@@ -171,6 +171,10 @@ footer {
 
 /* Responsividade (Celular) */
 @media (max-width: 768px) {
+    .hero {
+        background-attachment: scroll; /* Desliga o efeito parallax no celular para não dar zoom/cortar a foto */
+        background-position: center center;
+    }
     .hero h1 { font-size: 3.5rem; }
     .show-item {
         flex-direction: column;
