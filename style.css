@@ -43,11 +43,10 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Aqui entra a sua foto com uma camada escura por cima para o texto continuar legível */
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(10, 10, 10, 0.9)), url('img/fundo-baile.jpg');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed; /* Isso cria um efeito "Parallax" onde a foto fica parada enquanto a página rola */
+    background-attachment: fixed;
     text-align: center;
 }
 
@@ -65,7 +64,7 @@ h2 {
     margin-bottom: 40px;
 }
 
-/* Botões */
+/* Botões Iniciais */
 .btn-booking, .btn-whatsapp, .btn-presskit {
     display: inline-block;
     padding: 15px 30px;
@@ -83,7 +82,7 @@ h2 {
     box-shadow: 0 5px 15px rgba(255, 0, 128, 0.3);
 }
 
-.btn-booking:hover, .btn-whatsapp:hover {
+.btn-booking:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(255, 0, 128, 0.6);
 }
@@ -138,7 +137,55 @@ h2 {
     color: #fff;
 }
 
-/* SESSÃO 4: Contato */
+/* SESSÃO 4: Redes Sociais */
+.social-links {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn-instagram {
+    display: inline-block;
+    padding: 15px 40px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 50px;
+    text-transform: uppercase;
+    color: #fff;
+    /* Gradiente oficial do Instagram */
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    box-shadow: 0 5px 15px rgba(220, 39, 67, 0.4);
+    transition: 0.3s;
+}
+
+.btn-instagram:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(220, 39, 67, 0.6);
+}
+
+.btn-secundario {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 50px;
+    text-transform: uppercase;
+    color: #fff;
+    background: transparent;
+    border: 2px solid #555;
+    transition: 0.3s;
+}
+
+.btn-secundario:hover {
+    border-color: #ff0080;
+    color: #ff0080;
+}
+
+/* SESSÃO 5: Contato */
 .contato-links {
     margin-top: 30px;
     display: flex;
@@ -147,8 +194,13 @@ h2 {
 }
 
 .btn-whatsapp {
-    background: #25D366; /* Cor do WhatsApp */
+    background: #25D366;
     color: #fff;
+}
+
+.btn-whatsapp:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(37, 211, 102, 0.4);
 }
 
 .btn-presskit {
@@ -172,7 +224,7 @@ footer {
 /* Responsividade (Celular) */
 @media (max-width: 768px) {
     .hero {
-        background-attachment: scroll; /* Desliga o efeito parallax no celular para não dar zoom/cortar a foto */
+        background-attachment: scroll;
         background-position: center center;
     }
     .hero h1 { font-size: 3.5rem; }
@@ -182,7 +234,7 @@ footer {
         text-align: left;
         align-items: flex-start;
     }
-    .contato-links {
+    .contato-links, .social-links {
         flex-direction: column;
     }
 }
