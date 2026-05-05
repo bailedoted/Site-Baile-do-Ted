@@ -98,52 +98,64 @@ h2 {
     color: #fff;
 }
 
-/* SESSÃO 3: Agenda (COM ARTES) */
+/* SESSÃO 3: Agenda (FORMATO CARTÕES COM ARTE 1080x1350) */
 .agenda-lista {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    display: grid; /* Ativa o formato de grade/cartões */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Faz as colunas se ajustarem sozinhas */
+    gap: 30px; /* Espaço entre os cartões */
 }
 
 .show-item {
     background: #1a1a1a;
-    padding: 15px 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    border-left: 5px solid #ff0080;
-    gap: 20px; /* Dá um respiro entre a foto e o texto */
+    border-bottom: 5px solid #ff0080; /* Linha neon embaixo do card */
+    overflow: hidden; /* Faz a foto respeitar os cantos arredondados */
+    transition: 0.3s;
+}
+
+.show-item:hover {
+    transform: translateY(-10px); /* O cartão levanta um pouquinho quando passa o mouse */
+    box-shadow: 0 15px 30px rgba(255, 0, 128, 0.15);
 }
 
 .show-arte {
-    width: 80px;
-    height: 80px;
-    object-fit: cover; /* Faz a foto não ficar espremida */
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    width: 100%; /* A foto ocupa toda a largura do cartão */
+    aspect-ratio: 4 / 5; /* Força exatamente a proporção 1080x1350 (4:5) */
+    object-fit: cover; /* Evita que a foto fique esticada ou amassada */
 }
 
 .show-info {
-    flex: 1; /* Faz o texto empurrar o botão para o final */
-    text-align: left;
+    padding: 20px 10px 10px;
+    text-align: center;
+    width: 100%;
 }
 
 .show-data {
     font-weight: bold;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     color: #ff0080;
+    margin-bottom: 5px;
+}
+
+.show-local {
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 15px;
 }
 
 .btn-lista {
     background: transparent;
     border: 1px solid #ff0080;
     color: #ff0080;
-    padding: 8px 20px;
+    padding: 10px 30px;
     border-radius: 20px;
     text-decoration: none;
-    font-size: 0.9rem;
-    white-space: nowrap;
+    font-size: 1rem;
+    margin-bottom: 25px; /* Margem antes de acabar o cartão */
+    transition: 0.3s;
 }
 
 .btn-lista:hover {
@@ -241,18 +253,8 @@ footer {
         background-position: center center;
     }
     .hero h1 { font-size: 3.5rem; }
-    .show-item {
-        flex-direction: column; /* Coloca a arte em cima, texto no meio e botão embaixo no celular */
-        text-align: center;
-        gap: 15px;
-    }
-    .show-info {
-        text-align: center;
-    }
-    .show-arte {
-        width: 150px; /* Arte fica um pouco maior no celular para dar destaque */
-        height: 150px;
-    }
+    
+    /* A grade de eventos já se ajusta sozinha no celular, então só ajustamos os links de contato */
     .contato-links, .social-links {
         flex-direction: column;
     }
