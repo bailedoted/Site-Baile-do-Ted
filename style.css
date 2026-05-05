@@ -44,7 +44,7 @@ h2 {
     align-items: center;
     justify-content: center;
     /* Aqui entra a sua foto com uma camada escura por cima para o texto continuar legível */
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(10, 10, 10, 0.9)), url('img/fundo.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(10, 10, 10, 0.9)), url('img/fundo-baile.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed; /* Isso cria um efeito "Parallax" onde a foto fica parada enquanto a página rola */
