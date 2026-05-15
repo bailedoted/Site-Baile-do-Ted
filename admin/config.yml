@@ -1,0 +1,23 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "img"
+public_folder: "img"
+
+collections:
+  - name: "eventos"
+    label: "Agenda de Shows"
+    files:
+      - label: "Lista de Eventos"
+        name: "lista_eventos"
+        file: "agenda.json"
+        fields:
+          - label: "Eventos"
+            name: "shows"
+            widget: "list"
+            fields:
+              - {label: "Data do Show (Ex: SEX, 29 MAI)", name: "data", widget: "string"}
+              - {label: "Nome ou Local", name: "local", widget: "string"}
+              - {label: "Arte do Evento", name: "arte", widget: "image"}
+              - {label: "Texto do Botão", name: "botao_texto", widget: "string", default: "Mais Info"}
