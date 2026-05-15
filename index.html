@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baile do Ted | Official Booking</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
 
@@ -33,8 +32,26 @@
     <section id="agenda" class="section">
         <div class="container">
             <h2>Tour Dates</h2>
-            <div class="agenda-lista" id="agenda-dinamica">
-                <p>Carregando agenda atualizada...</p>
+            <div class="agenda-lista">
+                
+                <div class="show-item">
+                    <img src="img/arte1.jpg" alt="Arte do Evento" class="show-arte">
+                    <div class="show-info">
+                        <div class="show-data">SEX, 29 MAI</div>
+                        <div class="show-local">Formatura Terceiro Ano</div>
+                    </div>
+                    <a href="#" class="btn-lista">Mais Info</a>
+                </div>
+
+                <div class="show-item">
+                    <img src="img/arte2.jpg" alt="Arte do Evento" class="show-arte">
+                    <div class="show-info">
+                        <div class="show-data">SÁB, 13 JUN</div>
+                        <div class="show-local">Original Pub</div>
+                    </div>
+                    <a href="#" class="btn-lista">Lista VIP</a>
+                </div>
+
             </div>
         </div>
     </section>
@@ -65,49 +82,5 @@
         <p>&copy; 2026 Baile do Ted. Todos os direitos reservados.</p>
     </footer>
 
-    <script>
-        fetch('agenda.json?v=' + new Date().getTime())
-            .then(response => {
-                if (!response.ok) throw new Error('Ficheiro agenda.json não encontrado');
-                return response.json();
-            })
-            .then(data => {
-                const container = document.getElementById('agenda-dinamica');
-                container.innerHTML = ''; 
-
-                if (data && data.shows && data.shows.length > 0) {
-                    data.shows.forEach(show => {
-                        const card = `
-                            <div class="show-item">
-                                <img src="${show.arte}" alt="Arte do Evento" class="show-arte">
-                                <div class="show-info">
-                                    <div class="show-data">${show.data}</div>
-                                    <div class="show-local">${show.local}</div>
-                                </div>
-                                <a href="#contato" class="btn-lista">${show.botao_texto || 'Mais Info'}</a>
-                            </div>
-                        `;
-                        container.innerHTML += card;
-                    });
-                } else {
-                    container.innerHTML = '<p>Nenhum evento agendado no momento.</p>';
-                }
-            })
-            .catch(err => {
-                console.error('Erro:', err);
-                document.getElementById('agenda-dinamica').innerHTML = '<p>Ainda não existem eventos publicados no painel.</p>';
-            });
-
-        // Controle do Login do Admin
-        if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", user => {
-                if (!user) {
-                    window.netlifyIdentity.on("login", () => {
-                        document.location.href = "/admin/";
-                    });
-                }
-            });
-        }
-    </script>
 </body>
 </html>
