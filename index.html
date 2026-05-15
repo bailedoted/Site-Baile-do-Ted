@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baile do Ted | Official Booking</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
 
@@ -29,71 +30,11 @@
         </div>
     </section>
 
-    <!-- SESSÃO 3: Agenda de Shows (AGORA COM ARTES) -->
     <section id="agenda" class="section">
         <div class="container">
             <h2>Tour Dates</h2>
-            <div class="agenda-lista">
-                
-                <!-- Maio -->
-                <div class="show-item">
-                    <!-- Troque o nome arte1.jpg pelo nome da sua foto -->
-                    <img src="img/tedsite.png" alt="Arte do Evento" class="show-arte">
-                    <div class="show-info">
-                        <div class="show-data">SÁB, 09 MAI</div>
-                        <div class="show-local">Aniversário Livia</div>
-                    </div>
-                    <a href="#" class="btn-lista">Mais Info</a>
-                </div>
-
-                <div class="show-item">
-                    <!-- Troque o nome arte2.jpg pelo nome da sua foto -->
-                    <img src="img/tedsite.png" alt="Arte do Evento" class="show-arte">
-                    <div class="show-info">
-                        <div class="show-data">SEX, 15 MAI</div>
-                        <div class="show-local">Aniversário Ana Laura</div>
-                    </div>
-                    <a href="#" class="btn-lista">Mais Info</a>
-                </div>
-
-                <div class="show-item">
-                    <img src="img/tedsite.png" alt="Arte do Evento" class="show-arte">
-                    <div class="show-info">
-                        <div class="show-data">SEX, 29 MAI</div>
-                        <div class="show-local">Formatura Terceiro Ano</div>
-                    </div>
-                    <a href="#" class="btn-lista">Mais Info</a>
-                </div>
-
-                <!-- Junho -->
-                <div class="show-item">
-                    <img src="img/tedsite.png" alt="Arte do Evento" class="show-arte">
-                    <div class="show-info">
-                        <div class="show-data">SÁB, 13 JUN</div>
-                        <div class="show-local">Original Pub</div>
-                    </div>
-                    <a href="#" class="btn-lista">Lista VIP</a>
-                </div>
-
-                <div class="show-item">
-                    <img src="img/tedsite.png" alt="Arte do Evento" class="show-arte">
-                    <div class="show-info">
-                        <div class="show-data">SEX, 26 JUN</div>
-                        <div class="show-local">Formatura Maximos</div>
-                    </div>
-                    <a href="#" class="btn-lista">Mais Info</a>
-                </div>
-
-                <!-- Julho -->
-                <div class="show-item">
-                    <img src="img/tedsite.png" alt="Arte do Evento" class="show-arte">
-                    <div class="show-info">
-                        <div class="show-data">SEX, 04 JUL</div>
-                        <div class="show-local">Smoke Pub</div>
-                    </div>
-                    <a href="#" class="btn-lista">Lista VIP</a>
-                </div>
-
+            <div class="agenda-lista" id="agenda-dinamica">
+                <p>Carregando agenda...</p>
             </div>
         </div>
     </section>
@@ -101,11 +42,8 @@
     <section id="social" class="section dark-bg">
         <div class="container">
             <h2>Acompanhe o Baile</h2>
-            <p>Bastidores, fotos dos eventos e novidades em primeira mão!</p>
             <div class="social-links">
-                <a href="https://www.instagram.com/bailedoted/" class="btn-instagram" target="_blank">
-                    Siga @bailedoted
-                </a>
+                <a href="https://www.instagram.com/bailedoted/" class="btn-instagram" target="_blank">Siga @bailedoted</a>
                 <a href="#" class="btn-secundario">TikTok</a>
                 <a href="#" class="btn-secundario">YouTube</a>
             </div>
@@ -115,9 +53,8 @@
     <section id="contato" class="section">
         <div class="container">
             <h2>Bookings & Contato</h2>
-            <p>Quer o Baile do Ted no seu evento? Fale diretamente com a nossa equipe.</p>
             <div class="contato-links">
-                <a href="https://wa.me/5541995906901" class="btn-whatsapp" target="_blank">Falar no WhatsApp</a>
+                <a href="https://wa.me/5541985051986" class="btn-whatsapp" target="_blank">Falar no WhatsApp</a>
                 <a href="#" class="btn-presskit">Baixar Presskit (PDF)</a>
             </div>
         </div>
@@ -127,5 +64,46 @@
         <p>&copy; 2026 Baile do Ted. Todos os direitos reservados.</p>
     </footer>
 
+    <script>
+        fetch('agenda.json')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('agenda-dinamica');
+                container.innerHTML = ''; // Limpa o "Carregando..."
+
+                if (data.shows && data.shows.length > 0) {
+                    data.shows.forEach(show => {
+                        const card = `
+                            <div class="show-item">
+                                <img src="${show.arte}" alt="Arte do Evento" class="show-arte">
+                                <div class="show-info">
+                                    <div class="show-data">${show.data}</div>
+                                    <div class="show-local">${show.local}</div>
+                                </div>
+                                <a href="#contato" class="btn-lista">${show.botao_texto || 'Mais Info'}</a>
+                            </div>
+                        `;
+                        container.innerHTML += card;
+                    });
+                } else {
+                    container.innerHTML = '<p>Nenhum evento agendado no momento.</p>';
+                }
+            })
+            .catch(err => {
+                console.error('Erro ao carregar agenda:', err);
+                container.innerHTML = '<p>Erro ao carregar a agenda. Tente atualizar a página.</p>';
+            });
+
+        // Script para redirecionar após o login no admin
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
 </body>
 </html>
