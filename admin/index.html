@@ -21,11 +21,11 @@
         <div class="container">
             <h2>O Projeto</h2>
             <div class="release-text">
-                <p>O <strong>Baile do Ted</strong> é um projeto musical que nasceu em 2018, no Rio Grande do Sul. O line-up conta com o <strong>DJ Neto como residente</strong> e <strong>Andrezinho como convidado especial</strong>. Desde o início, a proposta foi ir além de um simples show: criar uma experiência envolvente, onde a música e a interação com o público caminham juntas.</p>
+                <p>O <strong>Baile do Ted</strong> é um projeto musical que nasceu em 2018, no Rio Grande do Sul, idealizado pelo <strong>DJ Neto</strong>. Desde o início, a proposta foi ir além de um simples show: criar uma experiência envolvente, onde a música e a interação com o público caminham juntas, transformando cada apresentação em um momento único.</p>
                 <br>
                 <p>Com uma identidade marcante, o Baile do Ted mistura os ritmos do <strong>funk e do eletrofunk</strong>, trazendo batidas intensas, energia contagiante e uma forte conexão com a pista. O projeto rapidamente ganhou destaque pela sua originalidade e pela forma dinâmica como se comunica com o público, tornando cada evento uma verdadeira celebração.</p>
                 <br>
-                <p>Ao longo de sua trajetória, o Baile do Ted já percorreu <strong>mais de sete estados brasileiros</strong>, consolidando sua presença em diferentes regiões do país. Cada apresentação carrega a essência do projeto: animação, proximidade com o público e uma entrega musical que não deixa ninguém parado.</p>
+                <p>Ao longo de sua trajetória, o Baile do Ted já percorreu <strong>mais de sete estados brasileiros</strong>, consolidando sua presença em diferentes regiões do país e conquistando uma base de fãs cada vez mais fiel. Cada apresentação carrega a essência do projeto: animação, proximidade com o público e uma entrega musical que não deixa ninguém parado.</p>
             </div>
         </div>
     </section>
@@ -34,7 +34,7 @@
         <div class="container">
             <h2>Tour Dates</h2>
             <div class="agenda-lista" id="agenda-dinamica">
-                <p>Carregando agenda atualizada...</p>
+                <p>Carregando agenda...</p>
             </div>
         </div>
     </section>
@@ -42,7 +42,6 @@
     <section id="social" class="section dark-bg">
         <div class="container">
             <h2>Acompanhe o Baile</h2>
-            <p>Bastidores, fotos dos eventos e novidades em primeira mão! Poste seus vídeos com a tag #andrezinhoeclub.</p>
             <div class="social-links">
                 <a href="https://www.instagram.com/bailedoted/" class="btn-instagram" target="_blank">Siga @bailedoted</a>
                 <a href="#" class="btn-secundario">TikTok</a>
@@ -66,16 +65,13 @@
     </footer>
 
     <script>
-        fetch('agenda.json?v=' + new Date().getTime())
-            .then(response => {
-                if (!response.ok) throw new Error('Ficheiro agenda.json não encontrado');
-                return response.json();
-            })
+        fetch('agenda.json')
+            .then(response => response.json())
             .then(data => {
                 const container = document.getElementById('agenda-dinamica');
-                container.innerHTML = ''; 
+                container.innerHTML = ''; // Limpa o "Carregando..."
 
-                if (data && data.shows && data.shows.length > 0) {
+                if (data.shows && data.shows.length > 0) {
                     data.shows.forEach(show => {
                         const card = `
                             <div class="show-item">
@@ -94,11 +90,11 @@
                 }
             })
             .catch(err => {
-                console.error('Erro:', err);
-                document.getElementById('agenda-dinamica').innerHTML = '<p>Ainda não existem eventos publicados no painel.</p>';
+                console.error('Erro ao carregar agenda:', err);
+                container.innerHTML = '<p>Erro ao carregar a agenda. Tente atualizar a página.</p>';
             });
 
-        // Controle do Login do Admin
+        // Script para redirecionar após o login no admin
         if (window.netlifyIdentity) {
             window.netlifyIdentity.on("init", user => {
                 if (!user) {
