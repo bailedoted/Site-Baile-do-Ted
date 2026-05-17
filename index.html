@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baile do Ted | Official Booking</title>
     <link rel="stylesheet" href="style.css">
+    
+    <link href='https://player.streaming.com.py/player-flutuante.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
@@ -217,6 +219,12 @@
             Desenvolvido por <a href="https://abreaporta.com.br/" target="_blank" style="color: #ffffff; text-decoration: underline;">Abre a Porta</a>
         </p>
     </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://player.streaming.com.py/player-flutuante.js"></script>
+    <script>
+    $(function(){$.kast({streaming:"https://cdn.streaming.com.py:7012/stream",autoPlay: 0,theme: "dark",ui: "colored",position: "right",serverInfo:""})});function load_musica_atual(){$(function(){$.ajax({url:"https://player.streaming.com.py/proxy-cors/7012/currentsong",type:"GET",success:function(musica_atual){load_cover(musica_atual);}});});}setInterval(load_musica_atual,2000);
+    </script>
 
 </body>
 </html>
