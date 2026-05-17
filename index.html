@@ -20,7 +20,7 @@
         <div class="container">
             <h2>O Projeto</h2>
             <div class="release-text">
-                <p>O <strong>Baile do Ted</strong> é um projeto musical que nasceu in 2018, no Rio Grande do Sul, idealizado pelo <strong>DJ Neto</strong>. Desde o início, a proposta foi ir além de um simples show: criar uma experiência envolvendo, onde a música e a interação com o público caminham juntas, transformando cada apresentação em um momento único.</p>
+                <p>O <strong>Baile do Ted</strong> é um projeto musical que nasceu em 2018, no Rio Grande do Sul, idealizado pelo <strong>DJ Neto</strong>. Desde o início, a proposta foi ir além de um simples show: criar uma experiência envolvente, onde a música e a interação com o público caminham juntas, transformando cada apresentação em um momento único.</p>
                 <br>
                 <p>Com uma identidade marcante, o Baile do Ted mistura os ritmos do <strong>funk e do eletrofunk</strong>, trazendo batidas intensas, energia contagiante e uma forte conexão com a pista. O projeto rapidamente ganhou destaque pela sua originalidade e pela forma dinâmica como se comunica com o público, tornando cada evento uma verdadeira celebração.</p>
                 <br>
@@ -91,8 +91,8 @@
                 <label for="tipo-show" style="display: block; margin-bottom: 5px; font-weight: bold;">Formato do Show:</label>
                 <select id="tipo-show" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 5px; border: none; font-size: 16px; background: #222; color: #fff;">
                     <option value="0">Selecione uma opção...</option>
-                    <option value="3000">Baile do Ted - Padrão (R$ 2.500,00)</option>
-                    <option value="5000">Baile do Ted - Completo com Estrutura (R$ 3.000,00)</option>
+                    <option value="2500">Baile do Ted - Padrão (R$ 2.500,00)</option>
+                    <option value="3000">Baile do Ted - Completo com Estrutura (R$ 3.000,00)</option>
                 </select>
 
                 <button onclick="calcularOrcamento()" class="btn-booking" style="width: 100%; cursor: pointer; border: none; padding: 12px; font-size: 16px; font-weight: bold;">Calcular Estimativa</button>
@@ -102,10 +102,11 @@
                     
                     <div id="dados-orcamento">
                         <p><strong>Distância (Ida e Volta):</strong> <span id="res-km">--</span> km</p>
-                        <p><strong>Custo de Deslocamento (R$ 0,70/km):</strong> R$ <span id="res-frete">--</span></p>
+                        <p><strong>Custo de Deslocamento:</strong> R$ <span id="res-frete">--</span></p>
                         <p><strong>Cachê / Estrutura:</strong> R$ <span id="res-show">--</span></p>
+                        <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;"><em>* Pedágios não inclusos na estimativa (calculados no fechamento).</em></p>
                         
-                        <h3 style="color: #ff007f; margin-top: 15px; font-size: 1.5rem;">Estimativa Total: R$ <span id="res-total">--</span></h3>
+                        <h3 style="color: #ff007f; margin-top: 15px; font-size: 1.5rem;">Estimativa Base: R$ <span id="res-total">--</span></h3>
                         
                         <a id="btn-whats-orcamento" href="#" class="btn-whatsapp" target="_blank" style="display: block; text-align: center; margin-top: 20px; text-decoration: none;">Enviar Cotação pelo WhatsApp</a>
                     </div>
@@ -161,7 +162,7 @@
                     const kmIda = distanciaMetros / 1000;
                     const kmIdaVolta = kmIda * 2;
                     
-                    const custoKm = 0.50;
+                    const custoKm = 0.68;
                     const valorFrete = kmIdaVolta * custoKm;
                     const valorTotal = valorFrete + valorShow;
 
@@ -173,7 +174,7 @@
                     msgErro.style.display = 'none';
                     dadosOrcamento.style.display = 'block';
 
-                    const msgWhats = `Olá! Fiz uma simulação no site para o Baile do Ted em *${cidadeInput}*.%0A%0A*Distância Ida/Volta:* ${kmIdaVolta.toFixed(0)} km%0A*Custo de Deslocamento:* R$ ${valorFrete.toFixed(2)}%0A*Cachê/Estrutura:* R$ ${valorShow.toFixed(2)}%0A*Total Estimado:* R$ ${valorTotal.toFixed(2)}%0A%0AGostaria de conversar sobre as datas disponíveis!`;
+                    const msgWhats = `Olá! Fiz uma simulação no site para o Baile do Ted em *${cidadeInput}*.%0A%0A*Distância Ida/Volta:* ${kmIdaVolta.toFixed(0)} km%0A*Custo de Deslocamento:* R$ ${valorFrete.toFixed(2)}%0A*Cachê/Estrutura:* R$ ${valorShow.toFixed(2)}%0A*Estimativa Base:* R$ ${valorTotal.toFixed(2)}%0A_(Obs: Valores de pedágio serão calculados e somados no fechamento)_.%0A%0AGostaria de conversar sobre as datas disponíveis!`;
                     btnWhats.href = `https://wa.me/5541995906901?text=${msgWhats}`;
 
                 } catch (error) {
