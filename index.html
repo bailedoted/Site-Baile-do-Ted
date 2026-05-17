@@ -104,7 +104,7 @@
                         <p><strong>Distância (Ida e Volta):</strong> <span id="res-km">--</span> km</p>
                         <p><strong>Custo de Deslocamento:</strong> R$ <span id="res-frete">--</span></p>
                         <p><strong>Cachê / Estrutura:</strong> R$ <span id="res-show">--</span></p>
-                        <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;"><em>* Pedágios não inclusos na estimativa (calculados no fechamento).</em></p>
+                        <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;"><em>* Despesas extras (pedágios, alimentação e hospedagem) não inclusas nesta estimativa (calculadas no fechamento).</em></p>
                         
                         <h3 style="color: #ff007f; margin-top: 15px; font-size: 1.5rem;">Estimativa Base: R$ <span id="res-total">--</span></h3>
                         
@@ -174,7 +174,7 @@
                     msgErro.style.display = 'none';
                     dadosOrcamento.style.display = 'block';
 
-                    const msgWhats = `Olá! Fiz uma simulação no site para o Baile do Ted em *${cidadeInput}*.%0A%0A*Distância Ida/Volta:* ${kmIdaVolta.toFixed(0)} km%0A*Custo de Deslocamento:* R$ ${valorFrete.toFixed(2)}%0A*Cachê/Estrutura:* R$ ${valorShow.toFixed(2)}%0A*Estimativa Base:* R$ ${valorTotal.toFixed(2)}%0A_(Obs: Valores de pedágio serão calculados e somados no fechamento)_.%0A%0AGostaria de conversar sobre as datas disponíveis!`;
+                    const msgWhats = `Olá! Fiz uma simulação no site para o Baile do Ted em *${cidadeInput}*.%0A%0A*Distância Ida/Volta:* ${kmIdaVolta.toFixed(0)} km%0A*Custo de Deslocamento:* R$ ${valorFrete.toFixed(2)}%0A*Cachê/Estrutura:* R$ ${valorShow.toFixed(2)}%0A*Estimativa Base:* R$ ${valorTotal.toFixed(2)}%0A_(Obs: Despesas com pedágios, alimentação e hospedagem não inclusas na simulação)_.%0A%0AGostaria de conversar sobre as datas disponíveis!`;
                     btnWhats.href = `https://wa.me/5541995906901?text=${msgWhats}`;
 
                 } catch (error) {
