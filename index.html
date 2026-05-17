@@ -7,17 +7,13 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        audio::-webkit-media-controls-timeline { display:none; }
         .caixa-radio {
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 9999;
-            background: rgba(17, 17, 17, 0.9);
-            padding: 5px 10px;
-            border-radius: 50px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border: 1px solid #ff007f;
+            border-radius: 3px; /* Cantos levemente arredondados para combinar com o player */
         }
     </style>
 </head>
@@ -234,7 +230,23 @@
     </footer>
 
     <div class="caixa-radio">
-        <audio autoplay controls="controls" src="https://cdn.streaming.com.py:7012/stream"></audio>
+        <script type="text/javascript" src="https://hosted.muses.org/mrp.js"></script>
+        <script type="text/javascript">
+            MRP.insert({
+                'url':'https://cdn.streaming.com.py:7012/stream',
+                'codec':'',
+                'volume':100,
+                'autoplay':true,
+                'forceHTML5':true,
+                'jsevents':false,
+                'buffering':0,
+                'title':'Baile do Ted',
+                'wmode':'transparent',
+                'skin':'compact',
+                'width':191,
+                'height':46
+            });
+        </script>
     </div>
 
 </body>
