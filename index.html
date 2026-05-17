@@ -6,7 +6,20 @@
     <title>Baile do Ted | Official Booking</title>
     <link rel="stylesheet" href="style.css">
     
-    <link href='https://player.streaming.com.py/player-flutuante.css' rel='stylesheet' type='text/css'>
+    <style>
+        audio::-webkit-media-controls-timeline { display:none; }
+        .caixa-radio {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: rgba(17, 17, 17, 0.9);
+            padding: 5px 10px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 1px solid #ff007f;
+        }
+    </style>
 </head>
 <body>
 
@@ -220,11 +233,9 @@
         </p>
     </footer>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://player.streaming.com.py/player-flutuante.js"></script>
-    <script>
-    $(function(){$.kast({streaming:"https://cdn.streaming.com.py:7012/stream",autoPlay: 0,theme: "dark",ui: "colored",position: "right",serverInfo:""})});function load_musica_atual(){$(function(){$.ajax({url:"https://player.streaming.com.py/proxy-cors/7012/currentsong",type:"GET",success:function(musica_atual){load_cover(musica_atual);}});});}setInterval(load_musica_atual,2000);
-    </script>
+    <div class="caixa-radio">
+        <audio autoplay controls="controls" src="https://cdn.streaming.com.py:7012/stream"></audio>
+    </div>
 
 </body>
 </html>
