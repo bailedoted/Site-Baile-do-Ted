@@ -114,14 +114,7 @@
 
             <div class="orcamento-box" style="background: #111; padding: 30px; border-radius: 10px; margin-top: 20px; border: 1px solid #333;">
                 <label for="cidade-destino" style="display: block; margin-bottom: 5px; font-weight: bold;">Sua Cidade e Estado:</label>
-                <input type="text" id="cidade-destino" placeholder="Ex: Lagoa Vermelha, RS" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 5px; border: none; font-size: 16px; background: #222; color: #fff;">
-
-                <label for="tipo-show" style="display: block; margin-bottom: 5px; font-weight: bold;">Formato do Show:</label>
-                <select id="tipo-show" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 5px; border: none; font-size: 16px; background: #222; color: #fff;">
-                    <option value="0">Selecione uma opção...</option>
-                    <option value="2500">Baile do Ted - Padrão (R$ 2.500,00)</option>
-                    <option value="3000">Baile do Ted - Completo com Estrutura (R$ 3.000,00)</option>
-                </select>
+                <input type="text" id="cidade-destino" placeholder="Ex: Lagoa Vermelha, RS" style="width: 100%; padding: 12px; margin-bottom: 25px; border-radius: 5px; border: none; font-size: 16px; background: #222; color: #fff;">
 
                 <button onclick="calcularOrcamento()" class="btn-booking" style="width: 100%; cursor: pointer; border: none; padding: 12px; font-size: 16px; font-weight: bold;">Calcular Estimativa</button>
 
@@ -145,7 +138,6 @@
         <script>
             async function calcularOrcamento() {
                 const cidadeInput = document.getElementById('cidade-destino').value;
-                const valorShow = parseFloat(document.getElementById('tipo-show').value);
                 const btnWhats = document.getElementById('btn-whats-orcamento');
                 const resultadoBox = document.getElementById('resultado-box');
                 const dadosOrcamento = document.getElementById('dados-orcamento');
@@ -155,8 +147,8 @@
                 dadosOrcamento.style.display = 'none';
                 msgErro.style.display = 'none';
 
-                if (!cidadeInput || valorShow === 0) {
-                    msgErro.innerText = "Por favor, preencha a cidade e o formato do show.";
+                if (!cidadeInput) {
+                    msgErro.innerText = "Por favor, digite a cidade de destino.";
                     msgErro.style.display = 'block';
                     return;
                 }
@@ -190,24 +182,23 @@
                     const kmIda = distanciaMetros / 1000;
                     const kmIdaVolta = kmIda * 2;
                     
-                    // LÓGICA DA TABELA DE VALORES FIXOS POR DISTÂNCIA
-                    let valorFixoLogistica = 0;
+                    // LÓGICA DA TABELA PARA O VALOR DO SHOW
+                    let valorShow = 0;
                     if (kmIdaVolta <= 200) {
-                        valorFixoLogistica = 1500;
+                        valorShow = 1500;
                     } else if (kmIdaVolta <= 300) {
-                        valorFixoLogistica = 2000;
+                        valorShow = 2000;
                     } else if (kmIdaVolta <= 500) {
-                        valorFixoLogistica = 2500;
+                        valorShow = 2500;
                     } else {
-                        valorFixoLogistica = 3000; // De 500km até 1000km ou mais
+                        valorShow = 3000; // De 500km até 1000km ou mais
                     }
                     
-                    // Custo por KM Rodado (Combustível/Desgaste)
+                    // Custo de Deslocamento (Gasto de KM)
                     const custoKm = 0.68;
-                    const valorVariavelFrete = kmIdaVolta * custoKm;
+                    const valorFrete = kmIdaVolta * custoKm;
                     
-                    // Custo de Deslocamento Total = Valor Fixo da Faixa + Gasto de KM
-                    const valorFrete = valorFixoLogistica + valorVariavelFrete;
+                    // Custo Total = Valor do Show + Gasto de KM
                     const valorTotal = valorFrete + valorShow;
 
                     document.getElementById('res-km').innerText = kmIdaVolta.toFixed(0);
