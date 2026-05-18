@@ -72,7 +72,7 @@
                 </div>
                 
                 <div class="show-item">
-                    <img src="img/ted.png" alt="Arte do Evento" class="show-arte">
+                    <img src="img/tedsite.png" alt="Arte do Evento" class="show-arte">
                     <div class="show-info">
                         <div class="show-data">SÁB, 13 JUN</div>
                         <div class="show-local">
@@ -190,8 +190,24 @@
                     const kmIda = distanciaMetros / 1000;
                     const kmIdaVolta = kmIda * 2;
                     
+                    // LÓGICA DA TABELA DE VALORES FIXOS POR DISTÂNCIA
+                    let valorFixoLogistica = 0;
+                    if (kmIdaVolta <= 200) {
+                        valorFixoLogistica = 1500;
+                    } else if (kmIdaVolta <= 300) {
+                        valorFixoLogistica = 2000;
+                    } else if (kmIdaVolta <= 500) {
+                        valorFixoLogistica = 2500;
+                    } else {
+                        valorFixoLogistica = 3000; // De 500km até 1000km ou mais
+                    }
+                    
+                    // Custo por KM Rodado (Combustível/Desgaste)
                     const custoKm = 0.68;
-                    const valorFrete = kmIdaVolta * custoKm;
+                    const valorVariavelFrete = kmIdaVolta * custoKm;
+                    
+                    // Custo de Deslocamento Total = Valor Fixo da Faixa + Gasto de KM
+                    const valorFrete = valorFixoLogistica + valorVariavelFrete;
                     const valorTotal = valorFrete + valorShow;
 
                     document.getElementById('res-km').innerText = kmIdaVolta.toFixed(0);
