@@ -122,9 +122,8 @@
                     <p id="msg-erro" style="color: #ff007f; display: none; font-weight: bold;"></p>
                     
                     <div id="dados-orcamento">
-                        <p><strong>Distância (Ida e Volta):</strong> <span id="res-km">--</span> km</p>
-                        <p><strong>Custo de Deslocamento:</strong> R$ <span id="res-frete">--</span></p>
                         <p><strong>Cachê / Estrutura:</strong> R$ <span id="res-show">--</span></p>
+                        <p><strong>Deslocamento:</strong> R$ <span id="res-frete">--</span></p>
                         <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;"><em>* Despesas extras (pedágios, alimentação e hospedagem) não inclusas nesta estimativa (calculadas no fechamento).</em></p>
                         
                         <h3 style="color: #ff007f; margin-top: 15px; font-size: 1.5rem;">Estimativa Base: R$ <span id="res-total">--</span></h3>
@@ -201,7 +200,6 @@
                     // Custo Total = Valor do Show + Gasto de KM
                     const valorTotal = valorFrete + valorShow;
 
-                    document.getElementById('res-km').innerText = kmIdaVolta.toFixed(0);
                     document.getElementById('res-frete').innerText = valorFrete.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                     document.getElementById('res-show').innerText = valorShow.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                     document.getElementById('res-total').innerText = valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -209,7 +207,7 @@
                     msgErro.style.display = 'none';
                     dadosOrcamento.style.display = 'block';
 
-                    const msgWhats = `Olá! Fiz uma simulação no site para o Baile do Ted em *${cidadeInput}*.%0A%0A*Distância Ida/Volta:* ${kmIdaVolta.toFixed(0)} km%0A*Custo de Deslocamento:* R$ ${valorFrete.toFixed(2)}%0A*Cachê/Estrutura:* R$ ${valorShow.toFixed(2)}%0A*Estimativa Base:* R$ ${valorTotal.toFixed(2)}%0A_(Obs: Despesas com pedágios, alimentação e hospedagem não inclusas na simulação)_.%0A%0AGostaria de conversar sobre as datas disponíveis!`;
+                    const msgWhats = `Olá! Fiz uma simulação no site para o Baile do Ted em *${cidadeInput}*.%0A%0A*Cachê/Estrutura:* R$ ${valorShow.toFixed(2)}%0A*Deslocamento:* R$ ${valorFrete.toFixed(2)}%0A*Estimativa Base:* R$ ${valorTotal.toFixed(2)}%0A_(Obs: Despesas com pedágios, alimentação e hospedagem não inclusas na simulação)_.%0A%0AGostaria de conversar sobre as datas disponíveis!`;
                     btnWhats.href = `https://wa.me/5541995906901?text=${msgWhats}`;
 
                 } catch (error) {
