@@ -29,7 +29,7 @@
             border-radius: 3px; 
         }
 
-        /* Estilo dos Novos Cards de Calendário */
+        /* Estilo dos Cards de Calendário */
         .card-evento {
             display: block;
             background: #111;
@@ -50,6 +50,94 @@
             gap: 20px;
         }
     </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        // Configuração real do Firebase do Baile do Ted
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_yKDVhp4n8YDgIhtzOPT5DJX24dip_X4",
+            authDomain: "baile-do-ted.firebaseapp.com",
+            projectId: "baile-do-ted",
+            storageBucket: "baile-do-ted.firebasestorage.app",
+            messagingSenderId: "838778419593",
+            appId: "1:838778419593:web:590a0a81c4ff2f1a140958",
+            measurementId: "G-WTT2FR4EH7"
+        };
+
+        // Inicializar Firebase e Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Carregar eventos do banco de dados
+        async function carregarEventos() {
+            const containerDestaque = document.getElementById("container-destaque");
+            const gridCalendario = document.getElementById("grid-calendario");
+            
+            try {
+                const q = query(collection(db, "eventos"), orderBy("dataTimestamp", "asc"));
+                const querySnapshot = await getDocs(q);
+                
+                let eventos = [];
+                querySnapshot.forEach((doc) => {
+                    eventos.push({ id: doc.id, ...doc.data() });
+                });
+
+                if (eventos.length === 0) {
+                    containerDestaque.innerHTML = "<p style='color:#aaa; text-align:center;'>Nenhum show agendado no momento. Acompanhe nossas redes!</p>";
+                    return;
+                }
+
+                // O primeiro evento da lista ordenada por data será o Destaque
+                const proximoShow = eventos[0];
+                containerDestaque.innerHTML = `
+                    <div class="show-destaque" style="background: linear-gradient(135deg, #151515, #050505); border: 2px solid #ff007f; padding: 30px; border-radius: 15px; margin-bottom: 40px; text-align: center; box-shadow: 0 10px 30px rgba(255, 0, 127, 0.25); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <span style="background: #ff007f; color: #fff; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Próximo Show</span>
+                        <div style="width: 100%; max-width: 450px; margin-bottom: 20px; overflow: hidden; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                            <img src="${proximoShow.imagem || 'img/tedsite.png'}" alt="${proximoShow.nome}" style="width: 100%; height: auto; display: block; object-fit: cover;">
+                        </div>
+                        <h3 style="font-size: 2.2rem; margin: 5px 0 10px 0; font-weight: 800; color: #fff;">${proximoShow.nome}</h3>
+                        <p style="font-size: 1.3rem; color: #ff007f; font-weight: bold; margin-bottom: 5px;">${proximoShow.dataTexto}</p>
+                        <p style="font-size: 1.1rem; color: #aaa; margin-bottom: 20px;">${proximoShow.localidade}</p>
+                        <a href="${proximoShow.link || 'https://wa.me/5541995906901'}" target="_blank" class="btn-booking" style="display: inline-block; padding: 15px 40px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px;">Quero este show no meu evento</a>
+                    </div>
+                `;
+
+                // Os demais eventos entram no calendário abaixo
+                gridCalendario.innerHTML = "";
+                const demaisEventos = eventos.slice(1);
+
+                demaisEventos.forEach((evento) => {
+                    const statusTag = evento.esgotado 
+                        ? `<span style="background: #ff007f20; color: #ff007f; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; border: 1px solid #ff007f50;">ESGOTADO</span>`
+                        : `<span style="color: #00c853; font-size: 0.9rem; font-weight: bold;">🟢 Lista Aberta</span>`;
+
+                    gridCalendario.innerHTML += `
+                        <a href="${evento.link || 'https://wa.me/5541995906901'}" target="_blank" class="card-evento" style="${evento.esgotado ? 'opacity: 0.7;' : ''}">
+                            <div style="position: relative;">
+                                <img src="${evento.imagem || 'img/tedsite.png'}" alt="${evento.nome}" style="width: 100%; height: 140px; object-fit: cover; ${evento.esgotado ? 'filter: grayscale(80%);' : ''}">
+                                <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">${evento.mesAbas}</span>
+                                    <span style="display: block; font-size: 1.5rem; font-weight: bold;">${evento.diaNum}</span>
+                                </div>
+                            </div>
+                            <div style="padding: 15px;">
+                                <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">${evento.nome}</h4>
+                                <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">${evento.localidade}</p>
+                                ${statusTag}
+                            </div>
+                        </a>
+                    `;
+                });
+
+            } catch (error) {
+                console.error("Erro ao carregar banco de dados: ", error);
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", carregarEventos);
+    </script>
 </head>
 <body>
 
@@ -78,83 +166,9 @@
         <div class="container">
             <h2>Agenda Oficial</h2>
             
-            <div class="show-destaque" style="background: linear-gradient(135deg, #151515, #050505); border: 2px solid #ff007f; padding: 30px; border-radius: 15px; margin-bottom: 40px; text-align: center; box-shadow: 0 10px 30px rgba(255, 0, 127, 0.25); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <span style="background: #ff007f; color: #fff; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Próximo Show</span>
-                
-                <div style="width: 100%; max-width: 450px; margin-bottom: 20px; overflow: hidden; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
-                    <img src="img/formatura.png" alt="Formatura Terceiro Ano" style="width: 100%; height: auto; display: block; object-fit: cover;">
-                </div>
+            <div id="container-destaque"></div>
 
-                <h3 style="font-size: 2.2rem; margin: 5px 0 10px 0; font-weight: 800; color: #fff;">Formatura Terceiro Ano</h3>
-                <p style="font-size: 1.3rem; color: #ff007f; font-weight: bold; margin-bottom: 5px;">SEX, 29 MAI</p>
-                <p style="font-size: 1.1rem; color: #aaa; margin-bottom: 20px;">Curitiba / PR</p>
-                
-                <a href="https://wa.me/5541995906901?text=Quero%20informa%C3%A7%C3%B5es%20sobre%20o%20show%20na%20Formatura%20Terceiro%20Ano%20em%20Curitiba" class="btn-booking" style="display: inline-block; padding: 15px 40px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px;">Quero este show no meu evento</a>
-            </div>
-
-            <div class="grid-calendario">
-                
-                <a href="#" onclick="return false;" class="card-evento" style="opacity: 0.7; cursor: default;">
-                    <div style="position: relative;">
-                        <img src="img/festafechada.png" alt="Evento Privado" style="width: 100%; height: 140px; object-fit: cover; filter: grayscale(80%);">
-                        <div style="position: absolute; top: 10px; right: 10px; background: #333; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; border: 1px solid #444;">
-                            <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">Jun</span>
-                            <span style="display: block; font-size: 1.5rem; font-weight: bold;">12</span>
-                        </div>
-                    </div>
-                    <div style="padding: 15px;">
-                        <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">Evento Privado</h4>
-                        <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">Curitiba / PR</p>
-                        <span style="background: #ff007f20; color: #ff007f; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; border: 1px solid #ff007f50;">ESGOTADO</span>
-                    </div>
-                </a>
-
-                <a href="https://wa.me/5541995906901?text=Quero%20entrar%20na%20lista%20do%20Original%20Pub" target="_blank" class="card-evento">
-                    <div style="position: relative;">
-                        <img src="img/tedsite.png" alt="Original Pub" style="width: 100%; height: 140px; object-fit: cover;">
-                        <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                            <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">Jun</span>
-                            <span style="display: block; font-size: 1.5rem; font-weight: bold;">13</span>
-                        </div>
-                    </div>
-                    <div style="padding: 15px;">
-                        <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">Original Pub</h4>
-                        <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">Lagoa Vermelha / RS</p>
-                        <span style="color: #00c853; font-size: 0.9rem; font-weight: bold;">🟢 Lista Aberta</span>
-                    </div>
-                </a>
-
-                <a href="https://wa.me/5541995906901?text=Mais%20informações%20sobre%20Formatura%20Maximos" target="_blank" class="card-evento">
-                    <div style="position: relative;">
-                        <img src="img/formatura.png" alt="Formatura Maximos" style="width: 100%; height: 140px; object-fit: cover;">
-                        <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                            <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">Jun</span>
-                            <span style="display: block; font-size: 1.5rem; font-weight: bold;">26</span>
-                        </div>
-                    </div>
-                    <div style="padding: 15px;">
-                        <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">Formatura Maximos</h4>
-                        <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">Curitiba / PR</p>
-                        <span style="color: #0088cc; font-size: 0.9rem; font-weight: bold;">🔵 Mais Info</span>
-                    </div>
-                </a>
-
-                <a href="https://wa.me/5541995906901?text=Quero%20entrar%20na%20lista%20VIP%20do%20Smoke%20Pub" target="_blank" class="card-evento">
-                    <div style="position: relative;">
-                        <img src="img/tedsite.png" alt="Smoke Pub" style="width: 100%; height: 140px; object-fit: cover;">
-                        <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                            <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">Jul</span>
-                            <span style="display: block; font-size: 1.5rem; font-weight: bold;">04</span>
-                        </div>
-                    </div>
-                    <div style="padding: 15px;">
-                        <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">Smoke Pub</h4>
-                        <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">Curitiba / PR</p>
-                        <span style="color: #ff007f; font-size: 0.9rem; font-weight: bold;">🔥 Lista VIP</span>
-                    </div>
-                </a>
-
-            </div>
+            <div id="grid-calendario" class="grid-calendario"></div>
         </div>
     </section>
 
@@ -230,7 +244,6 @@
                     const kmIda = distanciaMetros / 1000;
                     const kmIdaVolta = kmIda * 2;
                     
-                    // LÓGICA DA TABELA PARA O VALOR DO SHOW
                     let valorShow = 0;
                     if (kmIdaVolta <= 200) {
                         valorShow = 1500;
@@ -239,14 +252,11 @@
                     } else if (kmIdaVolta <= 500) {
                         valorShow = 2500;
                     } else {
-                        valorShow = 3000; // De 500km até 1000km ou mais
+                        valorShow = 3000; 
                     }
                     
-                    // Custo de Deslocamento (Gasto de KM)
                     const custoKm = 0.68;
                     const valorFrete = kmIdaVolta * custoKm;
-                    
-                    // Custo Total = Valor do Show + Gasto de KM
                     const valorTotal = valorFrete + valorShow;
 
                     document.getElementById('res-total').innerText = valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
