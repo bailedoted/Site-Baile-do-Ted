@@ -11,10 +11,10 @@
             --fundo-noite: #050000;
             --fundo-translucido: rgba(10, 0, 0, 0.85);
             --vermelho-sangue: #660000;
-            --vermelho-fogo: #b30000;
+            --vermelho-fogo: #cc0000;
             --dourado-luz: #d4af37;
             --texto-claro: #e0e0e0;
-            --texto-escuro: #7a7a7a;
+            --texto-escuro: #888888;
             --borda-fina: 1px solid #330000;
         }
 
@@ -23,15 +23,24 @@
         body {
             background-color: var(--fundo-noite);
             color: var(--texto-claro);
-            font-family: 'Georgia', 'Times New Roman', serif; /* Fonte clássica e pesada */
+            font-family: 'Georgia', 'Times New Roman', serif;
             line-height: 1.7;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
         }
+
+        /* Efeito de Luz de Vela (Piscar suave) */
+        @keyframes luzDeVela {
+            0% { text-shadow: 0 0 5px var(--vermelho-fogo), 0 0 10px var(--dourado-luz); }
+            50% { text-shadow: 0 0 15px var(--vermelho-sangue), 0 0 25px var(--dourado-luz); }
+            100% { text-shadow: 0 0 5px var(--vermelho-fogo), 0 0 10px var(--dourado-luz); }
+        }
+        .vela { animation: luzDeVela 3s infinite alternate; }
 
         .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 2;}
 
         /* --- MENU --- */
         nav {
-            background: linear-gradient(to bottom, #000 70%, transparent);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 50%, transparent);
             padding: 20px 0; position: fixed; width: 100%; top: 0; z-index: 1000;
         }
         .nav-content { display: flex; justify-content: space-between; align-items: center; }
@@ -46,11 +55,11 @@
         }
         .btn-laroye:hover { background: var(--vermelho-fogo); box-shadow: 0 0 15px var(--vermelho-sangue); }
 
-        /* --- HERO (A Encruzilhada) com Paralaxe --- */
+        /* --- HERO (A Encruzilhada) com Paralaxe e Imagem de Fogo --- */
         .hero {
             height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center;
-            /* O FUNDO PESADO: Fogo/Neblina. Ele fica fixo (fixed) enquanto a página rola */
-            background: linear-gradient(rgba(5,0,0,0.85), rgba(5,0,0,0.95)), url('img/fundo-fogo.jpg') no-repeat center center;
+            /* Imagem de Fogo/Faíscas do Unsplash */
+            background: linear-gradient(rgba(5,0,0,0.7), rgba(5,0,0,0.95)), url('https://images.unsplash.com/photo-1498855926480-d98e83099315?q=80&w=1920&auto=format&fit=crop') no-repeat center center;
             background-attachment: fixed;
             background-size: cover;
             border-bottom: 5px solid var(--vermelho-sangue);
@@ -66,7 +75,7 @@
         @media(max-width: 600px) { .hero h1 { font-size: 2.5rem; } }
         
         .hero h2 { font-size: 1.8rem; color: var(--texto-claro); margin-bottom: 25px; font-style: italic; font-weight: normal;}
-        .hero p { font-size: 1.2rem; margin-bottom: 40px; color: #999; }
+        .hero p { font-size: 1.2rem; margin-bottom: 40px; color: #aaa; }
 
         .btn-encruza {
             display: inline-block; background: var(--vermelho-sangue); color: #fff;
@@ -79,7 +88,7 @@
 
         /* --- SEÇÕES GERAIS --- */
         .section { padding: 120px 0; border-bottom: var(--borda-fina); }
-        .bg-textura { background-color: #020000; } /* Cor lisa bem escura para contraste com o parallax */
+        .bg-textura { background-color: #020000; }
         
         .titulo-terreiro {
             text-align: center; font-size: 3rem; color: var(--dourado-luz); margin-bottom: 20px;
@@ -93,13 +102,16 @@
 
         .moldura-foto {
             position: relative; padding: 10px; background: #000; border: 2px solid var(--vermelho-sangue);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            box-shadow: 0 10px 40px rgba(102,0,0,0.3);
         }
-        .moldura-foto img { width: 100%; height: auto; display: block; filter: contrast(1.1) grayscale(0.1); }
+        /* Imagem de um homem nas sombras com filtro para ficar vermelho/escuro */
+        .moldura-foto img { 
+            width: 100%; height: 500px; display: block; object-fit: cover;
+            filter: contrast(1.2) sepia(0.3) hue-rotate(-20deg) saturate(1.5) brightness(0.7);
+        }
         
-        /* Detalhe nas quinas da foto */
-        .moldura-foto::before { content: '🔱'; position: absolute; top: -15px; left: -15px; font-size: 2rem; color: var(--dourado-luz); }
-        .moldura-foto::after { content: '🔱'; position: absolute; bottom: -15px; right: -15px; font-size: 2rem; color: var(--dourado-luz); }
+        .moldura-foto::before { content: '🔱'; position: absolute; top: -15px; left: -15px; font-size: 2.5rem; color: var(--vermelho-fogo); z-index: 3;}
+        .moldura-foto::after { content: '🔱'; position: absolute; bottom: -15px; right: -15px; font-size: 2.5rem; color: var(--vermelho-fogo); z-index: 3;}
 
         .texto-terreiro p { font-size: 1.2rem; color: var(--texto-claro); margin-bottom: 20px; text-align: justify;}
         .destaque-exu { display: block; color: var(--vermelho-fogo); font-size: 1.3rem; font-weight: bold; font-style: italic; margin-top: 30px; border-left: 3px solid var(--dourado-luz); padding-left: 15px;}
@@ -108,18 +120,19 @@
         .grid-trabalhos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         
         .card-trabalho {
-            background: rgba(5, 0, 0, 0.6); padding: 50px 30px; border: 1px solid #220000;
+            background: rgba(10, 0, 0, 0.8); padding: 50px 30px; border: 1px solid #330000;
             text-align: center; transition: 0.4s; position: relative;
         }
         .card-trabalho:hover { transform: translateY(-10px); border-color: var(--vermelho-fogo); background: rgba(20, 0, 0, 0.9); box-shadow: 0 10px 30px rgba(102, 0, 0, 0.4); }
         
-        .icon-ponto { font-size: 3rem; color: var(--dourado-luz); margin-bottom: 20px; display: block;}
+        .icon-ponto { font-size: 3.5rem; color: var(--dourado-luz); margin-bottom: 20px; display: block; text-shadow: 0 0 10px #000;}
         .card-trabalho h3 { font-size: 1.8rem; color: #fff; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;}
         .card-trabalho p { color: var(--texto-escuro); font-size: 1.05rem; }
 
-        /* --- FUNDO PARALAXE SEPARADOR --- */
+        /* --- FUNDO PARALAXE SEPARADOR (Velas na Tronqueira) --- */
         .parallax-separador {
-            background: linear-gradient(rgba(10,0,0,0.8), rgba(10,0,0,0.8)), url('img/altar-tranca.jpg') no-repeat center center;
+            /* Imagem de velas no escuro */
+            background: linear-gradient(rgba(10,0,0,0.7), rgba(10,0,0,0.9)), url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1920&auto=format&fit=crop') no-repeat center center;
             background-attachment: fixed;
             background-size: cover;
             padding: 150px 20px;
@@ -133,6 +146,7 @@
         /* --- RODAPÉ --- */
         footer {
             background: #000; padding: 80px 0 40px 0; text-align: center;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
         }
         .final-laroye { font-size: 3rem; color: var(--vermelho-fogo); margin-bottom: 30px; text-transform: uppercase; font-weight: 900; letter-spacing: 2px;}
         
@@ -149,8 +163,8 @@
 
     <header class="hero">
         <div class="hero-content">
-            <div class="simbolo-central">🔱</div>
-            <h1>Leo de Tranca Ruas</h1>
+            <div class="simbolo-central vela">🔱</div>
+            <h1 class="vela">Leo de Tranca Ruas</h1>
             <h2>Senhor dos Caminhos. Dono da Encruzilhada.</h2>
             <p>Onde o mundo dos homens falha, a força da Quimbanda resolve. Trabalhos pesados, sigilo absoluto e resposta rápida sob a Lei Maior de Exu.</p>
             
@@ -161,10 +175,10 @@
     <section class="section bg-textura">
         <div class="container grid-terreiro">
             <div class="moldura-foto">
-                <img src="img/leo-sacerdote.jpg" alt="Sacerdote Leo de Tranca Ruas">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop" alt="Sacerdote Autoridade">
             </div>
             <div class="texto-terreiro">
-                <h2 class="titulo-terreiro" style="text-align: left;">A Força da Coroa</h2>
+                <h2 class="titulo-terreiro vela" style="text-align: left;">A Força da Coroa</h2>
                 <p>Aqui não se brinca com a espiritualidade. Sacerdote Leo atua com fundamentos cruzados, garantindo que o seu pedido chegue a quem realmente tem poder para mudar a sua realidade: <strong>Seu Tranca Ruas das Almas</strong>.</p>
                 <p>Com mais de 15 anos de chão de terreiro, o trabalho do Sacerdote é pautado no sigilo e no resultado. Se os seus caminhos estão trancados, se a vida financeira não anda, ou se inimigos ocultos estão derrubando você, é hora de agir.</p>
                 <p>O que a maldade humana amarra, o garfo de Exu desamarra.</p>
@@ -174,7 +188,7 @@
     </section>
 
     <div class="parallax-separador">
-        <h2>Firmeza e Respeito</h2>
+        <h2 class="vela">Firmeza e Respeito</h2>
         <p>"Dentro da tronqueira, o fogo não queima a alma justa, mas consome a língua do traidor. Salve a força do Povo da Rua."</p>
     </div>
 
@@ -207,12 +221,12 @@
 
     <footer id="contato">
         <div class="container">
-            <h2 class="final-laroye">Salve Seu Tranca Ruas!</h2>
-            <p style="color: #999; margin-bottom: 40px; font-size: 1.1rem; max-width: 700px; margin-left: auto; margin-right: auto;">Não deixe para amanhã o que a espiritualidade pode resolver hoje. O atendimento é feito com Oráculo, apontando exatamente a raiz e a solução do seu problema.</p>
+            <h2 class="final-laroye vela">Salve Seu Tranca Ruas!</h2>
+            <p style="color: #aaa; margin-bottom: 40px; font-size: 1.1rem; max-width: 700px; margin-left: auto; margin-right: auto;">Não deixe para amanhã o que a espiritualidade pode resolver hoje. O atendimento é feito com Oráculo, apontando exatamente a raiz e a solução do seu problema.</p>
             
             <a href="https://wa.me/5500000000000?text=Laroyê! Gostaria de agendar uma consulta com o Sacerdote Leo." target="_blank" class="btn-encruza" style="padding: 15px 40px; font-size: 1.1rem;">🔱 Consultar o Sacerdote (WhatsApp)</a>
 
-            <div style="margin-top: 60px; color: #666; font-size: 0.95rem;">
+            <div style="margin-top: 60px; color: #777; font-size: 0.95rem;">
                 <p>📍 Terreiro localizado em [Cidade/Estado]. (Endereço exato fornecido apenas após agendamento)</p>
                 <p style="margin-top: 10px;">⚠️ Realizamos trabalhos à distância com fotos e vídeos comprovando a execução no altar.</p>
             </div>
