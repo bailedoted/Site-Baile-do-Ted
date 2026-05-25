@@ -331,7 +331,16 @@
                     return;
                 }
 
-                msgErro.innerText = "Calculando rota a partir de Curitiba... aguarde.";
+                // Frases engraçadas do Ted durante o carregamento
+                const frasesTed = [
+                    "Calma aí, parceiro de trovão! Tô calculando essa rota enquanto abro uma gelada... ⚡🐻🍻",
+                    "Acordando o Ted da ressaca para ver quantos KM dá até aí... aguenta! 🐻💤",
+                    "Preparando o cooler e medindo a distância... Já vou avisando que a equipe bebe muito! 🐻🍻",
+                    "Sai pra lá, trovão! O Ted tá focado calculando os custos dessa viagem... ⚡🐻"
+                ];
+                const fraseAleatoria = frasesTed[Math.floor(Math.random() * frasesTed.length)];
+                
+                msgErro.innerText = fraseAleatoria;
                 msgErro.style.display = 'block';
                 msgErro.style.color = "#fff";
 
