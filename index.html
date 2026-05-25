@@ -55,7 +55,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // Configuração real do Firebase do Baile do Ted
         const firebaseConfig = {
             apiKey: "AIzaSyA_yKDVhp4n8YDgIhtzOPT5DJX24dip_X4",
             authDomain: "baile-do-ted.firebaseapp.com",
@@ -66,11 +65,9 @@
             measurementId: "G-WTT2FR4EH7"
         };
 
-        // Inicializar Firebase e Firestore
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Carregar eventos do banco de dados
         async function carregarEventos() {
             const containerDestaque = document.getElementById("container-destaque");
             const gridCalendario = document.getElementById("grid-calendario");
@@ -89,8 +86,16 @@
                     return;
                 }
 
-                // O primeiro evento da lista ordenada por data será o Destaque
                 const proximoShow = eventos[0];
+                
+                // FALLBACKS INTELIGENTES (Se tiver em branco, usa os dados padrão do Ted / Abre a Porta)
+                let localDestaque = proximoShow.localNome ? `📍 ${proximoShow.localNome}` : '📍 Local Privado';
+                let enderecoDestaque = proximoShow.localEndereco ? `<br><small style="color: #ccc;">${proximoShow.localEndereco}</small>` : '';
+                
+                let instagramFinal = proximoShow.instagram || '@bailedoted';
+                let contatoFinal = proximoShow.localContato || '(41) 99590-6901';
+                let linkVendasFinal = proximoShow.linkIngresso || 'https://abreaporta.com.br';
+
                 containerDestaque.innerHTML = `
                     <div class="show-destaque" style="background: linear-gradient(135deg, #151515, #050505); border: 2px solid #ff007f; padding: 30px; border-radius: 15px; margin-bottom: 40px; text-align: center; box-shadow: 0 10px 30px rgba(255, 0, 127, 0.25); display: flex; flex-direction: column; align-items: center; justify-content: center;">
                         <span style="background: #ff007f; color: #fff; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Próximo Show</span>
@@ -98,25 +103,27 @@
                             <img src="${proximoShow.imagem || 'img/tedsite.png'}" alt="${proximoShow.nome}" style="width: 100%; height: auto; display: block; object-fit: cover;">
                         </div>
                         <h3 style="font-size: 2.2rem; margin: 5px 0 10px 0; font-weight: 800; color: #fff;">${proximoShow.nome}</h3>
-                        <p style="font-size: 1.3rem; color: #ff007f; font-weight: bold; margin-bottom: 5px;">${proximoShow.dataTexto}</p>
-                        <p style="font-size: 1.1rem; color: #aaa; margin-bottom: 20px;">${proximoShow.localidade}</p>
-                        <a href="${proximoShow.link || 'https://wa.me/5541995906901'}" target="_blank" class="btn-booking" style="display: inline-block; padding: 15px 40px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px;">Quero este show no meu evento</a>
+                        <p style="font-size: 1.3rem; color: #ff007f; font-weight: bold; margin-bottom: 10px;">${proximoShow.dataTexto}</p>
+                        <p style="font-size: 1.1rem; color: #fff; margin-bottom: 10px;">${localDestaque} ${enderecoDestaque}</p>
+                        <div style="margin-bottom: 20px; font-size: 0.95rem;">
+                            <a href="https://instagram.com/${instagramFinal.replace('@', '')}" target="_blank" style="color: #ff007f; text-decoration: none; margin-right: 15px;">📷 ${instagramFinal}</a>
+                            <span style="color: #00c853;">u0001F4DE ${contatoFinal}</span>
+                        </div>
+                        <a href="${linkVendasFinal}" target="_blank" class="btn-booking" style="display: inline-block; padding: 15px 40px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px;">🎫 Ingressos / Infos</a>
                     </div>
                 `;
 
-                // Os demais eventos entram no calendário abaixo
                 gridCalendario.innerHTML = "";
                 const demaisEventos = eventos.slice(1);
 
                 demaisEventos.forEach((evento) => {
-                    const statusTag = evento.esgotado 
-                        ? `<span style="background: #ff007f20; color: #ff007f; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; border: 1px solid #ff007f50;">ESGOTADO</span>`
-                        : `<span style="color: #00c853; font-size: 0.9rem; font-weight: bold;">🟢 Lista Aberta</span>`;
+                    let localLista = evento.localNome ? evento.localNome : 'Evento Restrito';
+                    let linkBotaoLista = evento.linkIngresso || 'https://abreaporta.com.br';
 
                     gridCalendario.innerHTML += `
-                        <a href="${evento.link || 'https://wa.me/5541995906901'}" target="_blank" class="card-evento" style="${evento.esgotado ? 'opacity: 0.7;' : ''}">
+                        <a href="${linkBotaoLista}" target="_blank" class="card-evento">
                             <div style="position: relative;">
-                                <img src="${evento.imagem || 'img/tedsite.png'}" alt="${evento.nome}" style="width: 100%; height: 140px; object-fit: cover; ${evento.esgotado ? 'filter: grayscale(80%);' : ''}">
+                                <img src="${evento.imagem || 'img/tedsite.png'}" alt="${evento.nome}" style="width: 100%; height: 140px; object-fit: cover;">
                                 <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
                                     <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">${evento.mesAbas}</span>
                                     <span style="display: block; font-size: 1.5rem; font-weight: bold;">${evento.diaNum}</span>
@@ -124,8 +131,8 @@
                             </div>
                             <div style="padding: 15px;">
                                 <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">${evento.nome}</h4>
-                                <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">${evento.localidade}</p>
-                                ${statusTag}
+                                <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">${localLista}</p>
+                                <span style="color: #0088cc; font-size: 0.9rem; font-weight: bold;">🎫 Ver Detalhes</span>
                             </div>
                         </a>
                     `;
@@ -165,9 +172,7 @@
     <section id="agenda" class="section">
         <div class="container">
             <h2>Agenda Oficial</h2>
-            
             <div id="container-destaque"></div>
-
             <div id="grid-calendario" class="grid-calendario"></div>
         </div>
     </section>
