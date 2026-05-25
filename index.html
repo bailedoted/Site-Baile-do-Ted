@@ -96,6 +96,17 @@
         @media(max-width: 600px) {
             .input-orcamento-group { flex-direction: column; }
         }
+
+        /* Animações da Barra de Progresso do Orçamento */
+        @keyframes encherBarra {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        @keyframes brilhoNeon {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
     </style>
 
     <script type="module">
@@ -118,6 +129,9 @@
         async function carregarEventos() {
             const containerDestaque = document.getElementById("container-destaque");
             const gridCalendario = document.getElementById("grid-calendario");
+            
+            // Mensagem de Loading para o cliente não ver o site vazio enquanto as imagens chegam
+            containerDestaque.innerHTML = "<p style='color:#ff007f; text-align:center; font-size: 1.2rem; font-weight: bold;'>Buscando a agenda mais braba... 🐻🎶</p>";
             
             try {
                 const q = query(collection(db, "eventos"), orderBy("dataTimestamp", "asc"));
@@ -194,7 +208,7 @@
                     gridCalendario.innerHTML += `
                         <div class="card-evento">
                             <div style="position: relative; background: #050505; border-bottom: 1px solid #222;">
-                                <img src="${evento.imagem || 'img/tedsite.png'}" alt="${evento.nome}" style="width: 100%; height: 220px; object-fit: contain; display: block;">
+                                <img src="${evento.imagem || 'img/tedsite.png'}" alt="${evento.nome}" style="width: 100%; height: 220px; object-fit: contain; display: block;" loading="lazy">
                                 
                                 <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
                                     <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">${evento.mesAbas}</span>
@@ -274,11 +288,18 @@
             <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 12px; border: 1px solid #333; margin-bottom: 50px;">
                 <div class="input-orcamento-group">
                     <input type="text" id="cidade-destino" placeholder="Digite sua Cidade e Estado (Ex: Lagoa Vermelha, RS)" style="flex: 1; padding: 14px; border-radius: 8px; border: 1px solid #444; background: #222; color: #fff; font-size: 15px; margin: 0;">
-                    <button onclick="calcularOrcamento()" style="background: linear-gradient(90deg, #ff007f, #b300ff); color: #fff; border: none; padding: 14px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; margin: 0;">Calcular Estimativa</button>
+                    <button onclick="calcularOrcamento()" id="btn-calcular" style="background: linear-gradient(90deg, #ff007f, #b300ff); color: #fff; border: none; padding: 14px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; margin: 0; min-width: 180px;">Calcular Estimativa</button>
+                </div>
+
+                <div id="loading-box" style="display: none; margin-top: 25px; text-align: center;">
+                    <p id="msg-ted" style="color: #ff007f; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px;"></p>
+                    <div style="width: 100%; height: 12px; background: #222; border-radius: 10px; overflow: hidden; border: 1px solid #444;">
+                        <div id="barra-progresso" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ff007f, #b300ff, #00c853, #ff007f); background-size: 300% 100%;"></div>
+                    </div>
                 </div>
 
                 <div id="resultado-box" style="display: none; margin-top: 20px; border-top: 1px solid #444; padding-top: 20px;">
-                    <p id="msg-erro" style="color: #ff007f; font-weight: bold; margin: 0;"></p>
+                    <p id="msg-erro" style="color: #ff007f; font-weight: bold; margin: 0 0 15px 0; display: none;"></p>
                     
                     <div id="dados-orcamento">
                         <h3 style="color: #ff007f; margin: 0 0 10px 0; font-size: 1.5rem;">Estimativa Base: R$ <span id="res-total">--</span></h3>
@@ -317,41 +338,56 @@
             async function calcularOrcamento() {
                 const cidadeInput = document.getElementById('cidade-destino').value;
                 const btnWhats = document.getElementById('btn-whats-orcamento');
+                const btnCalcular = document.getElementById('btn-calcular');
+                const loadingBox = document.getElementById('loading-box');
                 const resultadoBox = document.getElementById('resultado-box');
                 const dadosOrcamento = document.getElementById('dados-orcamento');
                 const msgErro = document.getElementById('msg-erro');
+                const barraProgresso = document.getElementById('barra-progresso');
+                const msgTed = document.getElementById('msg-ted');
 
-                resultadoBox.style.display = 'block';
+                // Reseta a tela
+                resultadoBox.style.display = 'none';
                 dadosOrcamento.style.display = 'none';
                 msgErro.style.display = 'none';
+                loadingBox.style.display = 'none';
+                barraProgresso.style.animation = 'none';
 
                 if (!cidadeInput) {
-                    msgErro.innerText = "Por favor, digite a cidade de destino.";
+                    resultadoBox.style.display = 'block';
+                    msgErro.innerText = "🚨 Digite o nome da cidade, parceiro!";
                     msgErro.style.display = 'block';
                     return;
                 }
 
-                // Frases engraçadas do Ted durante o carregamento
+                // Frases engraçadas do Ted
                 const frasesTed = [
                     "Calma aí, parceiro de trovão! Tô calculando essa rota enquanto abro uma gelada... ⚡🐻🍻",
                     "Acordando o Ted da ressaca para ver quantos KM dá até aí... aguenta! 🐻💤",
                     "Preparando o cooler e medindo a distância... Já vou avisando que a equipe bebe muito! 🐻🍻",
                     "Sai pra lá, trovão! O Ted tá focado calculando os custos dessa viagem... ⚡🐻"
                 ];
-                const fraseAleatoria = frasesTed[Math.floor(Math.random() * frasesTed.length)];
+                msgTed.innerText = frasesTed[Math.floor(Math.random() * frasesTed.length)];
                 
-                msgErro.innerText = fraseAleatoria;
-                msgErro.style.display = 'block';
-                msgErro.style.color = "#fff";
+                // Mostra animação de loading travada por 3 segundos
+                loadingBox.style.display = 'block';
+                btnCalcular.disabled = true;
+                btnCalcular.innerText = "Calculando...";
+                
+                // Reinicia animações CSS da barra
+                setTimeout(() => {
+                    barraProgresso.style.animation = 'encherBarra 3s linear forwards, brilhoNeon 2s ease infinite';
+                }, 10);
 
-                try {
+                // Promessa de 3 Segundos (Delay obrigatório)
+                const delayPromise = new Promise(resolve => setTimeout(resolve, 3000));
+
+                // Promessa do calculo da API
+                const calculoPromise = (async () => {
                     const resGeo = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cidadeInput)}`);
                     const geoData = await resGeo.json();
-
-                    if (geoData.length === 0) {
-                        throw new Error("Cidade não encontrada. Digite no formato 'Cidade, Estado'.");
-                    }
-
+                    if (geoData.length === 0) throw new Error("Cidade não encontrada. Digite no formato 'Cidade, Estado'.");
+                    
                     const latDestino = geoData[0].lat;
                     const lonDestino = geoData[0].lon;
                     const latCwb = -25.4284;
@@ -359,11 +395,8 @@
 
                     const resRota = await fetch(`https://router.project-osrm.org/route/v1/driving/${lonCwb},${latCwb};${lonDestino},${latDestino}?overview=false`);
                     const rotaData = await resRota.json();
-
-                    if (rotaData.code !== 'Ok') {
-                        throw new Error("Não foi possível traçar uma rota de carro para este destino.");
-                    }
-
+                    if (rotaData.code !== 'Ok') throw new Error("Não foi possível traçar uma rota de carro para este destino.");
+                    
                     const distanciaMetros = rotaData.routes[0].distance;
                     const kmIda = distanciaMetros / 1000;
                     const kmIdaVolta = kmIda * 2;
@@ -374,22 +407,31 @@
                     else if (kmIdaVolta <= 500) { valorShow = 2500; } 
                     else { valorShow = 3000; }
                     
-                    const custoKm = 0.68;
-                    const valorFrete = kmIdaVolta * custoKm;
-                    const valorTotal = valorFrete + valorShow;
+                    return (kmIdaVolta * 0.68) + valorShow;
+                })();
 
+                // Roda o Delay e o Calculo ao mesmo tempo
+                try {
+                    const [_, valorTotal] = await Promise.all([delayPromise, calculoPromise]);
+                    
+                    // Sucesso! Mostra os dados
+                    loadingBox.style.display = 'none';
                     document.getElementById('res-total').innerText = valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
-                    msgErro.style.display = 'none';
+                    resultadoBox.style.display = 'block';
                     dadosOrcamento.style.display = 'block';
 
                     const msgWhats = `Olá! Fiz uma simulação no site para o Baile do Ted em *${cidadeInput}*.%0A%0A*Estimativa Base:* R$ ${valorTotal.toFixed(2)}%0A_(Obs: Despesas com hospedagem e alimentação não inclusas na simulação)_.%0A%0AGostaria de conversar sobre as datas disponíveis!`;
                     btnWhats.href = `https://wa.me/5541995906901?text=${msgWhats}`;
-
                 } catch (error) {
+                    // Erro
+                    await delayPromise; // Garante que a barra andou os 3 segudos antes de dar erro
+                    loadingBox.style.display = 'none';
+                    resultadoBox.style.display = 'block';
+                    msgErro.style.display = 'block';
                     msgErro.innerText = error.message || "Erro ao calcular. Tente digitar apenas o nome da cidade e a sigla do estado.";
-                    msgErro.style.color = "#ff007f";
-                    dadosOrcamento.style.display = 'none';
+                } finally {
+                    btnCalcular.disabled = false;
+                    btnCalcular.innerText = "Calcular Novamente";
                 }
             }
         </script>
