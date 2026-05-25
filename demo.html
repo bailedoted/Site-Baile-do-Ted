@@ -3,316 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Templo Espiritual | Tradição e Força</title>
+    <title>Leo de Tranca Ruas | Sacerdote de Força e Proteção</title>
     
     <style>
-        /* Variáveis de Cores do Segmento */
+        /* Variáveis de Cores de Quimbanda Elegante */
         :root {
-            --fundo: #050505;
-            --fundo-card: #111111;
-            --vermelho-escuro: #8b0000;
-            --vermelho-vivo: #d32f2f;
-            --dourado: #daa520;
-            --dourado-claro: #f4d03f;
-            --texto-claro: #e0e0e0;
-            --texto-escuro: #888888;
+            --fundo: #020202; /* Preto absoluto */
+            --fundo-card: #0a0a0a;
+            --borda: #1a1a1a;
+            --vermelho-quimbanda: #660000; /* Vermelho sangue seco, bordô escuro */
+            --vermelho-vivo: #990000;
+            --dourado-velho: #b8860b; /* Dourado mais queimado */
+            --dourado-claro: #daa520;
+            --texto-claro: #dcdcdc;
+            --texto-escuro: #777777;
+            /* Fonte estilizada para remeter ao tribal/étnico */
+            --fonte-etnica: 'Courier New', Courier, monospace; /* Usaremos monospace bold p/ simular blocos esculpidos */
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth;}
 
         body {
             background-color: var(--fundo);
             color: var(--texto-claro);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Times New Roman', Times, serif; /* Serifada para seriedade */
             line-height: 1.6;
         }
 
-        /* Títulos com fonte clássica para passar seriedade */
-        h1, h2, h3, h4 {
-            font-family: 'Georgia', 'Times New Roman', Times, serif;
-            font-weight: normal;
-        }
+        h1, h2, h3 { font-weight: normal; }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- SÍMBOLOS GERAIS --- */
+        .simbolo-tridente { color: var(--vermelho-quimbanda); font-size: 1.2rem; margin: 0 5px; }
 
         /* --- MENU --- */
         nav {
-            background: rgba(5, 5, 5, 0.9);
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(139, 0, 0, 0.3);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            background: rgba(2, 2, 2, 0.95);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--vermelho-quimbanda);
+            position: fixed; width: 100%; top: 0; z-index: 1000; backdrop-filter: blur(5px);
         }
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
         .logo {
-            font-size: 1.5rem;
-            color: var(--dourado);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-decoration: none;
-        }
-        .btn-nav-whats {
-            background: transparent;
-            color: var(--dourado);
-            border: 1px solid var(--dourado);
-            padding: 8px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            transition: 0.3s;
+            font-family: var(--fonte-etnica);
             font-weight: bold;
-        }
-        .btn-nav-whats:hover {
-            background: var(--dourado);
-            color: var(--fundo);
+            font-size: 1.2rem;
+            color: var(--dourado-velho);
+            text-decoration: none;
+            letter-spacing: 1px;
         }
 
-        /* --- HERO (Topo da Página) --- */
+        /* --- HERO (Topo com o Nome Autoridade) --- */
         .hero {
-            position: relative;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             text-align: center;
-            background: linear-gradient(rgba(5,5,5,0.8), rgba(5,5,5,0.9)), url('https://images.unsplash.com/photo-1602498456745-e9503b30470b?q=80&w=1920&auto=format&fit=crop') no-repeat center center/cover;
+            /* Imagem de fundo: Uma encruzilhada escura de paralelepípedos com neblina */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(2,2,2,1)), url('https://images.unsplash.com/photo-1518113941321-4d334546a36c?q=80&w=1920') no-repeat center center/cover;
+            border-bottom: 2px solid var(--vermelho-quimbanda);
         }
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 800px;
-            padding: 20px;
-        }
-        .hero h1 {
-            font-size: 3.5rem;
-            color: var(--dourado-claro);
-            margin-bottom: 20px;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.8);
-        }
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 40px;
-            color: #ccc;
-        }
-        .btn-primario {
+        .hero-content { max-width: 800px; padding: 20px; margin-top: 60px;}
+        
+        /* Estilização do Nome "LEO" simula blocos de alfabeto étnico */
+        .nome-leo-africano {
+            font-family: var(--fonte-etnica);
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--fundo);
+            background-color: var(--texto-claro);
+            padding: 10px 20px;
             display: inline-block;
-            background: linear-gradient(135deg, var(--vermelho-escuro), var(--vermelho-vivo));
-            color: #fff;
-            padding: 15px 40px;
-            border-radius: 5px;
+            letter-spacing: -5px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(220, 220, 220, 0.2);
+        }
+        @media(max-width: 600px) { .nome-leo-africano { font-size: 3.5rem; } }
+
+        .subnome-autoridade {
+            font-size: 2.2rem;
+            color: var(--dourado-claro);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        @media(max-width: 600px) { .subnome-autoridade { font-size: 1.4rem; } }
+
+        .hero p { font-size: 1.2rem; margin-bottom: 40px; color: #aaa; font-style: italic;}
+
+        .btn-whats {
+            display: inline-block;
+            background: linear-gradient(135deg, #111, var(--vermelho-quimbanda));
+            color: var(--dourado-claro);
+            padding: 15px 45px;
+            border-radius: 2px;
             text-decoration: none;
             font-size: 1.1rem;
             text-transform: uppercase;
+            font-weight: bold;
             letter-spacing: 1px;
+            border: 1px solid var(--dourado-velho);
             transition: 0.3s;
-            border: 1px solid var(--vermelho-vivo);
-            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.4);
+            box-shadow: 0 4px 15px rgba(102, 0, 0, 0.5);
         }
-        .btn-primario:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(211, 47, 47, 0.6);
+        .btn-whats:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
         }
 
-        /* --- SEÇÕES GERAIS --- */
-        .section {
-            padding: 100px 0;
-        }
+        /* --- SEÇÕES --- */
+        .section { padding: 100px 0; border-bottom: 1px solid var(--borda); }
+        .bg-card { background-color: var(--fundo-card); }
         .titulo-sessao {
             text-align: center;
             font-size: 2.5rem;
-            color: var(--dourado);
-            margin-bottom: 50px;
-            position: relative;
-        }
-        .titulo-sessao::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 2px;
-            background: var(--vermelho-vivo);
-            margin: 15px auto 0;
+            color: var(--dourado-velho);
+            margin-bottom: 60px;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- SOBRE O TEMPLO --- */
-        .grid-sobre {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: center;
+        /* --- SOBRE O SACERDOTE --- */
+        .grid-sobre { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        @media(max-width: 768px) { .grid-sobre { grid-template-columns: 1fr; text-align: center; } }
+        
+        .img-leo-container {
+            position: relative;
+            border: 2px solid var(--vermelho-quimbanda);
+            padding: 10px;
+            background: #000;
         }
-        @media(max-width: 768px) {
-            .grid-sobre { grid-template-columns: 1fr; }
-        }
-        .img-sobre {
+        .img-leo {
             width: 100%;
-            border-radius: 10px;
-            border: 1px solid var(--vermelho-escuro);
-            box-shadow: 0 10px 30px rgba(139, 0, 0, 0.2);
+            height: auto;
+            border-radius: 2px;
+            /* Foto placeholders de um homem sério, autoridade, em ambiente escuro com velas */
+            content: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop'); 
         }
-        .texto-sobre p {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            color: #aaa;
+        /* Símbolo de Chave sobre a foto */
+        .capa-simbolo {
+            position: absolute; bottom: -20px; right: -20px;
+            background: var(--fundo);
+            border: 2px solid var(--dourado-velho);
+            color: var(--dourado-velho);
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
         }
 
-        /* --- SERVIÇOS / TRABALHOS --- */
-        .bg-escuro {
-            background-color: #080808;
-            border-top: 1px solid #1a1a1a;
-            border-bottom: 1px solid #1a1a1a;
-        }
-        .grid-servicos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
+        .texto-sobre p { margin-bottom: 20px; font-size: 1.1rem; color: var(--texto-escuro); }
+        .texto-sobre strong { color: var(--texto-claro); }
+
+        /* --- ESPECIALIDADES (Cards de Simbologia) --- */
+        .grid-servicos { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
         .card-servico {
-            background: var(--fundo-card);
+            background: rgba(255,255,255,0.01);
             padding: 40px 30px;
-            border-radius: 8px;
+            border-radius: 4px;
             text-align: center;
-            border: 1px solid #222;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .card-servico::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 3px;
-            background: var(--vermelho-escuro);
+            border: 1px solid var(--borda);
             transition: 0.3s;
         }
         .card-servico:hover {
+            border-color: var(--vermelho-quimbanda);
+            background: rgba(102, 0, 0, 0.05);
             transform: translateY(-5px);
-            border-color: rgba(139, 0, 0, 0.5);
-            box-shadow: 0 10px 25px rgba(139, 0, 0, 0.1);
         }
-        .card-servico:hover::before {
-            background: var(--dourado);
+        .icon-servico {
+            font-size: 3rem;
+            color: var(--vermelho-vivo);
+            margin-bottom: 20px;
+            display: block;
         }
-        .card-servico h3 {
-            font-size: 1.5rem;
-            color: var(--dourado-claro);
-            margin-bottom: 15px;
-        }
-        .card-servico p {
-            color: #999;
-            font-size: 0.95rem;
+        .card-servico h3 { font-size: 1.5rem; color: var(--dourado-velho); margin-bottom: 15px; text-transform: uppercase; }
+        .card-servico p { color: #888; font-size: 0.95rem; }
+
+        /* --- TESTEMUNHOS SIGILOSOS --- */
+        .quote-borda {
+            border-left: 3px solid var(--vermelho-quimbanda);
+            padding-left: 20px;
+            margin-bottom: 30px;
+            font-style: italic;
+            color: var(--texto-escuro);
         }
 
-        /* --- RODAPÉ E CONTATO --- */
+        /* --- RODAPÉ/CONTATO --- */
         footer {
-            background: #020202;
-            padding: 60px 0 30px 0;
+            background: #000;
+            padding: 80px 0 30px 0;
             text-align: center;
-            border-top: 2px solid var(--vermelho-escuro);
+            border-top: 1px solid var(--vermelho-quimbanda);
         }
-        .contato-info {
+        .final-call {
+            font-family: 'Georgia', serif;
+            font-size: 2.2rem;
+            color: var(--dourado-claro);
             margin-bottom: 30px;
         }
-        .contato-info p {
-            color: #aaa;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-        .direitos {
-            margin-top: 40px;
-            font-size: 0.85rem;
-            color: #555;
-            border-top: 1px solid #111;
-            padding-top: 20px;
-        }
+        .direitos { margin-top: 60px; font-size: 0.8rem; color: #444; border-top: 1px solid #111; padding-top: 20px; }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="container nav-content">
-            <a href="#" class="logo">Templo Sagrado</a>
-            <a href="#contato" class="btn-nav-whats">Falar Conosco</a>
+            <a href="#" class="logo">LEO <span style="color:var(--vermelho-quimbanda)">✝</span> TRANCA RUAS</a>
+            <a href="#contato" class="btn-whats" style="padding: 5px 15px; font-size: 0.8rem;">Agendar</a>
         </div>
     </nav>
 
     <header class="hero">
         <div class="hero-content">
-            <h1>Tradição, Ancestralidade e Força</h1>
-            <p>Um caminho sério de evolução e quebra de amarras. Encontre direcionamento espiritual através da sabedoria dos nossos ancestrais.</p>
-            <a href="#contato" class="btn-primario">Agendar Consulta Mística</a>
+            <div class="nome-leo-africano">LEO</div>
+            
+            <h2 class="subnome-autoridade">
+                <span class="simbolo-tridente">♆</span> 
+                de Tranca Ruas
+                <span class="simbolo-tridente">♆</span>
+            </h2>
+            
+            <p>Sacerdote de Quimbanda. Guardião dos segredos das Almas e das Encruzilhadas. Especialista em quebra de demandas fortes, proteção e abertura de caminhos trancados.</p>
+            
+            <a href="#contato" class="btn-whats">✝ Chamar na Lei ✝</a>
         </div>
     </header>
 
     <section class="section">
         <div class="container grid-sobre">
-            <div>
-                <img src="https://images.unsplash.com/photo-1510103759363-d3a3c2006e8b?q=80&w=800&auto=format&fit=crop" alt="Ambiente do Templo" class="img-sobre">
+            <div class="img-leo-container">
+                <img src="" alt="Sacerdote Leo" class="img-leo">
+                <div class="capa-simbolo" title="Guardião das Chaves">🗝️</div>
             </div>
             <div class="texto-sobre">
-                <h2 class="titulo-sessao" style="text-align: left;">Nossos Fundamentos</h2>
-                <p>O <strong>Templo Sagrado</strong> é uma casa fundamentada no respeito absoluto aos sagrados Orixás e Guias Espirituais. Trabalhamos dentro das diretrizes tradicionais para trazer luz e solução aos problemas terrenos.</p>
-                <p>Nossa missão é guiar aqueles que nos procuram através da verdade espiritual, sem falsas promessas. Oferecemos um espaço seguro de acolhimento, onde a Magia e o Culto Ancestral caminham lado a lado com a responsabilidade e o sigilo.</p>
-                <p>Dirigido por sacerdotes preparados, o Templo realiza rituais abertos e fechados para o equilíbrio, a cura e a prosperidade.</p>
+                <h2 class="titulo-sessao" style="text-align: left; justify-content: flex-start;">A Linhagem de Força</h2>
+                <p>Com mais de 15 anos de iniciação e chão de terreiro, <strong>Sacerdote Leo</strong> carrega a outorga e o axé de <strong>Seu Tranca Ruas das Almas</strong>.</p>
+                <p>Seu trabalho é pautado na **lealdade, no sigilo absoluto e na eficácia dos rituais**. Não trabalhamos com curiosos, mas sim com quem busca de fato a intervenção da Quimbanda para resolver o que o mundo terreno trancou.</p>
+                <p>Através da firmeza e do conhecimento, Leo atua como uma ponte entre você e a força dos Exus e Pombagiras, trazendo diagnóstico claro e a solução ritualística necessária.</p>
             </div>
         </div>
     </section>
 
-    <section class="section bg-escuro">
+    <section class="section bg-card">
         <div class="container">
-            <h2 class="titulo-sessao">Consultas e Trabalhos</h2>
+            <h2 class="titulo-sessao">Domínios de Atuação</h2>
             
             <div class="grid-servicos">
                 <div class="card-servico">
-                    <h3>Consulta com Oráculos</h3>
-                    <p>Atendimento através de búzios ou cartas para diagnóstico espiritual profundo. Descubra as raízes dos seus bloqueios e obtenha a direção exata para a sua vida amorosa, financeira e profissional.</p>
+                    <span class="icon-servico">🗝️</span>
+                    <h3>Abertura de Caminhos</h3>
+                    <p>Trabalhos fortes para desobstruir a vida financeira, profissional e comercial. Rituais para destravar negócios e atrair a verdadeira prosperidade sob a guarda de Tranca Ruas.</p>
                 </div>
                 
                 <div class="card-servico">
-                    <h3>Abertura de Caminhos</h3>
-                    <p>Rituais e magias direcionados para destravar energias estagnadas. Limpezas espirituais fortes e assentamentos para atrair prosperidade, sucesso nos negócios e vitórias em processos.</p>
+                    <span class="icon-servico">🛡️</span>
+                    <h3>Proteção e Descarrêgo</h3>
+                    <p>Limpezas espirituais profundas (ebós) para retirada de magias negras, inveja e obsessores. Fechamento de corpo e assentamentos de proteção para você e sua família.</p>
                 </div>
 
                 <div class="card-servico">
-                    <h3>Iniciação e Desenvolvimento</h3>
-                    <p>Orientação sacerdotal para aqueles que têm o chamado espiritual. Cursos e rituais de consagração mantendo a essência e o respeito às verdadeiras tradições.</p>
+                    <span class="icon-servico">⛓️</span>
+                    <h3>Quebra de Demanda</h3>
+                    <p>Intervenção pesada contra inimigos declarados e ocultos. Anulação de feitiços e quebra de amarras que impedem a sua felicidade e evolução.</p>
                 </div>
             </div>
-            
-            <div style="text-align: center; margin-top: 50px;">
-                <a href="#contato" class="btn-primario" style="background: transparent; color: var(--dourado); border-color: var(--dourado);">Saber mais sobre Trabalhos</a>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container" style="max-width: 800px;">
+            <h2 class="titulo-sessao">Relatos de Vitória</h2>
+            <div class="quote-borda">
+                "Minha vida estava completamente parada, parecia que tudo dava errado. Procurei o Sacerdote Leo e na primeira consulta ele já viu o que estava Trancado. Fizemos o trabalho e em 7 dias a porta do emprego que eu precisava se abriu. Salve Seu Tranca Ruas e o Axé do Leo!"
+                <br><strong style="color:var(--dourado-velho); font-style: normal;">- C.A., Empresário (Sigilo Garantido)</strong>
+            </div>
+            <div class="quote-borda">
+                "Leo é um homem sério. Não promete o que a espiritualidade não vai dar. Mas o que ele assina embaixo com Tranca Ruas, acontece. Ele desfez um trabalho que estava acabando com a minha saúde. Sou grata eternamente."
+                <br><strong style="color:var(--dourado-velho); font-style: normal;">- M.F., Advogada (Sigilo Garantido)</strong>
             </div>
         </div>
     </section>
 
     <footer id="contato">
         <div class="container">
-            <h2 style="font-family: 'Georgia', serif; font-size: 2rem; color: var(--dourado-claro); margin-bottom: 20px;">Entre em Contato</h2>
+            <h2 class="final-call">O caminho está trancado?</h2>
+            <p style="color: #aaa; margin-bottom: 40px; font-style: italic;">Não tente resolver sozinho o que exige a força da Lei. Agende sua consulta sigilosa com o Sacerdote Leo e permita que Tranca Ruas ordene o seu caminho.</p>
             
-            <div class="contato-info">
-                <p>Atendimentos presenciais e à distância (com total sigilo).</p>
-                <p style="margin-top: 20px;">📍 <strong>Endereço:</strong> Rua da Tradição, 123 - Cidade/UF</p>
-                <p>📞 <strong>WhatsApp:</strong> (00) 00000-0000</p>
-                <p>✉️ <strong>E-mail:</strong> contato@templosagrado.com.br</p>
+            <a href="https://wa.me/5500000000000?text=Olá Sacerdote Leo, preciso de ajuda para abrir meus caminhos." target="_blank" class="btn-whats" style="font-size: 1.3rem;">🗝️ Agendar Consulta Mística 🛡️</a>
+
+            <div class="contato-info" style="margin-top: 50px; color: #666; font-size: 0.9rem;">
+                <p>📍 Templo localizado em Cidade/UF (Endereço exato apenas após agendamento)</p>
+                <p>Atendimentos Presenciais e à Distância (com mesma eficácia).</p>
             </div>
 
-            <a href="https://wa.me/5500000000000" target="_blank" class="btn-primario" style="border-radius: 50px; padding: 15px 50px; margin-top: 10px;">Chamar no WhatsApp</a>
-
             <div class="direitos">
-                <p>&copy; 2026 Templo Sagrado. Todos os direitos reservados.</p>
-                <p style="margin-top: 5px;">Desenvolvido por <a href="https://abreaporta.com.br" target="_blank" style="color: var(--dourado); text-decoration: none;">Abre a Porta</a></p>
+                <p>&copy; 2026 Leo de Tranca Ruas. Lei e Tradição.</p>
+                <p style="margin-top: 5px;">Plataforma de Demonstração por <a href="https://abreaporta.com.br" target="_blank" style="color: var(--dourado-velho); text-decoration: none;">Abre a Porta</a></p>
             </div>
         </div>
     </footer>
