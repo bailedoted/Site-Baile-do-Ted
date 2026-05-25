@@ -74,11 +74,11 @@
                     diaNum: dataFormatada.diaNum,
                     mesAbas: dataFormatada.mesAbas,
                     dataTimestamp: dataFormatada.dataTimestamp,
-                    localNome: document.getElementById('localNome').value,
-                    localEndereco: document.getElementById('localEndereco').value,
-                    localContato: document.getElementById('localContato').value,
-                    instagram: document.getElementById('instagram').value,
-                    linkIngresso: document.getElementById('linkIngresso').value,
+                    localNome: document.getElementById('localNome').value || '',
+                    localEndereco: document.getElementById('localEndereco').value || '',
+                    localContato: document.getElementById('localContato').value || '',
+                    instagram: document.getElementById('instagram').value || '',
+                    linkIngresso: document.getElementById('linkIngresso').value || '',
                     imagem: urlImagem
                 };
 
@@ -113,11 +113,14 @@
                 const evento = docSnap.data();
                 const eventoJson = JSON.stringify({id: docSnap.id, ...evento}).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
                 
+                // Tratar exibição caso o local esteja vazio
+                const localExibicao = evento.localNome ? `📍 ${evento.localNome}` : 'Local Restrito/Não informado';
+
                 lista.innerHTML += `
                     <div class="evento-item">
                         <div class="evento-info">
                             <strong style="color:#ff007f">${evento.dataTexto}</strong> - <strong>${evento.nome}</strong> <br>
-                            <small style="color:#aaa">📍 ${evento.localNome} | ${evento.localEndereco}</small>
+                            <small style="color:#aaa">${localExibicao}</small>
                         </div>
                         <div class="botoes-acao">
                             <button class="btn-editar" onclick="editarEvento('${eventoJson}')">Editar</button>
@@ -134,8 +137,8 @@
             document.getElementById('eventoId').value = evento.id;
             document.getElementById('nome').value = evento.nome;
             document.getElementById('data').value = evento.dataBruta;
-            document.getElementById('localNome').value = evento.localNome;
-            document.getElementById('localEndereco').value = evento.localEndereco;
+            document.getElementById('localNome').value = evento.localNome || '';
+            document.getElementById('localEndereco').value = evento.localEndereco || '';
             document.getElementById('localContato').value = evento.localContato || '';
             document.getElementById('instagram').value = evento.instagram || '';
             document.getElementById('linkIngresso').value = evento.linkIngresso || '';
@@ -170,27 +173,27 @@
 
     <div class="admin-container">
         <h1 style="text-align: center;">🎛️ Dashboard - Baile do Ted</h1>
-        <p style="text-align: center; color: #aaa;">Gerencie seus shows. Os dados atualizam no site em tempo real.</p>
+        <p style="text-align: center; color: #aaa;">Apenas o Nome e a Data são obrigatórios.</p>
         
         <form id="form-evento" style="margin-top: 30px; border-bottom: 2px solid #333; padding-bottom: 30px;">
             <input type="hidden" id="eventoId">
 
             <div class="grid-form">
                 <div class="form-group">
-                    <label>Nome do Evento/Show:</label>
-                    <input type="text" id="nome" placeholder="Ex: Baile do Ted Original" required>
+                    <label>Nome do Evento/Show:*</label>
+                    <input type="text" id="nome" placeholder="Ex: Formatura 3º Ano" required>
                 </div>
                 <div class="form-group">
-                    <label>Data do Show:</label>
+                    <label>Data do Show:*</label>
                     <input type="date" id="data" required>
                 </div>
                 <div class="form-group">
                     <label>Nome da Casa/Local:</label>
-                    <input type="text" id="localNome" placeholder="Ex: Original Pub" required>
+                    <input type="text" id="localNome" placeholder="Ex: Original Pub">
                 </div>
                 <div class="form-group">
-                    <label>Endereço Completo:</label>
-                    <input type="text" id="localEndereco" placeholder="Ex: Av. Afonso Pena, 322 - Lagoa Vermelha" required>
+                    <label>Endereço / Cidade:</label>
+                    <input type="text" id="localEndereco" placeholder="Ex: Curitiba / PR">
                 </div>
                 <div class="form-group">
                     <label>Contato da Casa (WhatsApp):</label>
@@ -205,8 +208,8 @@
                     <input type="url" id="linkIngresso" placeholder="Ex: https://sympla.com.br/...">
                 </div>
                 <div class="form-group">
-                    <label>Arte do Evento (Caminho ou Link):</label>
-                    <input type="text" id="imagemTexto" placeholder="Ex: img/formatura.png ou link da net">
+                    <label>Arte do Evento (Caminho):</label>
+                    <input type="text" id="imagemTexto" placeholder="Ex: img/formatura.png">
                     <small style="color:#aaa;">Se não preencher, a logo padrão será usada.</small>
                 </div>
             </div>
