@@ -31,12 +31,12 @@
 
         /* Estilo dos Cards de Calendário */
         .card-evento {
-            display: block;
+            display: flex;
+            flex-direction: column;
             background: #111;
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
             border: 1px solid #222;
-            text-decoration: none;
             transition: all 0.3s ease;
         }
         .card-evento:hover {
@@ -46,8 +46,8 @@
         }
         .grid-calendario {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
         }
     </style>
 
@@ -88,7 +88,7 @@
 
                 const proximoShow = eventos[0];
                 
-                // FALLBACKS INTELIGENTES E VISUAL PREMIUM
+                // FALLBACKS INTELIGENTES E VISUAL PREMIUM (DESTAQUE)
                 let localDestaque = proximoShow.localNome ? `📍 ${proximoShow.localNome}` : '📍 Local Privado';
                 let enderecoDestaque = proximoShow.localEndereco ? `<span style="display:block; color: #aaa; font-size: 0.95rem; margin-top: 5px;">${proximoShow.localEndereco}</span>` : '';
                 
@@ -97,7 +97,7 @@
                 let numeroWhatsLimpo = contatoFinal.replace(/\D/g, ''); 
                 
                 let linkVendasFinal = proximoShow.linkIngresso || 'https://abreaporta.com.br';
-                let textoBotaoPrincipal = proximoShow.linkIngresso ? '🎫 Ingressos' : '📲 Informações';
+                let textoBotaoPrincipal = proximoShow.linkIngresso ? '🎫 Comprar Ingressos' : '📲 Mais Informações';
 
                 containerDestaque.innerHTML = `
                     <div class="show-destaque" style="position: relative; background: #0a0a0a; border: 1px solid #333; padding: 40px 20px; border-radius: 20px; margin-bottom: 40px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.8); overflow: hidden;">
@@ -107,8 +107,8 @@
                         <div style="position: relative; z-index: 1;">
                             <span style="background: linear-gradient(90deg, #ff007f, #b300ff); color: #fff; padding: 8px 25px; border-radius: 30px; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; display: inline-block; box-shadow: 0 4px 15px rgba(255, 0, 127, 0.4);">🔥 O Próximo Show</span>
                             
-                            <div style="width: 100%; max-width: 380px; margin: 0 auto 25px auto; overflow: hidden; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); border: 1px solid #222;">
-                                <img src="${proximoShow.imagem || 'img/tedsite.png'}" alt="${proximoShow.nome}" style="width: 100%; height: auto; display: block; object-fit: cover;">
+                            <div style="width: 100%; max-width: 380px; margin: 0 auto 25px auto; overflow: hidden; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); border: 1px solid #222; background: #000;">
+                                <img src="${proximoShow.imagem || 'img/tedsite.png'}" alt="${proximoShow.nome}" style="width: 100%; height: auto; display: block; object-fit: contain;">
                             </div>
 
                             <h3 style="font-size: 2.5rem; margin: 0 0 15px 0; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">${proximoShow.nome}</h3>
@@ -138,23 +138,45 @@
 
                 demaisEventos.forEach((evento) => {
                     let localLista = evento.localNome ? evento.localNome : 'Evento Restrito';
+                    let cidadeLista = evento.localEndereco ? evento.localEndereco : '';
                     let linkBotaoLista = evento.linkIngresso || 'https://abreaporta.com.br';
+                    
+                    let instaCard = evento.instagram || '@bailedoted';
+                    let contatoCard = evento.localContato || '(41) 99590-6901';
+                    let whatsCardLimpo = contatoCard.replace(/\D/g, '');
 
                     gridCalendario.innerHTML += `
-                        <a href="${linkBotaoLista}" target="_blank" class="card-evento">
-                            <div style="position: relative;">
-                                <img src="${evento.imagem || 'img/tedsite.png'}" alt="${evento.nome}" style="width: 100%; height: 140px; object-fit: cover;">
+                        <div class="card-evento">
+                            <div style="position: relative; background: #050505; border-bottom: 1px solid #222;">
+                                <img src="${evento.imagem || 'img/tedsite.png'}" alt="${evento.nome}" style="width: 100%; height: 220px; object-fit: contain; display: block;">
+                                
                                 <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
                                     <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">${evento.mesAbas}</span>
                                     <span style="display: block; font-size: 1.5rem; font-weight: bold;">${evento.diaNum}</span>
                                 </div>
                             </div>
-                            <div style="padding: 15px;">
-                                <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">${evento.nome}</h4>
-                                <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">${localLista}</p>
-                                <span style="color: #0088cc; font-size: 0.9rem; font-weight: bold;">🎫 Ver Detalhes</span>
+                            
+                            <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
+                                <h4 style="color: #fff; font-size: 1.2rem; margin: 0 0 10px 0; font-weight: 800;">${evento.nome}</h4>
+                                
+                                <p style="color: #ff007f; font-size: 0.95rem; margin: 0 0 5px 0; font-weight: bold;">📍 ${localLista}</p>
+                                ${cidadeLista ? `<p style="color: #aaa; font-size: 0.85rem; margin: 0 0 15px 0;">🌍 ${cidadeLista}</p>` : ''}
+                                
+                                <div style="display: flex; gap: 10px; margin-bottom: 20px; margin-top: auto;">
+                                    <a href="https://instagram.com/${instaCard.replace('@', '')}" target="_blank" title="${instaCard}" style="display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; background: rgba(255,0,127,0.1); color: #ff007f; border-radius: 50%; text-decoration: none; border: 1px solid rgba(255,0,127,0.3); transition: all 0.3s ease;" onmouseover="this.style.background='#ff007f'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,0,127,0.1)'; this.style.color='#ff007f'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                                    </a>
+                                    
+                                    <a href="https://wa.me/55${whatsCardLimpo}" target="_blank" title="WhatsApp" style="display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; background: rgba(0,200,83,0.1); color: #00c853; border-radius: 50%; text-decoration: none; border: 1px solid rgba(0,200,83,0.3); transition: all 0.3s ease;" onmouseover="this.style.background='#00c853'; this.style.color='#fff'" onmouseout="this.style.background='rgba(0,200,83,0.1)'; this.style.color='#00c853'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.411 0 11.981 0c3.184.001 6.177 1.242 8.426 3.496 2.249 2.254 3.487 5.244 3.486 8.428-.003 6.623-5.354 11.972-11.924 11.972-1.996-.001-3.956-.501-5.699-1.45L0 24zm6.59-4.846c1.666.988 3.311 1.485 5.333 1.486 5.517 0 10.005-4.477 10.008-9.986.002-2.669-1.036-5.178-2.925-7.069C17.175 1.693 14.673.655 12.002.655 6.485.655 1.997 5.132 1.994 10.64c0 2.083.547 4.11 1.585 5.86l-.99 3.616 3.704-.962h.354zM16.52 14.92c-.233-.117-1.384-.683-1.597-.762-.214-.078-.37-.117-.526.117-.156.234-.604.762-.741.918-.137.156-.273.175-.506.058-.233-.117-.988-.363-1.88-1.161-.694-.618-1.163-1.382-1.3-1.616-.137-.234-.015-.361.102-.477.106-.105.234-.273.349-.41.117-.136.156-.233.234-.39.078-.155.038-.292-.019-.41-.059-.117-.526-1.267-.721-1.735-.19-.459-.383-.396-.526-.404-.136-.007-.293-.008-.449-.008-.156 0-.41.059-.624.292-.214.234-.818.8-.818 1.95 0 1.15.838 2.261.955 2.417.117.156 1.648 2.516 3.993 3.527.558.241 1.002.385 1.345.495.561.178 1.07.153 1.472.093.448-.067 1.384-.565 1.579-1.111.195-.547.195-1.015.137-1.111-.059-.098-.215-.156-.449-.274z"/></svg>
+                                    </a>
+                                </div>
+                                
+                                <a href="${linkBotaoLista}" target="_blank" style="display: block; width: 100%; text-align: center; background: #1a1a1a; color: #fff; text-decoration: none; padding: 12px 0; border-radius: 8px; font-weight: bold; border: 1px solid #333; transition: all 0.3s ease; text-transform: uppercase; font-size: 0.9rem;" onmouseover="this.style.background='#ff007f'; this.style.borderColor='#ff007f'; this.style.boxShadow='0 4px 15px rgba(255,0,127,0.4)'" onmouseout="this.style.background='#1a1a1a'; this.style.borderColor='#333'; this.style.boxShadow='none'">
+                                    🎫 Ver Detalhes
+                                </a>
                             </div>
-                        </a>
+                        </div>
                     `;
                 });
 
