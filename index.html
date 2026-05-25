@@ -28,6 +28,27 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             border-radius: 3px; 
         }
+
+        /* Estilo dos Novos Cards de Calendário */
+        .card-evento {
+            display: block;
+            background: #111;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #222;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .card-evento:hover {
+            transform: translateY(-5px);
+            border-color: #ff007f;
+            box-shadow: 0 8px 20px rgba(255, 0, 127, 0.2);
+        }
+        .grid-calendario {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
     </style>
 </head>
 <body>
@@ -71,51 +92,67 @@
                 <a href="https://wa.me/5541995906901?text=Quero%20informa%C3%A7%C3%B5es%20sobre%20o%20show%20na%20Formatura%20Terceiro%20Ano%20em%20Curitiba" class="btn-booking" style="display: inline-block; padding: 15px 40px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px;">Quero este show no meu evento</a>
             </div>
 
-            <div class="agenda-lista" style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="grid-calendario">
                 
-                <div class="show-item" style="display: flex; align-items: center; background: #111; padding: 15px; border-radius: 10px; border: 1px solid #222; gap: 20px; flex-wrap: wrap;">
-                    <img src="img/festafechada.png" alt="Evento Privado" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: #222;">
-                    <div class="show-info" style="flex: 1; min-width: 200px;">
-                        <div class="show-data" style="color: #ff007f; font-weight: bold; font-size: 1.2rem;">SEX, 12 JUN</div>
-                        <div class="show-local" style="font-size: 1.1rem; color: #fff;">
-                            Evento Corporativo / Privado<br>
-                            <small style="color: #ff007f; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Sold Out</small><br>
-                            <small style="opacity: 0.6;">Curitiba / PR</small>
+                <a href="#" onclick="return false;" class="card-evento" style="opacity: 0.7; cursor: default;">
+                    <div style="position: relative;">
+                        <img src="img/festafechada.png" alt="Evento Privado" style="width: 100%; height: 140px; object-fit: cover; filter: grayscale(80%);">
+                        <div style="position: absolute; top: 10px; right: 10px; background: #333; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; border: 1px solid #444;">
+                            <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">Jun</span>
+                            <span style="display: block; font-size: 1.5rem; font-weight: bold;">12</span>
                         </div>
                     </div>
-                    <span style="background: #333; color: #aaa; padding: 10px 20px; border-radius: 5px; font-weight: bold; font-size: 0.9rem; text-transform: uppercase;">Esgotado</span>
-                </div>
-        
-                <div class="show-item" style="display: flex; align-items: center; background: #111; padding: 15px; border-radius: 10px; border: 1px solid #222; gap: 20px; flex-wrap: wrap;">
-                    <img src="img/tedsite.png" alt="Original Pub" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: #222;">
-                    <div class="show-info" style="flex: 1; min-width: 200px;">
-                        <div class="show-data" style="color: #ff007f; font-weight: bold; font-size: 1.2rem;">SÁB, 13 JUN</div>
-                        <div class="show-local" style="font-size: 1.1rem; color: #fff;">
-                            Original Pub<br>
-                            <small><a href="https://www.instagram.com/originalpublv/" target="_blank" style="color: #ff007f; text-decoration: none; font-weight: bold;">@originalpublv</a></small><br>
-                            <small style="opacity: 0.6;">Av. Afonso Pena, 322 — Lagoa Vermelha / RS</small>
+                    <div style="padding: 15px;">
+                        <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">Evento Privado</h4>
+                        <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">Curitiba / PR</p>
+                        <span style="background: #ff007f20; color: #ff007f; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; border: 1px solid #ff007f50;">ESGOTADO</span>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/5541995906901?text=Quero%20entrar%20na%20lista%20do%20Original%20Pub" target="_blank" class="card-evento">
+                    <div style="position: relative;">
+                        <img src="img/tedsite.png" alt="Original Pub" style="width: 100%; height: 140px; object-fit: cover;">
+                        <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                            <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">Jun</span>
+                            <span style="display: block; font-size: 1.5rem; font-weight: bold;">13</span>
                         </div>
                     </div>
-                    <a href="https://wa.me/5541995906901?text=Quero%20entrar%20na%20lista%20do%20Original%20Pub" target="_blank" class="btn-lista" style="padding: 10px 20px; text-decoration: none; font-weight: bold; font-size: 0.9rem; text-align: center;">Lista TOP</a>
-                </div>
-
-                <div class="show-item" style="display: flex; align-items: center; background: #111; padding: 15px; border-radius: 10px; border: 1px solid #222; gap: 20px; flex-wrap: wrap;">
-                    <img src="img/formatura.png" alt="Formatura Maximos" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: #222;">
-                    <div class="show-info" style="flex: 1; min-width: 200px;">
-                        <div class="show-data" style="color: #ff007f; font-weight: bold; font-size: 1.2rem;">SEX, 26 JUN</div>
-                        <div class="show-local" style="font-size: 1.1rem; color: #fff;">Formatura Maximos<br><small style="opacity: 0.6;">Curitiba / PR</small></div>
+                    <div style="padding: 15px;">
+                        <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">Original Pub</h4>
+                        <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">Lagoa Vermelha / RS</p>
+                        <span style="color: #00c853; font-size: 0.9rem; font-weight: bold;">🟢 Lista Aberta</span>
                     </div>
-                    <a href="https://wa.me/5541995906901?text=Mais%20informações%20sobre%20Formatura%20Maximos" target="_blank" class="btn-lista" style="padding: 10px 20px; text-decoration: none; font-weight: bold; font-size: 0.9rem; text-align: center;">Mais Info</a>
-                </div>
+                </a>
 
-                <div class="show-item" style="display: flex; align-items: center; background: #111; padding: 15px; border-radius: 10px; border: 1px solid #222; gap: 20px; flex-wrap: wrap;">
-                    <img src="img/tedsite.png" alt="Smoke Pub" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: #222;">
-                    <div class="show-info" style="flex: 1; min-width: 200px;">
-                        <div class="show-data" style="color: #ff007f; font-weight: bold; font-size: 1.2rem;">SEX, 04 JUL</div>
-                        <div class="show-local" style="font-size: 1.1rem; color: #fff;">Smoke Pub<br><small style="opacity: 0.6;">Curitiba / PR</small></div>
+                <a href="https://wa.me/5541995906901?text=Mais%20informações%20sobre%20Formatura%20Maximos" target="_blank" class="card-evento">
+                    <div style="position: relative;">
+                        <img src="img/formatura.png" alt="Formatura Maximos" style="width: 100%; height: 140px; object-fit: cover;">
+                        <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                            <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">Jun</span>
+                            <span style="display: block; font-size: 1.5rem; font-weight: bold;">26</span>
+                        </div>
                     </div>
-                    <a href="https://wa.me/5541995906901?text=Quero%20entrar%20na%20lista%20VIP%20do%20Smoke%20Pub" target="_blank" class="btn-lista" style="padding: 10px 20px; text-decoration: none; font-weight: bold; font-size: 0.9rem; text-align: center;">Lista VIP</a>
-                </div>
+                    <div style="padding: 15px;">
+                        <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">Formatura Maximos</h4>
+                        <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">Curitiba / PR</p>
+                        <span style="color: #0088cc; font-size: 0.9rem; font-weight: bold;">🔵 Mais Info</span>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/5541995906901?text=Quero%20entrar%20na%20lista%20VIP%20do%20Smoke%20Pub" target="_blank" class="card-evento">
+                    <div style="position: relative;">
+                        <img src="img/tedsite.png" alt="Smoke Pub" style="width: 100%; height: 140px; object-fit: cover;">
+                        <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                            <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">Jul</span>
+                            <span style="display: block; font-size: 1.5rem; font-weight: bold;">04</span>
+                        </div>
+                    </div>
+                    <div style="padding: 15px;">
+                        <h4 style="color: #fff; font-size: 1.1rem; margin: 0 0 5px 0;">Smoke Pub</h4>
+                        <p style="color: #aaa; font-size: 0.9rem; margin: 0 0 10px 0;">Curitiba / PR</p>
+                        <span style="color: #ff007f; font-size: 0.9rem; font-weight: bold;">🔥 Lista VIP</span>
+                    </div>
+                </a>
 
             </div>
         </div>
