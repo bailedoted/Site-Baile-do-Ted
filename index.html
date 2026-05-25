@@ -49,47 +49,6 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
         }
-
-        /* Estilo da Galeria de Vídeos */
-        .video-scroll-container {
-            display: flex; 
-            gap: 20px; 
-            overflow-x: auto; 
-            padding-bottom: 20px; 
-            scroll-snap-type: x mandatory; 
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .video-scroll-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        .video-scroll-container::-webkit-scrollbar-track {
-            background: #111; 
-            border-radius: 10px;
-        }
-        .video-scroll-container::-webkit-scrollbar-thumb {
-            background: #ff007f; 
-            border-radius: 10px;
-        }
-
-        .video-item {
-            min-width: 260px; 
-            max-width: 300px; 
-            flex: 0 0 auto; 
-            scroll-snap-align: center; 
-            position: relative; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            border: 1px solid #333; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-            background: #000;
-        }
-        .video-item video {
-            width: 100%; 
-            height: 450px; 
-            object-fit: cover; 
-            display: block;
-        }
     </style>
 
     <script type="module">
@@ -129,6 +88,7 @@
 
                 const proximoShow = eventos[0];
                 
+                // FALLBACKS INTELIGENTES E VISUAL PREMIUM (DESTAQUE)
                 let localDestaque = proximoShow.localNome ? `📍 ${proximoShow.localNome}` : '📍 Local Privado';
                 let enderecoDestaque = proximoShow.localEndereco ? `<span style="display:block; color: #aaa; font-size: 0.95rem; margin-top: 5px;">${proximoShow.localEndereco}</span>` : '';
                 
@@ -251,30 +211,7 @@
         </div>
     </section>
 
-    <section id="videos" class="section">
-        <div class="container">
-            <h2>A Vibe do Baile</h2>
-            <p style="color: #aaa; margin-bottom: 30px;">Sinta um pouco da energia que entregamos em cada show.</p>
-            
-            <div class="video-scroll-container">
-                
-                <div class="video-item">
-                    <video src="video/video1.mp4" autoplay muted loop playsinline></video>
-                </div>
-
-                <div class="video-item">
-                    <video src="video/video2.mp4" autoplay muted loop playsinline></video>
-                </div>
-                
-                <div class="video-item">
-                    <video src="video/video3.mp4" autoplay muted loop playsinline></video>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section id="agenda" class="section dark-bg">
+    <section id="agenda" class="section">
         <div class="container">
             <h2>Agenda Oficial</h2>
             <div id="container-destaque"></div>
@@ -282,7 +219,7 @@
         </div>
     </section>
 
-    <section id="orcamento" class="section">
+    <section id="orcamento" class="section dark-bg">
         <div class="container">
             <h2>Simule seu Orçamento</h2>
             <p>Descubra uma estimativa de custo para levar o Baile do Ted até a sua cidade.</p>
