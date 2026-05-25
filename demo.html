@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Templo Espiritual | Tradição e Força</title>
+    
+    <style>
+        /* Variáveis de Cores do Segmento */
+        :root {
+            --fundo: #050505;
+            --fundo-card: #111111;
+            --vermelho-escuro: #8b0000;
+            --vermelho-vivo: #d32f2f;
+            --dourado: #daa520;
+            --dourado-claro: #f4d03f;
+            --texto-claro: #e0e0e0;
+            --texto-escuro: #888888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--fundo);
+            color: var(--texto-claro);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Títulos com fonte clássica para passar seriedade */
+        h1, h2, h3, h4 {
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            font-weight: normal;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- MENU --- */
+        nav {
+            background: rgba(5, 5, 5, 0.9);
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            color: var(--dourado);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+        }
+        .btn-nav-whats {
+            background: transparent;
+            color: var(--dourado);
+            border: 1px solid var(--dourado);
+            padding: 8px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        .btn-nav-whats:hover {
+            background: var(--dourado);
+            color: var(--fundo);
+        }
+
+        /* --- HERO (Topo da Página) --- */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(rgba(5,5,5,0.8), rgba(5,5,5,0.9)), url('https://images.unsplash.com/photo-1602498456745-e9503b30470b?q=80&w=1920&auto=format&fit=crop') no-repeat center center/cover;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 20px;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            color: var(--dourado-claro);
+            margin-bottom: 20px;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: #ccc;
+        }
+        .btn-primario {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--vermelho-escuro), var(--vermelho-vivo));
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            border: 1px solid var(--vermelho-vivo);
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.4);
+        }
+        .btn-primario:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(211, 47, 47, 0.6);
+        }
+
+        /* --- SEÇÕES GERAIS --- */
+        .section {
+            padding: 100px 0;
+        }
+        .titulo-sessao {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--dourado);
+            margin-bottom: 50px;
+            position: relative;
+        }
+        .titulo-sessao::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 2px;
+            background: var(--vermelho-vivo);
+            margin: 15px auto 0;
+        }
+
+        /* --- SOBRE O TEMPLO --- */
+        .grid-sobre {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        @media(max-width: 768px) {
+            .grid-sobre { grid-template-columns: 1fr; }
+        }
+        .img-sobre {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--vermelho-escuro);
+            box-shadow: 0 10px 30px rgba(139, 0, 0, 0.2);
+        }
+        .texto-sobre p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #aaa;
+        }
+
+        /* --- SERVIÇOS / TRABALHOS --- */
+        .bg-escuro {
+            background-color: #080808;
+            border-top: 1px solid #1a1a1a;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .grid-servicos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .card-servico {
+            background: var(--fundo-card);
+            padding: 40px 30px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #222;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-servico::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: var(--vermelho-escuro);
+            transition: 0.3s;
+        }
+        .card-servico:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 0, 0, 0.5);
+            box-shadow: 0 10px 25px rgba(139, 0, 0, 0.1);
+        }
+        .card-servico:hover::before {
+            background: var(--dourado);
+        }
+        .card-servico h3 {
+            font-size: 1.5rem;
+            color: var(--dourado-claro);
+            margin-bottom: 15px;
+        }
+        .card-servico p {
+            color: #999;
+            font-size: 0.95rem;
+        }
+
+        /* --- RODAPÉ E CONTATO --- */
+        footer {
+            background: #020202;
+            padding: 60px 0 30px 0;
+            text-align: center;
+            border-top: 2px solid var(--vermelho-escuro);
+        }
+        .contato-info {
+            margin-bottom: 30px;
+        }
+        .contato-info p {
+            color: #aaa;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .direitos {
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: #555;
+            border-top: 1px solid #111;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="#" class="logo">Templo Sagrado</a>
+            <a href="#contato" class="btn-nav-whats">Falar Conosco</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Tradição, Ancestralidade e Força</h1>
+            <p>Um caminho sério de evolução e quebra de amarras. Encontre direcionamento espiritual através da sabedoria dos nossos ancestrais.</p>
+            <a href="#contato" class="btn-primario">Agendar Consulta Mística</a>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container grid-sobre">
+            <div>
+                <img src="https://images.unsplash.com/photo-1510103759363-d3a3c2006e8b?q=80&w=800&auto=format&fit=crop" alt="Ambiente do Templo" class="img-sobre">
+            </div>
+            <div class="texto-sobre">
+                <h2 class="titulo-sessao" style="text-align: left;">Nossos Fundamentos</h2>
+                <p>O <strong>Templo Sagrado</strong> é uma casa fundamentada no respeito absoluto aos sagrados Orixás e Guias Espirituais. Trabalhamos dentro das diretrizes tradicionais para trazer luz e solução aos problemas terrenos.</p>
+                <p>Nossa missão é guiar aqueles que nos procuram através da verdade espiritual, sem falsas promessas. Oferecemos um espaço seguro de acolhimento, onde a Magia e o Culto Ancestral caminham lado a lado com a responsabilidade e o sigilo.</p>
+                <p>Dirigido por sacerdotes preparados, o Templo realiza rituais abertos e fechados para o equilíbrio, a cura e a prosperidade.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section bg-escuro">
+        <div class="container">
+            <h2 class="titulo-sessao">Consultas e Trabalhos</h2>
+            
+            <div class="grid-servicos">
+                <div class="card-servico">
+                    <h3>Consulta com Oráculos</h3>
+                    <p>Atendimento através de búzios ou cartas para diagnóstico espiritual profundo. Descubra as raízes dos seus bloqueios e obtenha a direção exata para a sua vida amorosa, financeira e profissional.</p>
+                </div>
+                
+                <div class="card-servico">
+                    <h3>Abertura de Caminhos</h3>
+                    <p>Rituais e magias direcionados para destravar energias estagnadas. Limpezas espirituais fortes e assentamentos para atrair prosperidade, sucesso nos negócios e vitórias em processos.</p>
+                </div>
+
+                <div class="card-servico">
+                    <h3>Iniciação e Desenvolvimento</h3>
+                    <p>Orientação sacerdotal para aqueles que têm o chamado espiritual. Cursos e rituais de consagração mantendo a essência e o respeito às verdadeiras tradições.</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="#contato" class="btn-primario" style="background: transparent; color: var(--dourado); border-color: var(--dourado);">Saber mais sobre Trabalhos</a>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contato">
+        <div class="container">
+            <h2 style="font-family: 'Georgia', serif; font-size: 2rem; color: var(--dourado-claro); margin-bottom: 20px;">Entre em Contato</h2>
+            
+            <div class="contato-info">
+                <p>Atendimentos presenciais e à distância (com total sigilo).</p>
+                <p style="margin-top: 20px;">📍 <strong>Endereço:</strong> Rua da Tradição, 123 - Cidade/UF</p>
+                <p>📞 <strong>WhatsApp:</strong> (00) 00000-0000</p>
+                <p>✉️ <strong>E-mail:</strong> contato@templosagrado.com.br</p>
+            </div>
+
+            <a href="https://wa.me/5500000000000" target="_blank" class="btn-primario" style="border-radius: 50px; padding: 15px 50px; margin-top: 10px;">Chamar no WhatsApp</a>
+
+            <div class="direitos">
+                <p>&copy; 2026 Templo Sagrado. Todos os direitos reservados.</p>
+                <p style="margin-top: 5px;">Desenvolvido por <a href="https://abreaporta.com.br" target="_blank" style="color: var(--dourado); text-decoration: none;">Abre a Porta</a></p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
