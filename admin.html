@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Baile do Ted</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background-color: #050505; color: #fff; font-family: sans-serif; padding: 20px; }
+        .admin-container { max-width: 800px; margin: 0 auto; background: #111; padding: 30px; border-radius: 10px; border: 1px solid #333; }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 20px; border-radius: 5px; border: none; background: #222; color: #fff; font-size: 16px; }
+        label { font-weight: bold; color: #ff007f; }
+        .btn-salvar { background: #00c853; color: #fff; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .evento-item { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; }
+        .btn-excluir { background: #ff0000; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_yKDVhp4n8YDgIhtzOPT5DJX24dip_X4",
+            authDomain: "baile-do-ted.firebaseapp.com",
+            projectId: "baile-do-ted",
+            storageBucket: "baile-do-ted.firebasestorage.app",
+            messagingSenderId: "838778419593",
+            appId: "1:838778419593:web:590a0a81c4ff2f1a140958"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Função para formatar a data automaticamente para o site
+        function processarData(dataISO) {
+            const diasSemana = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+            const mesesAno = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+            
+            // Corrige o fuso horário para não dar diferença de 1 dia
+            const data = new Date(dataISO + "T12:00:00"); 
+            
+            return {
+                diaNum: String(data.getDate()).padStart(2, '0'),
+                mesAbas: mesesAno[data.getMonth()],
+                dataTexto: `${diasSemana[data.getDay()]}, ${String(data.getDate()).padStart(2, '0')} ${mesesAno[data.getMonth()].toUpperCase()}`,
+                dataTimestamp: data.getTime()
+            };
+        }
+
+        // Adicionar novo evento
+        document.getElementById('form-evento').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-salvar');
+            btn.innerText = "Salvando...";
+            
+            const dataBruta = document.getElementById('data').value;
+            const dataFormatada = processarData(dataBruta);
+
+            try {
+                await addDoc(collection(db, "eventos"), {
+                    nome: document.getElementById('nome').value,
+                    localidade: document.getElementById('localidade').value,
+                    imagem: document.getElementById('imagem').value || 'img/tedsite.png',
+                    link: document.getElementById('link').value || 'https://wa.me/5541995906901',
+                    esgotado: document.getElementById('esgotado').value === "sim",
+                    dataTexto: dataFormatada.dataTexto,
+                    diaNum: dataFormatada.diaNum,
+                    mesAbas: dataFormatada.mesAbas,
+                    dataTimestamp: dataFormatada.dataTimestamp
+                });
+                
+                alert("Show cadastrado com sucesso!");
+                document.getElementById('form-evento').reset();
+                btn.innerText = "Cadastrar Show";
+                carregarEventosAdmin();
+            } catch (error) {
+                console.error("Erro: ", error);
+                alert("Erro ao salvar.");
+                btn.innerText = "Cadastrar Show";
+            }
+        });
+
+        // Carregar e listar eventos para poder excluir
+        window.carregarEventosAdmin = async function() {
+            const lista = document.getElementById('lista-eventos');
+            lista.innerHTML = "Carregando...";
+            
+            const q = query(collection(db, "eventos"), orderBy("dataTimestamp", "asc"));
+            const querySnapshot = await getDocs(q);
+            
+            lista.innerHTML = "";
+            querySnapshot.forEach((docSnap) => {
+                const evento = docSnap.data();
+                lista.innerHTML += `
+                    <div class="evento-item">
+                        <div>
+                            <strong style="color:#ff007f">${evento.dataTexto}</strong> - ${evento.nome} <br>
+                            <small style="color:#aaa">${evento.localidade}</small>
+                        </div>
+                        <button class="btn-excluir" onclick="deletarEvento('${docSnap.id}')">Excluir</button>
+                    </div>
+                `;
+            });
+        }
+
+        window.deletarEvento = async function(id) {
+            if(confirm("Tem certeza que deseja excluir este show?")) {
+                await deleteDoc(doc(db, "eventos", id));
+                carregarEventosAdmin();
+            }
+        }
+
+        // Iniciar
+        carregarEventosAdmin();
+    </script>
+</head>
+<body>
+
+    <div class="admin-container">
+        <h1 style="text-align: center;">🎛️ Painel de Controle - Baile do Ted</h1>
+        <p style="text-align: center; color: #aaa;">Adicione shows aqui e o site será atualizado automaticamente.</p>
+        
+        <form id="form-evento" style="margin-top: 30px; border-bottom: 2px solid #333; padding-bottom: 30px;">
+            <label>Nome do Evento (Ex: Original Pub):</label>
+            <input type="text" id="nome" required>
+
+            <label>Data do Show:</label>
+            <input type="date" id="data" required>
+
+            <label>Cidade e Estado (Ex: Lagoa Vermelha / RS):</label>
+            <input type="text" id="localidade" required>
+
+            <label>Nome do arquivo da imagem (Ex: img/formatura.png):</label>
+            <input type="text" id="imagem" placeholder="Deixe em branco para usar a logo padrão do Ted">
+
+            <label>Link do Botão (Lista VIP, Whats, etc):</label>
+            <input type="url" id="link" placeholder="Ex: https://wa.me/5541995906901">
+
+            <label>Status do Evento:</label>
+            <select id="esgotado">
+                <option value="nao">Disponível (Lista Aberta)</option>
+                <option value="sim">ESGOTADO (Sold Out)</option>
+            </select>
+
+            <button type="submit" class="btn-salvar" id="btn-salvar">Cadastrar Show</button>
+        </form>
+
+        <h2 style="margin-top: 30px;">Shows Agendados</h2>
+        <div id="lista-eventos"></div>
+    </div>
+
+</body>
+</html>
