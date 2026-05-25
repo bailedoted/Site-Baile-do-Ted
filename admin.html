@@ -54,7 +54,8 @@
         document.getElementById('form-evento').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-salvar');
-            btn.innerText = "Salvando...";
+            const textoOriginal = btn.innerText;
+            btn.innerText = "Salvando no Banco...";
             btn.disabled = true;
             
             const eventoId = document.getElementById('eventoId').value;
@@ -62,9 +63,6 @@
             const dataFormatada = processarData(dataBruta);
             
             let urlImagem = document.getElementById('imagemTexto').value;
-            if (!urlImagem || urlImagem.trim() === "") {
-                urlImagem = "img/tedsite.png"; 
-            }
 
             try {
                 const dadosEvento = {
@@ -79,7 +77,7 @@
                     localContato: document.getElementById('localContato').value || '',
                     instagram: document.getElementById('instagram').value || '',
                     linkIngresso: document.getElementById('linkIngresso').value || '',
-                    imagem: urlImagem
+                    imagem: urlImagem || 'img/tedsite.png'
                 };
 
                 if (eventoId) {
@@ -93,8 +91,8 @@
                 resetarFormulario();
                 carregarEventosAdmin();
             } catch (error) {
-                console.error("Erro: ", error);
-                alert("Erro ao salvar no banco de dados.");
+                console.error("Erro completo do Firebase: ", error);
+                alert("Erro ao salvar! Verifique se a aba 'Regras' do seu Firestore Database está ativada como pública.");
             } finally {
                 btn.innerText = "Cadastrar Show";
                 btn.disabled = false;
@@ -103,32 +101,35 @@
 
         window.carregarEventosAdmin = async function() {
             const lista = document.getElementById('lista-eventos');
-            lista.innerHTML = "Carregando shows...";
+            lista.innerHTML = "Carregando de forma dinâmica...";
             
-            const q = query(collection(db, "eventos"), orderBy("dataTimestamp", "asc"));
-            const querySnapshot = await getDocs(q);
-            
-            lista.innerHTML = "";
-            querySnapshot.forEach((docSnap) => {
-                const evento = docSnap.data();
-                const eventoJson = JSON.stringify({id: docSnap.id, ...evento}).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+            try {
+                const q = query(collection(db, "eventos"), orderBy("dataTimestamp", "asc"));
+                const querySnapshot = await getDocs(q);
                 
-                // Tratar exibição caso o local esteja vazio
-                const localExibicao = evento.localNome ? `📍 ${evento.localNome}` : 'Local Restrito/Não informado';
+                lista.innerHTML = "";
+                querySnapshot.forEach((docSnap) => {
+                    const evento = docSnap.data();
+                    const eventoJson = JSON.stringify({id: docSnap.id, ...evento}).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+                    
+                    const localExibicao = evento.localNome ? `📍 ${evento.localNome}` : 'Local Não Informado';
 
-                lista.innerHTML += `
-                    <div class="evento-item">
-                        <div class="evento-info">
-                            <strong style="color:#ff007f">${evento.dataTexto}</strong> - <strong>${evento.nome}</strong> <br>
-                            <small style="color:#aaa">${localExibicao}</small>
+                    lista.innerHTML += `
+                        <div class="evento-item">
+                            <div class="evento-info">
+                                <strong style="color:#ff007f">${evento.dataTexto}</strong> - <strong>${evento.nome}</strong> <br>
+                                <small style="color:#aaa">${localExibicao}</small>
+                            </div>
+                            <div class="botoes-acao">
+                                <button class="btn-editar" onclick="editarEvento('${eventoJson}')">Editar</button>
+                                <button class="btn-excluir" onclick="deletarEvento('${docSnap.id}')">Excluir</button>
+                            </div>
                         </div>
-                        <div class="botoes-acao">
-                            <button class="btn-editar" onclick="editarEvento('${eventoJson}')">Editar</button>
-                            <button class="btn-excluir" onclick="deletarEvento('${docSnap.id}')">Excluir</button>
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            } catch(e) {
+                lista.innerHTML = "<span style='color:red;'>Erro de conexão com o banco de dados. Verifique as regras do Firestore.</span>";
+            }
         }
 
         window.editarEvento = function(eventoJsonString) {
@@ -152,7 +153,7 @@
         }
 
         window.deletarEvento = async function(id) {
-            if(confirm("Tem certeza que deseja excluir este show definitivamente?")) {
+            if(confirm("Deseja mesmo excluir?")) {
                 await deleteDoc(doc(db, "eventos", id));
                 carregarEventosAdmin();
             }
@@ -173,7 +174,7 @@
 
     <div class="admin-container">
         <h1 style="text-align: center;">🎛️ Dashboard - Baile do Ted</h1>
-        <p style="text-align: center; color: #aaa;">Apenas o Nome e a Data são obrigatórios.</p>
+        <p style="text-align: center; color: #aaa;">Preencha apenas o que tiver. O resto o site auto-completa!</p>
         
         <form id="form-evento" style="margin-top: 30px; border-bottom: 2px solid #333; padding-bottom: 30px;">
             <input type="hidden" id="eventoId">
@@ -189,28 +190,27 @@
                 </div>
                 <div class="form-group">
                     <label>Nome da Casa/Local:</label>
-                    <input type="text" id="localNome" placeholder="Ex: Original Pub">
+                    <input type="text" id="localNome" placeholder="Deixe em branco p/ ocultar">
                 </div>
                 <div class="form-group">
                     <label>Endereço / Cidade:</label>
                     <input type="text" id="localEndereco" placeholder="Ex: Curitiba / PR">
                 </div>
                 <div class="form-group">
-                    <label>Contato da Casa (WhatsApp):</label>
-                    <input type="text" id="localContato" placeholder="Ex: (41) 9999-9999">
+                    <label>Contato da Casa:</label>
+                    <input type="text" id="localContato" placeholder="Vazio = Usa o Whats do Ted">
                 </div>
                 <div class="form-group">
-                    <label>Instagram da Casa/Evento:</label>
-                    <input type="text" id="instagram" placeholder="Ex: @originalpublv">
+                    <label>Instagram da Casa:</label>
+                    <input type="text" id="instagram" placeholder="Vazio = Usa @bailedoted">
                 </div>
                 <div class="form-group">
-                    <label>Link p/ Compra de Ingressos:</label>
-                    <input type="url" id="linkIngresso" placeholder="Ex: https://sympla.com.br/...">
+                    <label>Link de Ingressos:</label>
+                    <input type="url" id="linkIngresso" placeholder="Vazio = Abre a Porta">
                 </div>
                 <div class="form-group">
-                    <label>Arte do Evento (Caminho):</label>
+                    <label>Caminho da Imagem:</label>
                     <input type="text" id="imagemTexto" placeholder="Ex: img/formatura.png">
-                    <small style="color:#aaa;">Se não preencher, a logo padrão será usada.</small>
                 </div>
             </div>
 
