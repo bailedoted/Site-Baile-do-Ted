@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Baile do Ted</title>
     <style>
-        /* Estilo da tela de senha */
         #tela-senha {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 99999; display: flex;
@@ -13,51 +12,34 @@
         }
         .box-senha { background: #111; padding: 30px; border-radius: 10px; border: 1px solid #333; text-align: center; }
         
-        /* Estilo da Dashboard (igual ao anterior) */
         body { background-color: #050505; color: #fff; font-family: sans-serif; padding: 20px; }
         .admin-container { max-width: 900px; margin: 0 auto; background: #111; padding: 30px; border-radius: 10px; border: 1px solid #333; }
-        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; }
-        label { font-weight: bold; color: #ff007f; font-size: 14px; }
         .btn-salvar { background: #00c853; color: #fff; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <!-- TELA DE SENHA -->
     <div id="tela-senha">
         <div class="box-senha">
             <h2 style="color: #ff007f;">Acesso Restrito</h2>
-            <input type="password" id="senha-input" placeholder="Digite a senha" style="margin: 15px 0;">
+            <!-- Campo de senha -->
+            <input type="password" id="senha-input" placeholder="Digite a senha" style="margin: 15px 0; padding: 10px; width: 200px;">
             <button onclick="verificarSenha()" class="btn-salvar" style="margin-top: 0;">Entrar</button>
         </div>
     </div>
 
-    <!-- DASHBOARD PROTEGIDA -->
     <div class="admin-container" id="conteudo-admin" style="display: none;">
         <h1 style="text-align: center;">🎛️ Dashboard - Baile do Ted</h1>
-        
-        <form id="form-evento">
-            <input type="hidden" id="eventoId">
-            <div class="grid-form">
-                <div class="form-group">
-                    <label>Nome do Evento:*</label>
-                    <input type="text" id="nome" required>
-                </div>
-                <div class="form-group">
-                    <label>Data:*</label>
-                    <input type="date" id="data" required>
-                </div>
-                <!-- ... outros campos que você já tinha ... -->
-            </div>
-            <button type="submit" class="btn-salvar" id="btn-salvar">Salvar no Banco</button>
-        </form>
+        <!-- Restante do conteúdo aqui -->
     </div>
 
     <script>
+        // --- SENHA E TECLA ENTER ---
+        
+        // 1. Defina sua senha aqui:
+        const senhaCorreta = "ted2026"; 
+
         function verificarSenha() {
-            // MUDE A SENHA ABAIXO
-            const senhaCorreta = "ted2026"; 
             const senhaDigitada = document.getElementById('senha-input').value;
             
             if (senhaDigitada === senhaCorreta) {
@@ -67,6 +49,14 @@
                 alert("Senha incorreta, parceiro!");
             }
         }
+
+        // 2. Faz a tecla Enter funcionar no campo de senha
+        document.getElementById("senha-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                verificarSenha();
+            }
+        });
     </script>
 </body>
 </html>
