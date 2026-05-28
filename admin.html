@@ -44,7 +44,7 @@
         .preview-wrapper { background: #222; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-top: 20px; overflow: auto; }
         .contrato-form-vertical { display: flex; flex-direction: column; gap: 15px; }
         .contrato-form-vertical .form-group { margin-bottom: 0; }
-        #areaContratoPdf { width: 794px; min-height: 1123px; background: #fff; color: #111; padding: 55px; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.55; }
+        #areaContratoPdf { width: 794px; min-height: 1123px; background: #fff; color: #111; padding: 48px; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.45; }
         #areaContratoPdf h1, #areaContratoPdf h2, #areaContratoPdf h3 { color: #111; text-align: center; margin-top: 0; }
         #areaContratoPdf p { margin: 0 0 12px 0; }
         #areaContratoPdf strong { font-weight: 700; }
@@ -142,21 +142,32 @@
                 <code>{{cliente_nome}}</code>
                 <code>{{cliente_cpf_cnpj}}</code>
                 <code>{{cliente_rg_ie}}</code>
+                <code>{{cliente_representante}}</code>
+                <code>{{cliente_representante_cpf}}</code>
                 <code>{{cliente_telefone}}</code>
                 <code>{{cliente_email}}</code>
                 <code>{{evento_nome}}</code>
                 <code>{{evento_data}}</code>
                 <code>{{evento_local}}</code>
                 <code>{{evento_horario}}</code>
+                <code>{{duracao_apresentacao}}</code>
                 <code>{{valor_total}}</code>
+                <code>{{valor_total_extenso}}</code>
                 <code>{{valor_sinal}}</code>
                 <code>{{valor_sinal_percentual}}</code>
+                <code>{{valor_parcela_40}}</code>
+                <code>{{valor_parcela_40_percentual}}</code>
+                <code>{{valor_parcela_50}}</code>
+                <code>{{valor_parcela_50_percentual}}</code>
                 <code>{{valor_restante}}</code>
                 <code>{{valor_restante_percentual}}</code>
                 <code>{{forma_pagamento}}</code>
                 <code>{{opcoes_manuais}}</code>
                 <code>{{observacoes}}</code>
                 <code>{{data_hoje}}</code>
+                <code>{{data_hoje_dia}}</code>
+                <code>{{data_hoje_mes}}</code>
+                <code>{{data_hoje_ano}}</code>
             </div>
 
             <form id="form-contrato">
@@ -170,8 +181,16 @@
                         <input type="text" id="clienteCpfCnpj" placeholder="Ex: 000.000.000-00" required>
                     </div>
                     <div class="form-group">
-                        <label>RG / IE:</label>
+                        <label>RG / IE / Inscrição Estadual:</label>
                         <input type="text" id="clienteRgIe" placeholder="Opcional">
+                    </div>
+                    <div class="form-group">
+                        <label>Representante, se for CNPJ:</label>
+                        <input type="text" id="clienteRepresentante" placeholder="Ex: Nome completo do representante">
+                    </div>
+                    <div class="form-group">
+                        <label>CPF do Representante:</label>
+                        <input type="text" id="clienteRepresentanteCpf" placeholder="Ex: 000.000.000-00">
                     </div>
                     <div class="form-group">
                         <label>Telefone / WhatsApp:</label>
@@ -198,20 +217,32 @@
                         <input type="text" id="contratoEventoLocal" placeholder="Ex: Nome da casa, rua, número, cidade/UF">
                     </div>
                     <div class="form-group">
+                        <label>Duração da Apresentação:</label>
+                        <input type="text" id="contratoDuracao" value="01h30 (uma hora e trinta minutos)">
+                    </div>
+                    <div class="form-group">
                         <label>Valor Total:*</label>
                         <input type="text" id="contratoValorTotal" placeholder="Ex: 2500,00" required>
                     </div>
                     <div class="form-group">
-                        <label>Valor do Sinal - 10% automático:</label>
+                        <label>Valor por extenso:</label>
+                        <input type="text" id="contratoValorExtenso" placeholder="Ex: dois mil e quinhentos reais">
+                    </div>
+                    <div class="form-group">
+                        <label>Reserva de data - 10% automático:</label>
                         <input type="text" id="contratoValorSinal" placeholder="Calculado automaticamente" readonly>
                     </div>
                     <div class="form-group">
-                        <label>Valor Restante - 90% automático:</label>
-                        <input type="text" id="contratoValorRestante" placeholder="Calculado automaticamente" readonly>
+                        <label>Parcela até 24h antes da viagem - 40% automático:</label>
+                        <input type="text" id="contratoValorParcela40" placeholder="Calculado automaticamente" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Parcela no dia do evento - 50% automático:</label>
+                        <input type="text" id="contratoValorParcela50" placeholder="Calculado automaticamente" readonly>
                     </div>
                     <div class="form-group">
                         <label>Forma de Pagamento / Opções combinadas:</label>
-                        <input type="text" id="contratoFormaPagamento" placeholder="Ex: Pix, dinheiro, cartão, entrada via Pix e restante no dia do evento">
+                        <input type="text" id="contratoFormaPagamento" placeholder="Ex: Pix, dinheiro, cartão, observações de parcelamento...">
                     </div>
                     <div class="form-group">
                         <label>Opções / Combinados manuais:</label>
@@ -337,7 +368,8 @@
             if (snap.exists()) {
                 const d = snap.data();
                 document.getElementById('textoOrcamento').value = d.orcamento || '';
-                document.getElementById('textoContrato').value = d.contrato || MODELO_PADRAO_CONTRATO;
+                const contratoSalvo = d.contrato || "";
+                document.getElementById('textoContrato').value = contratoSalvo.includes("CLÁUSULA 12ª") ? contratoSalvo : MODELO_PADRAO_CONTRATO;
                 document.getElementById('textoInfos').value = d.infos || '';
             } else {
                 document.getElementById('textoContrato').value = MODELO_PADRAO_CONTRATO;
@@ -356,77 +388,99 @@
 
         const MODELO_PADRAO_CONTRATO = `CONTRATO DE PRESTAÇÃO DE SERVIÇOS ARTÍSTICOS
 
-Pelo presente instrumento particular, as partes abaixo identificadas firmam o presente contrato de prestação de serviços artísticos, mediante as cláusulas e condições seguintes.
+QUALIFICAÇÃO DA CONTRATADA
+Razão Social: Chama Produções e Eventos
+CNPJ: 50.959.776/0001-01
+Neste ato representada por: Adair Costa Beles Neto, CPF: 831.259.730-15
+Endereço: Rua José Scuissiato, 11 – Curitiba/PR
+Fone/WhatsApp: 41 8505-1986
 
-CONTRATANTE
-Nome/Razão Social: {{cliente_nome}}
-CPF/CNPJ: {{cliente_cpf_cnpj}}
-RG/IE: {{cliente_rg_ie}}
-Telefone/WhatsApp: {{cliente_telefone}}
-E-mail: {{cliente_email}}
+QUALIFICAÇÃO DA(O) CONTRATANTE
+Razão Social / Nome: **{{cliente_nome}}**
+CNPJ / CPF: **{{cliente_cpf_cnpj}}**
+Insc. Est.: **{{cliente_rg_ie}}**
+Neste ato representada(o) por: **{{cliente_representante}}**, CPF: **{{cliente_representante_cpf}}**
+Endereço: Não informado.
+Fone/WhatsApp: **{{cliente_telefone}}**
+E-mail: **{{cliente_email}}**
 
-CONTRATADO
-BAILE DO TED, doravante denominado CONTRATADO, responsável pela apresentação artística objeto deste contrato.
+DADOS DO EVENTO
+Atração: Baile do Ted
+Data do Evento: **{{evento_data}}**
+Local do Evento: **{{evento_local}}**
+Horário de Início do Show: **{{evento_horario}}**
+Duração da Apresentação: **{{duracao_apresentacao}}**
 
-CLÁUSULA 1ª - DO OBJETO
-O presente contrato tem como objeto a contratação do CONTRATADO para realização de apresentação artística/musical no evento denominado **{{evento_nome}}**.
+VALOR E FORMA DE PAGAMENTO
+Valor Total: **{{valor_total}}** (**{{valor_total_extenso}}**)
+Forma de pagamento: **{{forma_pagamento}}**
 
-CLÁUSULA 2ª - DOS DADOS DO EVENTO
-Data do evento: **{{evento_data}}**
-Horário do evento: **{{evento_horario}}**
-Local/endereço do evento: **{{evento_local}}**
+**{{valor_sinal_percentual}} no ato da assinatura deste contrato (reserva de data): {{valor_sinal}}.**
 
-As informações acima são essenciais para a reserva da data e organização da apresentação, devendo qualquer alteração ser comunicada previamente e aceita pelas partes.
+**{{valor_parcela_40_percentual}} até 24 (vinte e quatro) horas antes do início da viagem da equipe: {{valor_parcela_40}}.**
 
-CLÁUSULA 3ª - DO VALOR CONTRATADO
-O valor total combinado para a contratação é de **{{valor_total}}**.
+**{{valor_parcela_50_percentual}} no dia do evento, impreterivelmente antes do artista entrar no palco: {{valor_parcela_50}}.**
 
-Para confirmação e reserva da data, o CONTRATANTE pagará o sinal correspondente a **{{valor_sinal_percentual}}** do valor total, equivalente a **{{valor_sinal}}**.
+Opções / combinados manuais: **{{opcoes_manuais}}**
+Observações adicionais: **{{observacoes}}**
 
-Após o pagamento do sinal, ficará pendente o valor restante correspondente a **{{valor_restante_percentual}}** do valor total, equivalente a **{{valor_restante}}**.
+Dados Bancários:
+Banco: INTER
+Chave PIX (CNPJ): 50.959.776/0001-01
+Titular: Chama Produções e Eventos (ou Adair Costa Beles Neto)
 
-CLÁUSULA 4ª - DA FORMA DE PAGAMENTO
-A forma de pagamento combinada entre as partes será: **{{forma_pagamento}}**.
+CONDIÇÕES GERAIS DO CONTRATO
 
-O pagamento do sinal confirma a reserva da data. O valor restante deverá ser pago conforme combinado entre as partes, respeitando as informações registradas neste contrato.
+CLÁUSULA 1ª (DA ALTERAÇÃO DE DATAS): O presente contrato não deverá ser suspenso ou alterado, a não ser com a prévia e expressa aprovação de ambas as partes por escrito. As datas contratadas não poderão ser alteradas sem o consentimento da CONTRATADA.
 
-CLÁUSULA 5ª - DAS OPÇÕES, INCLUSÕES E COMBINADOS MANUAIS
-As opções, inclusões, condições específicas e combinados manuais definidos para este evento são:
+CLÁUSULA 2ª (DO CANCELAMENTO): No caso de desistência ou cancelamento do evento por parte do CONTRATANTE:
+I. Não haverá devolução do valor referente à reserva de data (10%).
+II. Se o cancelamento ocorrer com menos de 15 (quinze) dias da data do evento, o CONTRATANTE pagará multa equivalente a 50% do valor total do contrato.
+III. Se o cancelamento ocorrer no dia do evento, ou após o deslocamento da equipe da CONTRATADA, será devido o valor integral (100%) do contrato.
+Parágrafo Único: Caso a CONTRATADA fique impossibilitada de comparecer por motivo de força maior (como acidentes, doenças graves ou calamidades públicas, devidamente comprovados), compromete-se a devolver os valores pagos antecipadamente, ficando isenta de multas adicionais.
 
-**{{opcoes_manuais}}**
+CLÁUSULA 3ª (DA INADIMPLÊNCIA): A falta de pagamento de qualquer uma das parcelas nas datas estipuladas, especialmente a parcela exigida antes da subida ao palco, faculta à CONTRATADA o direito de reter a apresentação e rescindir imediatamente o contrato, sendo considerado o show como realizado, ficando o CONTRATANTE obrigado ao pagamento integral do valor acordado, sem prejuízo das penalidades legais.
 
-CLÁUSULA 6ª - DAS OBRIGAÇÕES DO CONTRATANTE
-O CONTRATANTE se compromete a fornecer as informações corretas sobre o evento, local, horário, estrutura disponível e demais condições necessárias para a realização da apresentação.
+CLÁUSULA 4ª (DO SHOW, EQUIPAMENTOS E EFEITOS): A CONTRATADA levará seus próprios equipamentos de DJ para a apresentação, necessitando exclusivamente que a estrutura de sonorização do evento possua conexão RCA disponível.
+I. Durante o show, a CONTRATADA fará a distribuição de brindes (copos, adesivos e pirulitos) para o público.
+II. A CONTRATADA utilizará efeitos visuais indoor do tipo "Gerb".
+III. Caso o CONTRATANTE providencie ou haja viabilidade e suporte na cidade para aluguel de cilindro de CO2, a CONTRATADA compromete-se a levar e operar a atração "Bazuca de CO2" durante o espetáculo.
 
-O CONTRATANTE também deverá garantir acesso adequado ao local do evento, condições mínimas para montagem e execução da apresentação, bem como cumprir os pagamentos acordados neste instrumento.
+CLÁUSULA 5ª (DA SONORIZAÇÃO): Fica a cargo do CONTRATANTE fornecer a sonorização de pista adequada e com potência suficiente para o tamanho do evento e do público esperado.
 
-CLÁUSULA 7ª - DAS OBRIGAÇÕES DO CONTRATADO
-O CONTRATADO se compromete a comparecer ao local do evento na data e horário combinados, realizando a apresentação artística conforme as condições acordadas entre as partes.
+CLÁUSULA 6ª (DA SEGURANÇA E INTEGRIDADE): O CONTRATANTE fica inteiramente responsável pela segurança material e pessoal da CONTRATADA e de toda a sua estrutura e instrumentos. Esta responsabilidade vigora a partir do momento da chegada da equipe ao local do evento até a sua retirada total. A interrupção do evento em consequência de perturbação da ordem, ou agressão física/moral aos artistas, é de exclusiva responsabilidade do CONTRATANTE, valendo como cláusula rescisória imediata e obrigando-o ao pagamento integral do contrato.
 
-CLÁUSULA 8ª - ALTERAÇÕES, CANCELAMENTOS E REMARCAÇÕES
-Qualquer alteração de data, horário, local ou condições da apresentação deverá ser informada com antecedência e dependerá da disponibilidade do CONTRATADO.
+CLÁUSULA 7ª (DA LOGÍSTICA E CAMARIM): O CONTRATANTE assume o pagamento integral e a disponibilização das seguintes despesas para 04 (quatro) pessoas da equipe:
 
-Em caso de cancelamento por parte do CONTRATANTE, o sinal pago para reserva da data poderá não ser devolvido, considerando o bloqueio da agenda e a impossibilidade de venda da mesma data a terceiros.
+Hospedagem: Quartos com ar-condicionado, banheiro privativo (WC) e estacionamento próprio (disposição de quartos a cargo do contratante). O CONTRATANTE deverá enviar as informações completas da hospedagem (nome do hotel, endereço completo e contato) com antecedência mínima de 24 (vinte e quatro) horas antes do início da viagem da equipe.
 
-CLÁUSULA 9ª - OBSERVAÇÕES GERAIS
-**{{observacoes}}**
+Alimentação: Jantar, podendo ser jantinha com espetinho, lanche ou pizza.
 
-CLÁUSULA 10ª - DA ACEITAÇÃO
-As partes declaram estar de acordo com todas as condições descritas neste contrato, comprometendo-se ao fiel cumprimento de suas obrigações.
+Camarim: Local reservado e seguro para troca de figurino, contendo 01 segurança exclusivo, 01 balde de gelo, 10 garrafas de água (sem gás), 10 latas de Coca-Cola Zero, 15 energéticos, 01 garrafa de Whisky Jack Daniel’s, 02 pizzas grandes (Frango/Calabresa), 01 caixa de Bis, 01 caixa de bombom e 01 cento de salgados sortidos.
 
-E por estarem justas e contratadas, firmam o presente instrumento para que produza seus efeitos legais.
+CLÁUSULA 8ª (DA ESTRUTURA DE PALCO E CORTESIAS): O CONTRATANTE deve providenciar:
+I. Uma base para instalação dos equipamentos do DJ (podendo ser um hard case ou similar a uma mesa).
+II. Caixas de retorno de som em cima do palco (indispensável para a qualidade do show).
+III. Sessão de fotos no camarim antes do show, limitada a no máximo 50 pessoas.
+IV. 07 (sete) cortesias do evento, à disposição da CONTRATADA.
 
-Data de emissão: {{data_hoje}}
+CLÁUSULA 9ª (DOS ALVARÁS): O CONTRATANTE deverá providenciar, por sua exclusiva responsabilidade financeira e legal, todos os alvarás e licenças para a realização do evento (Alvará judicial, Prefeitura, Corpo de Bombeiros, ECAD, etc.).
 
+CLÁUSULA 10ª (DO REPERTÓRIO): A escolha do repertório a ser executado ficará a inteiro critério artístico da CONTRATADA, não podendo o CONTRATANTE se opor ou interferir.
 
-____________________________________
-CONTRATANTE
-{{cliente_nome}}
+CLÁUSULA 11ª (DA MULTA POR DESCUMPRIMENTO): Em caso de infração de qualquer uma das cláusulas deste contrato (que não se enquadre nas regras específicas de cancelamento da Cláusula 2ª), por qualquer das partes, o infrator pagará à parte prejudicada uma multa estipulada em 50% (cinquenta por cento) do valor total deste contrato, além da possibilidade de rescisão imediata e apuração de perdas e danos, acrescidos de despesas e honorários advocatícios.
 
+CLÁUSULA 12ª (DO FORO): Elege-se o foro da Comarca de Curitiba - PR para dirimir quaisquer dúvidas ou litígios oriundos deste contrato, renunciando as partes a qualquer outro, por mais privilegiado que seja.
 
-____________________________________
-CONTRATADO
-BAILE DO TED`;
+E por estarem justos e contratados, assinam o presente instrumento em 02 (duas) vias de igual teor e forma, juntamente com duas testemunhas.
+
+Curitiba - PR, **{{data_hoje_dia}}** de **{{data_hoje_mes}}** de **{{data_hoje_ano}}**.
+
+Chama Produções e Eventos
+CONTRATADA (CNPJ: 50.959.776/0001-01)
+
+**{{cliente_nome}}**
+CONTRATANTE (CNPJ/CPF: **{{cliente_cpf_cnpj}}**)`;
 
 
         window.inserirModeloContratoComVariaveis = function() {
@@ -440,6 +494,23 @@ BAILE DO TED`;
             if (!dataISO) return "";
             const data = new Date(dataISO + "T12:00:00");
             return data.toLocaleDateString("pt-BR");
+        }
+
+        function formatarDataEventoCompleta(dataISO) {
+            if (!dataISO) return "";
+            const data = new Date(dataISO + "T12:00:00");
+            const dias = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+            return `${data.toLocaleDateString("pt-BR")} (${dias[data.getDay()]})`;
+        }
+
+        function dadosDataAtual() {
+            const hoje = new Date();
+            const meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+            return {
+                dia: String(hoje.getDate()).padStart(2, "0"),
+                mes: meses[hoje.getMonth()],
+                ano: String(hoje.getFullYear())
+            };
         }
 
         function moedaParaNumero(valor) {
@@ -490,10 +561,12 @@ BAILE DO TED`;
         function atualizarValoresAutomaticos() {
             const valorTotalNum = moedaParaNumero(document.getElementById("contratoValorTotal").value);
             const valorSinalNum = valorTotalNum * 0.10;
-            const valorRestanteNum = valorTotalNum * 0.90;
+            const valorParcela40Num = valorTotalNum * 0.40;
+            const valorParcela50Num = valorTotalNum * 0.50;
 
             document.getElementById("contratoValorSinal").value = valorTotalNum ? formatarMoedaNumero(valorSinalNum) : "";
-            document.getElementById("contratoValorRestante").value = valorTotalNum ? formatarMoedaNumero(valorRestanteNum) : "";
+            document.getElementById("contratoValorParcela40").value = valorTotalNum ? formatarMoedaNumero(valorParcela40Num) : "";
+            document.getElementById("contratoValorParcela50").value = valorTotalNum ? formatarMoedaNumero(valorParcela50Num) : "";
         }
 
         function obterDadosContrato() {
@@ -501,27 +574,40 @@ BAILE DO TED`;
 
             const valorTotalNum = moedaParaNumero(document.getElementById("contratoValorTotal").value);
             const valorSinalNum = valorTotalNum * 0.10;
-            const valorRestanteNum = valorTotalNum * 0.90;
+            const valorParcela40Num = valorTotalNum * 0.40;
+            const valorParcela50Num = valorTotalNum * 0.50;
+            const dataAtual = dadosDataAtual();
 
             return {
                 cliente_nome: document.getElementById("clienteNome").value.trim(),
                 cliente_cpf_cnpj: document.getElementById("clienteCpfCnpj").value.trim(),
                 cliente_rg_ie: document.getElementById("clienteRgIe").value.trim(),
+                cliente_representante: document.getElementById("clienteRepresentante").value.trim() || document.getElementById("clienteNome").value.trim(),
+                cliente_representante_cpf: document.getElementById("clienteRepresentanteCpf").value.trim() || document.getElementById("clienteCpfCnpj").value.trim(),
                 cliente_telefone: document.getElementById("clienteTelefone").value.trim(),
                 cliente_email: document.getElementById("clienteEmail").value.trim(),
                 evento_nome: document.getElementById("contratoEventoNome").value.trim(),
-                evento_data: formatarDataBr(document.getElementById("contratoEventoData").value),
+                evento_data: formatarDataEventoCompleta(document.getElementById("contratoEventoData").value),
                 evento_local: document.getElementById("contratoEventoLocal").value.trim(),
                 evento_horario: document.getElementById("contratoEventoHorario").value.trim(),
+                duracao_apresentacao: document.getElementById("contratoDuracao").value.trim() || "01h30 (uma hora e trinta minutos)",
                 valor_total: formatarMoedaNumero(valorTotalNum),
+                valor_total_extenso: document.getElementById("contratoValorExtenso").value.trim(),
                 valor_sinal: formatarMoedaNumero(valorSinalNum),
                 valor_sinal_percentual: "10%",
-                valor_restante: formatarMoedaNumero(valorRestanteNum),
+                valor_parcela_40: formatarMoedaNumero(valorParcela40Num),
+                valor_parcela_40_percentual: "40%",
+                valor_parcela_50: formatarMoedaNumero(valorParcela50Num),
+                valor_parcela_50_percentual: "50%",
+                valor_restante: formatarMoedaNumero(valorParcela40Num + valorParcela50Num),
                 valor_restante_percentual: "90%",
                 forma_pagamento: document.getElementById("contratoFormaPagamento").value.trim(),
                 opcoes_manuais: document.getElementById("contratoOpcoesManuais").value.trim(),
                 observacoes: document.getElementById("contratoObservacoes").value.trim(),
-                data_hoje: new Date().toLocaleDateString("pt-BR")
+                data_hoje: new Date().toLocaleDateString("pt-BR"),
+                data_hoje_dia: dataAtual.dia,
+                data_hoje_mes: dataAtual.mes,
+                data_hoje_ano: dataAtual.ano
             };
         }
 
