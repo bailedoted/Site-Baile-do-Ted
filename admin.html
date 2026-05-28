@@ -4,74 +4,227 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Baile do Ted</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
+        /* TELA DE SENHA */
+        #tela-senha {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 99999; display: flex;
+            align-items: center; justify-content: center; flex-direction: column;
+        }
+        .box-senha { background: #111; padding: 30px; border-radius: 10px; border: 1px solid #333; text-align: center; }
+        
+        /* SEU CSS ORIGINAL */
         body { background-color: #050505; color: #fff; font-family: sans-serif; padding: 20px; }
         .admin-container { max-width: 900px; margin: 0 auto; background: #111; padding: 30px; border-radius: 10px; border: 1px solid #333; }
         .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; font-size: 14px; box-sizing: border-box; }
-        .btn-salvar { background: #00c853; color: #fff; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 20px; }
-        .evento-item { display: flex; justify-content: space-between; background: #222; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; }
-        /* TELA DE SENHA */
-        #tela-senha { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        @media(max-width: 768px) { .grid-form { grid-template-columns: 1fr; } }
+        .form-group { margin-bottom: 15px; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; font-size: 14px; box-sizing: border-box; font-family: sans-serif; }
+        label { font-weight: bold; color: #ff007f; font-size: 14px; }
+        .btn-salvar { background: #00c853; color: #fff; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn-salvar:hover { background: #00e676; }
+        .btn-cancelar { background: #555; color: #fff; border: none; padding: 15px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 10px; display: none; }
+        .evento-item { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; flex-wrap: wrap; gap: 10px; }
+        .evento-info { flex: 1; min-width: 250px; }
+        .botoes-acao { display: flex; gap: 10px; }
+        .btn-editar { background: #0088cc; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-excluir { background: #ff0000; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-copiar { background: #00c853; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; transition: 0.2s; }
+        .btn-copiar:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
     <div id="tela-senha">
-        <div style="background: #111; padding: 30px; border-radius: 10px; border: 1px solid #333; text-align: center;">
-            <h2 style="color: #ff007f;">Acesso Restrito</h2>
-            <input type="password" id="senha-input" placeholder="Digite a senha" style="padding: 10px; width: 200px;">
-            <button onclick="verificarSenha()" class="btn-salvar" style="margin-top: 10px;">Entrar</button>
+        <div class="box-senha">
+            <h2 style="color: #ff007f; margin-bottom: 20px;">Acesso Restrito</h2>
+            <input type="password" id="senha-input" placeholder="Digite a senha" style="padding: 10px; width: 200px; text-align: center; border: 1px solid #444; background: #222; color: #fff;">
+            <button onclick="verificarSenha()" class="btn-salvar" style="margin-top: 15px; padding: 10px;">Entrar</button>
         </div>
     </div>
 
     <div class="admin-container" id="conteudo-admin" style="display: none;">
         <h1 style="text-align: center;">🎛️ Dashboard - Baile do Ted</h1>
         
-        <form id="form-evento">
+        <form id="form-evento" style="margin-top: 30px;">
             <input type="hidden" id="eventoId">
             <div class="grid-form">
-                <input type="text" id="nome" placeholder="Nome do Evento" required>
-                <input type="date" id="data" required>
-                <input type="text" id="localNome" placeholder="Nome da Casa">
-                <input type="text" id="localEndereco" placeholder="Endereço">
-                <input type="text" id="localContato" placeholder="WhatsApp">
-                <input type="text" id="instagram" placeholder="Instagram">
-                <input type="url" id="linkIngresso" placeholder="Link Ingressos">
-                <input type="text" id="imagemTexto" placeholder="Caminho Imagem">
+                <div class="form-group">
+                    <label>Nome do Evento/Show:*</label>
+                    <input type="text" id="nome" placeholder="Ex: Formatura 3º Ano" required>
+                </div>
+                <div class="form-group">
+                    <label>Data do Show:*</label>
+                    <input type="date" id="data" required>
+                </div>
+                <div class="form-group">
+                    <label>Nome da Casa/Local:</label>
+                    <input type="text" id="localNome" placeholder="Deixe em branco p/ ocultar">
+                </div>
+                <div class="form-group">
+                    <label>Endereço / Cidade:</label>
+                    <input type="text" id="localEndereco" placeholder="Ex: Curitiba / PR">
+                </div>
+                <div class="form-group">
+                    <label>Contato da Casa:</label>
+                    <input type="text" id="localContato" placeholder="Vazio = Usa o Whats do Ted">
+                </div>
+                <div class="form-group">
+                    <label>Instagram da Casa:</label>
+                    <input type="text" id="instagram" placeholder="Vazio = Usa @bailedoted">
+                </div>
+                <div class="form-group">
+                    <label>Link de Ingressos:</label>
+                    <input type="url" id="linkIngresso" placeholder="Vazio = Abre a Porta">
+                </div>
+                <div class="form-group">
+                    <label>Caminho da Imagem:</label>
+                    <input type="text" id="imagemTexto" placeholder="Ex: img/formatura.png">
+                </div>
             </div>
             <button type="submit" class="btn-salvar" id="btn-salvar">Cadastrar Show</button>
+            <button type="button" class="btn-cancelar" id="btn-cancelar" onclick="resetarFormulario()">Cancelar Edição</button>
         </form>
 
-        <h2>Shows Agendados</h2>
-        <div id="lista-eventos"></div>
+        <h2 style="margin-top: 30px;">Shows Agendados</h2>
+        <div id="lista-eventos" style="max-height: 400px; overflow-y: auto; padding-right: 10px; margin-bottom: 30px;"></div>
 
-        <h2 style="margin-top:40px; border-top: 1px solid #333; pt: 20px;">✍️ Gerar Contrato PDF</h2>
-        <div class="grid-form">
-            <input type="text" id="nomeContratante" placeholder="Nome Contratante">
-            <input type="text" id="cpfContratante" placeholder="CPF/CNPJ">
-            <input type="text" id="dataContrato" placeholder="Data Evento">
-            <input type="text" id="valorContrato" placeholder="Valor R$">
+        <h2 style="margin-top: 40px; border-top: 2px solid #333; padding-top: 30px;">📄 Textos Rápidos (WhatsApp)</h2>
+        <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">
+            <div class="form-group">
+                <label>Modelo de Orçamento:</label>
+                <textarea id="textoOrcamento" rows="5"></textarea>
+                <button type="button" onclick="copiarTexto('textoOrcamento')" class="btn-copiar">📋 Copiar</button>
+            </div>
+            <div class="form-group">
+                <label>Modelo de Contrato:</label>
+                <textarea id="textoContrato" rows="5"></textarea>
+                <button type="button" onclick="copiarTexto('textoContrato')" class="btn-copiar">📋 Copiar</button>
+            </div>
+            <div class="form-group">
+                <label>Informações Importantes:</label>
+                <textarea id="textoInfos" rows="5"></textarea>
+                <button type="button" onclick="copiarTexto('textoInfos')" class="btn-copiar">📋 Copiar</button>
+            </div>
+            <button type="button" id="btn-salvar-textos" class="btn-salvar" style="background: #0088cc; margin-top: 10px;">💾 Salvar Modelos no Banco</button>
         </div>
-        <button onclick="gerarPDF()" class="btn-salvar" style="background: #ff007f;">Gerar Contrato (PDF)</button>
-
-        <h2>📄 Textos Rápidos</h2>
-        <textarea id="textoOrcamento" rows="3"></textarea>
-        <textarea id="textoContrato" rows="3"></textarea>
-        <textarea id="textoInfos" rows="3"></textarea>
-        <button id="btn-salvar-textos" class="btn-salvar">💾 Salvar Modelos</button>
     </div>
 
     <script type="module">
-        // [AQUI ESTA TODA A SUA LÓGICA FIREBASE ORIGINAL QUE VOCÊ MANDOU]
-        // (Ao colar o código, garanta que o script Firebase completo está aqui)
-        // ... (Seu código Firebase original de carregamento e salvamento)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_yKDVhp4n8YDgIhtzOPT5DJX24dip_X4",
+            authDomain: "baile-do-ted.firebaseapp.com",
+            projectId: "baile-do-ted",
+            storageBucket: "baile-do-ted.firebasestorage.app",
+            messagingSenderId: "838778419593",
+            appId: "1:838778419593:web:590a0a81c4ff2f1a140958"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function processarData(dataISO) {
+            const diasSemana = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+            const mesesAno = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+            const data = new Date(dataISO + "T12:00:00"); 
+            return {
+                diaNum: String(data.getDate()).padStart(2, '0'),
+                mesAbas: mesesAno[data.getMonth()],
+                dataTexto: `${diasSemana[data.getDay()]}, ${String(data.getDate()).padStart(2, '0')} ${mesesAno[data.getMonth()].toUpperCase()}`,
+                dataTimestamp: data.getTime()
+            };
+        }
+
+        document.getElementById('form-evento').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-salvar');
+            btn.innerText = "Salvando...";
+            btn.disabled = true;
+            const eventoId = document.getElementById('eventoId').value;
+            const dataBruta = document.getElementById('data').value;
+            const dataFormatada = processarData(dataBruta);
+            try {
+                const dados = {
+                    nome: document.getElementById('nome').value,
+                    dataBruta: dataBruta,
+                    dataTexto: dataFormatada.dataTexto,
+                    diaNum: dataFormatada.diaNum,
+                    mesAbas: dataFormatada.mesAbas,
+                    dataTimestamp: dataFormatada.dataTimestamp,
+                    localNome: document.getElementById('localNome').value,
+                    localEndereco: document.getElementById('localEndereco').value,
+                    localContato: document.getElementById('localContato').value,
+                    instagram: document.getElementById('instagram').value,
+                    linkIngresso: document.getElementById('linkIngresso').value,
+                    imagem: document.getElementById('imagemTexto').value || 'img/tedsite.png'
+                };
+                if (eventoId) { await updateDoc(doc(db, "eventos", eventoId), dados); }
+                else { await addDoc(collection(db, "eventos"), dados); }
+                alert("Sucesso!");
+                resetarFormulario();
+                carregarEventosAdmin();
+            } catch (e) { alert("Erro!"); } finally { btn.innerText = "Cadastrar Show"; btn.disabled = false; }
+        });
+
+        window.carregarEventosAdmin = async function() {
+            const lista = document.getElementById('lista-eventos');
+            const q = query(collection(db, "eventos"), orderBy("dataTimestamp", "asc"));
+            const ss = await getDocs(q);
+            lista.innerHTML = "";
+            ss.forEach((docSnap) => {
+                const e = docSnap.data();
+                const json = JSON.stringify({id: docSnap.id, ...e}).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+                lista.innerHTML += `<div class="evento-item"><div><strong>${e.nome}</strong> - ${e.dataTexto}</div><div class="botoes-acao"><button class="btn-editar" onclick="editarEvento('${json}')">Editar</button><button class="btn-excluir" onclick="deletarEvento('${docSnap.id}')">Excluir</button></div></div>`;
+            });
+        }
+
+        window.editarEvento = (json) => {
+            const e = JSON.parse(json);
+            document.getElementById('eventoId').value = e.id;
+            document.getElementById('nome').value = e.nome;
+            document.getElementById('data').value = e.dataBruta;
+            document.getElementById('localNome').value = e.localNome || '';
+            document.getElementById('localEndereco').value = e.localEndereco || '';
+            document.getElementById('localContato').value = e.localContato || '';
+            document.getElementById('instagram').value = e.instagram || '';
+            document.getElementById('linkIngresso').value = e.linkIngresso || '';
+            document.getElementById('imagemTexto').value = e.imagem || '';
+            document.getElementById('btn-salvar').innerText = "Atualizar";
+            document.getElementById('btn-cancelar').style.display = "block";
+        }
+
+        window.deletarEvento = async (id) => { if(confirm("Excluir?")) { await deleteDoc(doc(db, "eventos", id)); carregarEventosAdmin(); } }
+
+        window.resetarFormulario = () => { document.getElementById('form-evento').reset(); document.getElementById('eventoId').value = ""; document.getElementById('btn-salvar').innerText = "Cadastrar Show"; document.getElementById('btn-cancelar').style.display = "none"; }
+
+        window.carregarTextos = async () => {
+            const snap = await getDoc(doc(db, "configuracoes", "textosGerais"));
+            if (snap.exists()) {
+                const d = snap.data();
+                document.getElementById('textoOrcamento').value = d.orcamento || '';
+                document.getElementById('textoContrato').value = d.contrato || '';
+                document.getElementById('textoInfos').value = d.infos || '';
+            }
+        }
+        document.getElementById('btn-salvar-textos').onclick = async () => {
+            await setDoc(doc(db, "configuracoes", "textosGerais"), {
+                orcamento: document.getElementById('textoOrcamento').value,
+                contrato: document.getElementById('textoContrato').value,
+                infos: document.getElementById('textoInfos').value
+            });
+            alert("Modelos salvos!");
+        }
+        window.copiarTexto = (id) => { navigator.clipboard.writeText(document.getElementById(id).value); alert("Copiado!"); }
+
+        carregarEventosAdmin();
+        carregarTextos();
     </script>
 
     <script>
-        // SENHA E ENTER
-        const senhaCorreta = "ted2026";
+        // LÓGICA DA SENHA
+        const senhaCorreta = "ted2026"; 
         function verificarSenha() {
             if (document.getElementById('senha-input').value === senhaCorreta) {
                 document.getElementById('tela-senha').style.display = 'none';
@@ -79,15 +232,6 @@
             } else { alert("Senha incorreta!"); }
         }
         document.getElementById("senha-input").addEventListener("keypress", (e) => { if (e.key === "Enter") verificarSenha(); });
-
-        // GERADOR PDF
-        window.gerarPDF = function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("CONTRATO BAILE DO TED", 20, 20);
-            doc.text("Contratante: " + document.getElementById('nomeContratante').value, 20, 30);
-            doc.save("Contrato.pdf");
-        };
     </script>
 </body>
 </html>
