@@ -527,6 +527,24 @@
                 </div>
             </div>
         </section>
+
+        <section class="card" id="configuracoes-base">
+            <div class="card-header">
+                <div>
+                    <h2>⛽ Configurações de Base</h2>
+                    <p>Valores usados como referência automática para prévias de orçamento.</p>
+                </div>
+            </div>
+
+            <div class="contrato-form-vertical">
+                <div class="form-group">
+                    <label>Valor da gasolina por litro:</label>
+                    <input type="text" id="valorGasolinaBase" placeholder="Ex: 6,20">
+                    <span class="hint">Esse valor fica salvo no banco e pode ser usado no modelo de orçamento com o marcador {{valor_gasolina}}.</span>
+                </div>
+                <button type="button" id="btn-salvar-config-base" class="btn-salvar btn-blue">💾 Salvar Valor da Gasolina</button>
+            </div>
+        </section>
     </div>
 
     <script type="module">
@@ -641,20 +659,47 @@
                 const d = snap.data();
                 document.getElementById('textoOrcamento').value = d.orcamento || '';
                 document.getElementById('textoInfos').value = d.infos || '';
+                document.getElementById('valorGasolinaBase').value = d.valorGasolinaBase || '';
             }
         }
 
         document.getElementById('btn-salvar-textos').onclick = async () => {
             await setDoc(doc(db, "configuracoes", "textosGerais"), {
                 orcamento: document.getElementById('textoOrcamento').value,
-                infos: document.getElementById('textoInfos').value
+                infos: document.getElementById('textoInfos').value,
+                valorGasolinaBase: document.getElementById('valorGasolinaBase').value
             }, { merge: true });
             alert("Textos salvos!");
         }
 
+        function obterValorGasolinaFormatado() {
+            const valor = moedaParaNumero(document.getElementById('valorGasolinaBase').value);
+            return valor ? formatarMoedaNumero(valor) : 'NÃO INFORMADO';
+        }
+
+        function aplicarVariaveisOrcamento(texto) {
+            const valorGasolina = obterValorGasolinaFormatado();
+            return String(texto || '')
+                .replaceAll('{{valor_gasolina}}', valorGasolina)
+                .replaceAll('{{VALOR_GASOLINA}}', valorGasolina)
+                .replaceAll('[valor_gasolina]', valorGasolina)
+                .replaceAll('[VALOR_GASOLINA]', valorGasolina);
+        }
+
         window.copiarTexto = (id) => {
-            navigator.clipboard.writeText(document.getElementById(id).value);
+            const textoOriginal = document.getElementById(id).value;
+            const textoFinal = id === 'textoOrcamento' ? aplicarVariaveisOrcamento(textoOriginal) : textoOriginal;
+            navigator.clipboard.writeText(textoFinal);
             alert("Copiado!");
+        }
+
+        document.getElementById('btn-salvar-config-base').onclick = async () => {
+            const valorGasolinaNum = moedaParaNumero(document.getElementById('valorGasolinaBase').value);
+            document.getElementById('valorGasolinaBase').value = valorGasolinaNum ? formatarMoedaNumero(valorGasolinaNum) : '';
+            await setDoc(doc(db, "configuracoes", "textosGerais"), {
+                valorGasolinaBase: document.getElementById('valorGasolinaBase').value
+            }, { merge: true });
+            alert("Valor da gasolina salvo!");
         }
 
         const MODELO_PADRAO_CONTRATO = `CONTRATO DE PRESTAÇÃO DE SERVIÇOS ARTÍSTICOS
@@ -1041,6 +1086,11 @@ CONTRATANTE (CNPJ/CPF: **{{cliente_cpf_cnpj}}**)`;
             atualizarValoresAutomaticos();
             document.getElementById("previewContrato").innerHTML = `<div id="areaContratoPdf"><h2>Prévia do contrato</h2><p>Preencha os dados acima e clique em <strong>Gerar Prévia</strong>.</p></div>`;
         }
+
+        document.getElementById('valorGasolinaBase').addEventListener('blur', () => {
+            const valorGasolinaNum = moedaParaNumero(document.getElementById('valorGasolinaBase').value);
+            document.getElementById('valorGasolinaBase').value = valorGasolinaNum ? formatarMoedaNumero(valorGasolinaNum) : '';
+        });
 
         document.getElementById("contratoValorTotal").addEventListener("input", atualizarValoresAutomaticos);
         document.getElementById("contratoValorTotal").addEventListener("blur", () => {
