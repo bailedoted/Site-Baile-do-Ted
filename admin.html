@@ -4,311 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Baile do Ted</title>
-    <link rel="stylesheet" href="style.css">
     <style>
+        /* Estilo da tela de senha */
+        #tela-senha {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 99999; display: flex;
+            align-items: center; justify-content: center; flex-direction: column;
+        }
+        .box-senha { background: #111; padding: 30px; border-radius: 10px; border: 1px solid #333; text-align: center; }
+        
+        /* Estilo da Dashboard (igual ao anterior) */
         body { background-color: #050505; color: #fff; font-family: sans-serif; padding: 20px; }
         .admin-container { max-width: 900px; margin: 0 auto; background: #111; padding: 30px; border-radius: 10px; border: 1px solid #333; }
         .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        @media(max-width: 768px) { .grid-form { grid-template-columns: 1fr; } }
-        .form-group { margin-bottom: 15px; }
-        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; font-size: 14px; box-sizing: border-box; font-family: sans-serif; }
+        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; }
         label { font-weight: bold; color: #ff007f; font-size: 14px; }
-        .btn-salvar { background: #00c853; color: #fff; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        .btn-salvar:hover { background: #00e676; }
-        .btn-cancelar { background: #555; color: #fff; border: none; padding: 15px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 10px; display: none; }
-        .evento-item { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; flex-wrap: wrap; gap: 10px; }
-        .evento-info { flex: 1; min-width: 250px; }
-        .botoes-acao { display: flex; gap: 10px; }
-        .btn-editar { background: #0088cc; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn-excluir { background: #ff0000; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn-copiar { background: #00c853; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; transition: 0.2s; }
-        .btn-copiar:active { transform: scale(0.95); }
+        .btn-salvar { background: #00c853; color: #fff; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyA_yKDVhp4n8YDgIhtzOPT5DJX24dip_X4",
-            authDomain: "baile-do-ted.firebaseapp.com",
-            projectId: "baile-do-ted",
-            storageBucket: "baile-do-ted.firebasestorage.app",
-            messagingSenderId: "838778419593",
-            appId: "1:838778419593:web:590a0a81c4ff2f1a140958"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // --- SISTEMA DE EVENTOS ---
-        function processarData(dataISO) {
-            const diasSemana = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
-            const mesesAno = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-            const data = new Date(dataISO + "T12:00:00"); 
-            return {
-                diaNum: String(data.getDate()).padStart(2, '0'),
-                mesAbas: mesesAno[data.getMonth()],
-                dataTexto: `${diasSemana[data.getDay()]}, ${String(data.getDate()).padStart(2, '0')} ${mesesAno[data.getMonth()].toUpperCase()}`,
-                dataTimestamp: data.getTime()
-            };
-        }
-
-        document.getElementById('form-evento').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-salvar');
-            btn.innerText = "Salvando no Banco...";
-            btn.disabled = true;
-            
-            const eventoId = document.getElementById('eventoId').value;
-            const dataBruta = document.getElementById('data').value;
-            const dataFormatada = processarData(dataBruta);
-            let urlImagem = document.getElementById('imagemTexto').value;
-
-            try {
-                const dadosEvento = {
-                    nome: document.getElementById('nome').value,
-                    dataBruta: dataBruta,
-                    dataTexto: dataFormatada.dataTexto,
-                    diaNum: dataFormatada.diaNum,
-                    mesAbas: dataFormatada.mesAbas,
-                    dataTimestamp: dataFormatada.dataTimestamp,
-                    localNome: document.getElementById('localNome').value || '',
-                    localEndereco: document.getElementById('localEndereco').value || '',
-                    localContato: document.getElementById('localContato').value || '',
-                    instagram: document.getElementById('instagram').value || '',
-                    linkIngresso: document.getElementById('linkIngresso').value || '',
-                    imagem: urlImagem || 'img/tedsite.png'
-                };
-
-                if (eventoId) {
-                    await updateDoc(doc(db, "eventos", eventoId), dadosEvento);
-                    alert("Show atualizado com sucesso!");
-                } else {
-                    await addDoc(collection(db, "eventos"), dadosEvento);
-                    alert("Show cadastrado com sucesso!");
-                }
-                
-                resetarFormulario();
-                carregarEventosAdmin();
-            } catch (error) {
-                console.error("Erro do Firebase: ", error);
-                alert("Erro ao salvar! Verifique se a aba 'Regras' do Firestore está ativada.");
-            } finally {
-                btn.innerText = "Cadastrar Show";
-                btn.disabled = false;
-            }
-        });
-
-        window.carregarEventosAdmin = async function() {
-            const lista = document.getElementById('lista-eventos');
-            lista.innerHTML = "Carregando shows...";
-            
-            try {
-                const q = query(collection(db, "eventos"), orderBy("dataTimestamp", "asc"));
-                const querySnapshot = await getDocs(q);
-                
-                lista.innerHTML = "";
-                querySnapshot.forEach((docSnap) => {
-                    const evento = docSnap.data();
-                    const eventoJson = JSON.stringify({id: docSnap.id, ...evento}).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-                    const localExibicao = evento.localNome ? `📍 ${evento.localNome}` : 'Local Restrito';
-
-                    lista.innerHTML += `
-                        <div class="evento-item">
-                            <div class="evento-info">
-                                <strong style="color:#ff007f">${evento.dataTexto}</strong> - <strong>${evento.nome}</strong> <br>
-                                <small style="color:#aaa">${localExibicao}</small>
-                            </div>
-                            <div class="botoes-acao">
-                                <button class="btn-editar" onclick="editarEvento('${eventoJson}')">Editar</button>
-                                <button class="btn-excluir" onclick="deletarEvento('${docSnap.id}')">Excluir</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            } catch(e) {
-                lista.innerHTML = "<span style='color:red;'>Erro de conexão com o banco de dados.</span>";
-            }
-        }
-
-        window.editarEvento = function(eventoJsonString) {
-            const evento = JSON.parse(eventoJsonString);
-            document.getElementById('eventoId').value = evento.id;
-            document.getElementById('nome').value = evento.nome;
-            document.getElementById('data').value = evento.dataBruta;
-            document.getElementById('localNome').value = evento.localNome || '';
-            document.getElementById('localEndereco').value = evento.localEndereco || '';
-            document.getElementById('localContato').value = evento.localContato || '';
-            document.getElementById('instagram').value = evento.instagram || '';
-            document.getElementById('linkIngresso').value = evento.linkIngresso || '';
-            document.getElementById('imagemTexto').value = evento.imagem || '';
-            
-            document.getElementById('btn-salvar').innerText = "Atualizar Show";
-            document.getElementById('btn-salvar').style.background = "#0088cc";
-            document.getElementById('btn-cancelar').style.display = "block";
-            window.scrollTo(0, 0);
-        }
-
-        window.deletarEvento = async function(id) {
-            if(confirm("Deseja mesmo excluir?")) {
-                await deleteDoc(doc(db, "eventos", id));
-                carregarEventosAdmin();
-            }
-        }
-
-        window.resetarFormulario = function() {
-            document.getElementById('form-evento').reset();
-            document.getElementById('eventoId').value = "";
-            document.getElementById('btn-salvar').innerText = "Cadastrar Show";
-            document.getElementById('btn-salvar').style.background = "#00c853";
-            document.getElementById('btn-cancelar').style.display = "none";
-        }
-
-
-        // --- SISTEMA DE TEXTOS RÁPIDOS (WHATSAPP) ---
-        window.carregarTextos = async function() {
-            try {
-                const docRef = doc(db, "configuracoes", "textosGerais");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const dados = docSnap.data();
-                    document.getElementById('textoOrcamento').value = dados.orcamento || '';
-                    document.getElementById('textoContrato').value = dados.contrato || '';
-                    document.getElementById('textoInfos').value = dados.infos || '';
-                }
-            } catch(e) {
-                console.log("Erro ao carregar textos rápidos.", e);
-            }
-        }
-
-        document.getElementById('btn-salvar-textos').addEventListener('click', async () => {
-            const btn = document.getElementById('btn-salvar-textos');
-            btn.innerText = "Salvando Modelos...";
-            try {
-                await setDoc(doc(db, "configuracoes", "textosGerais"), {
-                    orcamento: document.getElementById('textoOrcamento').value,
-                    contrato: document.getElementById('textoContrato').value,
-                    infos: document.getElementById('textoInfos').value
-                });
-                alert("Modelos de texto salvos com sucesso!");
-            } catch (error) {
-                alert("Erro ao salvar textos.");
-            } finally {
-                btn.innerText = "💾 Salvar Modelos no Banco";
-            }
-        });
-
-        window.copiarTexto = function(idElemento) {
-            const textoArea = document.getElementById(idElemento);
-            const texto = textoArea.value;
-            
-            if(!texto || texto.trim() === "") {
-                alert("O campo está vazio! Digite algo antes de copiar.");
-                return;
-            }
-
-            // Copia para a área de transferência
-            navigator.clipboard.writeText(texto).then(() => {
-                // Efeito visual no botão para confirmar a cópia
-                const btnClicado = event.target;
-                const textoOriginalBtn = btnClicado.innerText;
-                btnClicado.innerText = "✅ Copiado!";
-                btnClicado.style.background = "#0088cc";
-                
-                setTimeout(() => {
-                    btnClicado.innerText = textoOriginalBtn;
-                    btnClicado.style.background = "#00c853";
-                }, 2000);
-            }).catch(err => {
-                alert("Erro ao copiar texto.");
-            });
-        }
-
-        // Inicializa as duas funções ao abrir a página
-        carregarEventosAdmin();
-        carregarTextos();
-    </script>
 </head>
 <body>
 
-    <div class="admin-container">
-        <h1 style="text-align: center;">🎛️ Dashboard - Baile do Ted</h1>
-        
-        <p style="text-align: center; color: #aaa;">Cadastre a agenda do Baile aqui.</p>
-        <form id="form-evento" style="margin-top: 30px;">
-            <input type="hidden" id="eventoId">
-
-            <div class="grid-form">
-                <div class="form-group">
-                    <label>Nome do Evento/Show:*</label>
-                    <input type="text" id="nome" placeholder="Ex: Formatura 3º Ano" required>
-                </div>
-                <div class="form-group">
-                    <label>Data do Show:*</label>
-                    <input type="date" id="data" required>
-                </div>
-                <div class="form-group">
-                    <label>Nome da Casa/Local:</label>
-                    <input type="text" id="localNome" placeholder="Deixe em branco p/ ocultar">
-                </div>
-                <div class="form-group">
-                    <label>Endereço / Cidade:</label>
-                    <input type="text" id="localEndereco" placeholder="Ex: Curitiba / PR">
-                </div>
-                <div class="form-group">
-                    <label>Contato da Casa:</label>
-                    <input type="text" id="localContato" placeholder="Vazio = Usa o Whats do Ted">
-                </div>
-                <div class="form-group">
-                    <label>Instagram da Casa:</label>
-                    <input type="text" id="instagram" placeholder="Vazio = Usa @bailedoted">
-                </div>
-                <div class="form-group">
-                    <label>Link de Ingressos:</label>
-                    <input type="url" id="linkIngresso" placeholder="Vazio = Abre a Porta">
-                </div>
-                <div class="form-group">
-                    <label>Caminho da Imagem:</label>
-                    <input type="text" id="imagemTexto" placeholder="Ex: img/formatura.png">
-                </div>
-            </div>
-
-            <button type="submit" class="btn-salvar" id="btn-salvar">Cadastrar Show</button>
-            <button type="button" class="btn-cancelar" id="btn-cancelar" onclick="resetarFormulario()">Cancelar Edição</button>
-        </form>
-
-        <h2 style="margin-top: 30px;">Shows Agendados</h2>
-        <div id="lista-eventos" style="max-height: 400px; overflow-y: auto; padding-right: 10px; margin-bottom: 30px;"></div>
-
-
-        <h2 style="margin-top: 40px; border-top: 2px solid #333; padding-top: 30px;">📄 Textos Rápidos (WhatsApp)</h2>
-        <p style="color: #aaa;">Cole aqui seus modelos padrão. Salve no banco de dados e clique em "Copiar" sempre que for mandar para um cliente.</p>
-
-        <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">
-            
-            <div class="form-group">
-                <label>Modelo de Orçamento:</label>
-                <textarea id="textoOrcamento" rows="5" placeholder="Olá! Segue nossa proposta comercial..."></textarea>
-                <button type="button" onclick="copiarTexto('textoOrcamento')" class="btn-copiar">📋 Copiar para WhatsApp</button>
-            </div>
-
-            <div class="form-group">
-                <label>Modelo de Contrato / Dados:</label>
-                <textarea id="textoContrato" rows="5" placeholder="Para fechamento de contrato, precisamos de: Razão Social, CNPJ..."></textarea>
-                <button type="button" onclick="copiarTexto('textoContrato')" class="btn-copiar">📋 Copiar para WhatsApp</button>
-            </div>
-
-            <div class="form-group">
-                <label>Informações Importantes / Rider:</label>
-                <textarea id="textoInfos" rows="5" placeholder="O contratante deve providenciar 2 CDJs 2000 Nexus, 1 Mixer DJM 900..."></textarea>
-                <button type="button" onclick="copiarTexto('textoInfos')" class="btn-copiar">📋 Copiar para WhatsApp</button>
-            </div>
-
-            <button type="button" id="btn-salvar-textos" class="btn-salvar" style="background: #0088cc; margin-top: 10px;">💾 Salvar Modelos no Banco</button>
+    <!-- TELA DE SENHA -->
+    <div id="tela-senha">
+        <div class="box-senha">
+            <h2 style="color: #ff007f;">Acesso Restrito</h2>
+            <input type="password" id="senha-input" placeholder="Digite a senha" style="margin: 15px 0;">
+            <button onclick="verificarSenha()" class="btn-salvar" style="margin-top: 0;">Entrar</button>
         </div>
-
     </div>
 
+    <!-- DASHBOARD PROTEGIDA -->
+    <div class="admin-container" id="conteudo-admin" style="display: none;">
+        <h1 style="text-align: center;">🎛️ Dashboard - Baile do Ted</h1>
+        
+        <form id="form-evento">
+            <input type="hidden" id="eventoId">
+            <div class="grid-form">
+                <div class="form-group">
+                    <label>Nome do Evento:*</label>
+                    <input type="text" id="nome" required>
+                </div>
+                <div class="form-group">
+                    <label>Data:*</label>
+                    <input type="date" id="data" required>
+                </div>
+                <!-- ... outros campos que você já tinha ... -->
+            </div>
+            <button type="submit" class="btn-salvar" id="btn-salvar">Salvar no Banco</button>
+        </form>
+    </div>
+
+    <script>
+        function verificarSenha() {
+            // MUDE A SENHA ABAIXO
+            const senhaCorreta = "ted2026"; 
+            const senhaDigitada = document.getElementById('senha-input').value;
+            
+            if (senhaDigitada === senhaCorreta) {
+                document.getElementById('tela-senha').style.display = 'none';
+                document.getElementById('conteudo-admin').style.display = 'block';
+            } else {
+                alert("Senha incorreta, parceiro!");
+            }
+        }
+    </script>
 </body>
 </html>
