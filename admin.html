@@ -118,6 +118,7 @@
                 <label>Modelo de Contrato:</label>
                 <textarea id="textoContrato" rows="5"></textarea>
                 <button type="button" onclick="copiarTexto('textoContrato')" class="btn-copiar">📋 Copiar</button>
+                <button type="button" onclick="inserirModeloContratoComVariaveis()" class="btn-copiar" style="background: #ff9800; color: #111; margin-left: 8px;">🔄 Usar modelo com variáveis</button>
             </div>
             <div class="form-group">
                 <label>Informações Importantes:</label>
@@ -138,8 +139,6 @@
                 <code>{{cliente_nome}}</code>
                 <code>{{cliente_cpf_cnpj}}</code>
                 <code>{{cliente_rg_ie}}</code>
-                <code>{{cliente_endereco}}</code>
-                <code>{{cliente_cidade_uf}}</code>
                 <code>{{cliente_telefone}}</code>
                 <code>{{cliente_email}}</code>
                 <code>{{evento_nome}}</code>
@@ -148,7 +147,9 @@
                 <code>{{evento_horario}}</code>
                 <code>{{valor_total}}</code>
                 <code>{{valor_sinal}}</code>
+                <code>{{valor_sinal_percentual}}</code>
                 <code>{{valor_restante}}</code>
+                <code>{{valor_restante_percentual}}</code>
                 <code>{{forma_pagamento}}</code>
                 <code>{{observacoes}}</code>
                 <code>{{data_hoje}}</code>
@@ -177,14 +178,6 @@
                         <input type="email" id="clienteEmail" placeholder="cliente@email.com">
                     </div>
                     <div class="form-group">
-                        <label>Endereço Completo:</label>
-                        <input type="text" id="clienteEndereco" placeholder="Rua, número, bairro">
-                    </div>
-                    <div class="form-group">
-                        <label>Cidade / UF:</label>
-                        <input type="text" id="clienteCidadeUf" placeholder="Ex: Curitiba / PR">
-                    </div>
-                    <div class="form-group">
                         <label>Nome do Evento / Show:*</label>
                         <input type="text" id="contratoEventoNome" placeholder="Ex: Formatura 3º Ano" required>
                     </div>
@@ -197,16 +190,20 @@
                         <input type="text" id="contratoEventoHorario" placeholder="Ex: 22h às 02h">
                     </div>
                     <div class="form-group">
-                        <label>Local do Evento:</label>
-                        <input type="text" id="contratoEventoLocal" placeholder="Nome da casa / endereço">
+                        <label>Local / Endereço do Evento:</label>
+                        <input type="text" id="contratoEventoLocal" placeholder="Ex: Nome da casa, rua, número, cidade/UF">
                     </div>
                     <div class="form-group">
-                        <label>Valor Total:</label>
-                        <input type="text" id="contratoValorTotal" placeholder="Ex: 2500,00">
+                        <label>Valor Total:*</label>
+                        <input type="text" id="contratoValorTotal" placeholder="Ex: 2500,00" required>
                     </div>
                     <div class="form-group">
-                        <label>Valor do Sinal:</label>
-                        <input type="text" id="contratoValorSinal" placeholder="Ex: 500,00">
+                        <label>Valor do Sinal - 10% automático:</label>
+                        <input type="text" id="contratoValorSinal" placeholder="Calculado automaticamente" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor Restante - 90% automático:</label>
+                        <input type="text" id="contratoValorRestante" placeholder="Calculado automaticamente" readonly>
                     </div>
                     <div class="form-group">
                         <label>Forma de Pagamento:</label>
@@ -332,8 +329,10 @@
             if (snap.exists()) {
                 const d = snap.data();
                 document.getElementById('textoOrcamento').value = d.orcamento || '';
-                document.getElementById('textoContrato').value = d.contrato || '';
+                document.getElementById('textoContrato').value = d.contrato || MODELO_PADRAO_CONTRATO;
                 document.getElementById('textoInfos').value = d.infos || '';
+            } else {
+                document.getElementById('textoContrato').value = MODELO_PADRAO_CONTRATO;
             }
         }
         document.getElementById('btn-salvar-textos').onclick = async () => {
@@ -349,17 +348,23 @@
 
         const MODELO_PADRAO_CONTRATO = `CONTRATO DE APRESENTAÇÃO ARTÍSTICA
 
-CONTRATANTE: {{cliente_nome}}, inscrito(a) sob CPF/CNPJ nº {{cliente_cpf_cnpj}}, RG/IE {{cliente_rg_ie}}, residente/sediado(a) em {{cliente_endereco}}, {{cliente_cidade_uf}}, telefone {{cliente_telefone}}, e-mail {{cliente_email}}.
+CONTRATANTE: {{cliente_nome}}, inscrito(a) sob CPF/CNPJ nº {{cliente_cpf_cnpj}}, RG/IE {{cliente_rg_ie}}, telefone/WhatsApp {{cliente_telefone}}, e-mail {{cliente_email}}.
 
 CONTRATADO: BAILE DO TED.
 
-OBJETO DO CONTRATO:
-O presente contrato tem como objeto a apresentação artística no evento {{evento_nome}}, que será realizado em {{evento_data}}, no local {{evento_local}}, com horário previsto de {{evento_horario}}.
+CLÁUSULA 1ª - OBJETO DO CONTRATO
+O presente contrato tem como objeto a apresentação artística do BAILE DO TED no evento {{evento_nome}}, que será realizado em {{evento_data}}, no local/endereço {{evento_local}}, com horário previsto de {{evento_horario}}.
 
-VALORES E PAGAMENTO:
-O valor total combinado é de {{valor_total}}. O valor de sinal/entrada é de {{valor_sinal}}, restando o valor de {{valor_restante}}, conforme forma de pagamento: {{forma_pagamento}}.
+CLÁUSULA 2ª - VALOR TOTAL E SINAL
+O valor total combinado para a contratação é de {{valor_total}}. Para reserva da data, o CONTRATANTE deverá pagar o sinal correspondente a {{valor_sinal_percentual}} do valor total, equivalente a {{valor_sinal}}.
 
-OBSERVAÇÕES:
+CLÁUSULA 3ª - VALOR RESTANTE
+Após o pagamento do sinal, ficará pendente o valor restante correspondente a {{valor_restante_percentual}} do valor total, equivalente a {{valor_restante}}, que deverá ser pago conforme combinado entre as partes.
+
+CLÁUSULA 4ª - FORMA DE PAGAMENTO
+A forma de pagamento combinada será: {{forma_pagamento}}.
+
+CLÁUSULA 5ª - OBSERVAÇÕES E COMBINADOS
 {{observacoes}}
 
 E por estarem de acordo, as partes assinam o presente contrato.
@@ -371,6 +376,13 @@ CONTRATANTE
 
 ____________________________________
 BAILE DO TED`;
+
+        window.inserirModeloContratoComVariaveis = function() {
+            if (confirm("Isso vai substituir o texto atual do campo Modelo de Contrato pelo modelo com variáveis. Continuar?")) {
+                document.getElementById("textoContrato").value = MODELO_PADRAO_CONTRATO;
+                alert("Modelo com variáveis aplicado. Depois clique em Salvar Modelos no Banco para deixar salvo.");
+            }
+        }
 
         function formatarDataBr(dataISO) {
             if (!dataISO) return "";
@@ -412,26 +424,42 @@ BAILE DO TED`;
                 .toLowerCase();
         }
 
-        function obterDadosContrato() {
+        function formatarMoedaNumero(numero) {
+            if (!numero) return "";
+            return numero.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+        }
+
+        function atualizarValoresAutomaticos() {
             const valorTotalNum = moedaParaNumero(document.getElementById("contratoValorTotal").value);
-            const valorSinalNum = moedaParaNumero(document.getElementById("contratoValorSinal").value);
-            const valorRestanteNum = Math.max(valorTotalNum - valorSinalNum, 0);
+            const valorSinalNum = valorTotalNum * 0.10;
+            const valorRestanteNum = valorTotalNum * 0.90;
+
+            document.getElementById("contratoValorSinal").value = valorTotalNum ? formatarMoedaNumero(valorSinalNum) : "";
+            document.getElementById("contratoValorRestante").value = valorTotalNum ? formatarMoedaNumero(valorRestanteNum) : "";
+        }
+
+        function obterDadosContrato() {
+            atualizarValoresAutomaticos();
+
+            const valorTotalNum = moedaParaNumero(document.getElementById("contratoValorTotal").value);
+            const valorSinalNum = valorTotalNum * 0.10;
+            const valorRestanteNum = valorTotalNum * 0.90;
 
             return {
                 cliente_nome: document.getElementById("clienteNome").value.trim(),
                 cliente_cpf_cnpj: document.getElementById("clienteCpfCnpj").value.trim(),
                 cliente_rg_ie: document.getElementById("clienteRgIe").value.trim(),
-                cliente_endereco: document.getElementById("clienteEndereco").value.trim(),
-                cliente_cidade_uf: document.getElementById("clienteCidadeUf").value.trim(),
                 cliente_telefone: document.getElementById("clienteTelefone").value.trim(),
                 cliente_email: document.getElementById("clienteEmail").value.trim(),
                 evento_nome: document.getElementById("contratoEventoNome").value.trim(),
                 evento_data: formatarDataBr(document.getElementById("contratoEventoData").value),
                 evento_local: document.getElementById("contratoEventoLocal").value.trim(),
                 evento_horario: document.getElementById("contratoEventoHorario").value.trim(),
-                valor_total: formatarMoedaCampo(document.getElementById("contratoValorTotal").value),
-                valor_sinal: formatarMoedaCampo(document.getElementById("contratoValorSinal").value),
-                valor_restante: valorRestanteNum.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+                valor_total: formatarMoedaNumero(valorTotalNum),
+                valor_sinal: formatarMoedaNumero(valorSinalNum),
+                valor_sinal_percentual: "10%",
+                valor_restante: formatarMoedaNumero(valorRestanteNum),
+                valor_restante_percentual: "90%",
                 forma_pagamento: document.getElementById("contratoFormaPagamento").value.trim(),
                 observacoes: document.getElementById("contratoObservacoes").value.trim(),
                 data_hoje: new Date().toLocaleDateString("pt-BR")
@@ -514,8 +542,8 @@ BAILE DO TED`;
             const dados = obterDadosContrato();
             const contratoTexto = montarTextoContrato();
 
-            if (!dados.cliente_nome || !dados.cliente_cpf_cnpj || !dados.evento_nome || !dados.evento_data) {
-                alert("Preencha pelo menos nome do cliente, CPF/CNPJ, evento e data.");
+            if (!dados.cliente_nome || !dados.cliente_cpf_cnpj || !dados.evento_nome || !dados.evento_data || !dados.valor_total) {
+                alert("Preencha pelo menos nome do cliente, CPF/CNPJ, evento, data e valor total.");
                 return;
             }
 
@@ -530,6 +558,7 @@ BAILE DO TED`;
 
         window.limparContrato = function() {
             document.getElementById("form-contrato").reset();
+            atualizarValoresAutomaticos();
             document.getElementById("previewContrato").innerHTML = `
                 <div id="areaContratoPdf">
                     <h2>Prévia do contrato</h2>
@@ -538,8 +567,16 @@ BAILE DO TED`;
             `;
         }
 
+        document.getElementById("contratoValorTotal").addEventListener("input", atualizarValoresAutomaticos);
+        document.getElementById("contratoValorTotal").addEventListener("blur", () => {
+            const valorTotalNum = moedaParaNumero(document.getElementById("contratoValorTotal").value);
+            document.getElementById("contratoValorTotal").value = valorTotalNum ? formatarMoedaNumero(valorTotalNum) : "";
+            atualizarValoresAutomaticos();
+        });
+
         carregarEventosAdmin();
         carregarTextos();
+        atualizarValoresAutomaticos();
     </script>
 
     <script>
