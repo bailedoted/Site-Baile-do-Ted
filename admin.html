@@ -42,9 +42,12 @@
         .btn-pdf { background: #ff9800; color: #111; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; }
         .btn-limpar { background: #666; color: #fff; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; }
         .preview-wrapper { background: #222; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-top: 20px; overflow: auto; }
+        .contrato-form-vertical { display: flex; flex-direction: column; gap: 15px; }
+        .contrato-form-vertical .form-group { margin-bottom: 0; }
         #areaContratoPdf { width: 794px; min-height: 1123px; background: #fff; color: #111; padding: 55px; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.55; }
-        #areaContratoPdf h1, #areaContratoPdf h2, #areaContratoPdf h3 { color: #111; text-align: center; }
+        #areaContratoPdf h1, #areaContratoPdf h2, #areaContratoPdf h3 { color: #111; text-align: center; margin-top: 0; }
         #areaContratoPdf p { margin: 0 0 12px 0; }
+        #areaContratoPdf strong { font-weight: 700; }
 
     </style>
 
@@ -116,7 +119,7 @@
             </div>
             <div class="form-group">
                 <label>Modelo de Contrato:</label>
-                <textarea id="textoContrato" rows="5"></textarea>
+                <textarea id="textoContrato" rows="18"></textarea>
                 <button type="button" onclick="copiarTexto('textoContrato')" class="btn-copiar">📋 Copiar</button>
                 <button type="button" onclick="inserirModeloContratoComVariaveis()" class="btn-copiar" style="background: #ff9800; color: #111; margin-left: 8px;">🔄 Usar modelo com variáveis</button>
             </div>
@@ -151,12 +154,13 @@
                 <code>{{valor_restante}}</code>
                 <code>{{valor_restante_percentual}}</code>
                 <code>{{forma_pagamento}}</code>
+                <code>{{opcoes_manuais}}</code>
                 <code>{{observacoes}}</code>
                 <code>{{data_hoje}}</code>
             </div>
 
             <form id="form-contrato">
-                <div class="grid-form">
+                <div class="contrato-form-vertical">
                     <div class="form-group">
                         <label>Nome do Cliente / Contratante:*</label>
                         <input type="text" id="clienteNome" placeholder="Ex: João da Silva" required>
@@ -206,10 +210,14 @@
                         <input type="text" id="contratoValorRestante" placeholder="Calculado automaticamente" readonly>
                     </div>
                     <div class="form-group">
-                        <label>Forma de Pagamento:</label>
-                        <input type="text" id="contratoFormaPagamento" placeholder="Ex: Pix / dinheiro / cartão">
+                        <label>Forma de Pagamento / Opções combinadas:</label>
+                        <input type="text" id="contratoFormaPagamento" placeholder="Ex: Pix, dinheiro, cartão, entrada via Pix e restante no dia do evento">
                     </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
+                    <div class="form-group">
+                        <label>Opções / Combinados manuais:</label>
+                        <textarea id="contratoOpcoesManuais" rows="4" placeholder="Ex: opções escolhidas, serviços inclusos, estrutura, repertório, tempo de apresentação, itens extras..."></textarea>
+                    </div>
+                    <div class="form-group">
                         <label>Observações:</label>
                         <textarea id="contratoObservacoes" rows="4" placeholder="Ex: estrutura, horários, exigências, combinados extras..."></textarea>
                     </div>
@@ -346,36 +354,80 @@
         window.copiarTexto = (id) => { navigator.clipboard.writeText(document.getElementById(id).value); alert("Copiado!"); }
 
 
-        const MODELO_PADRAO_CONTRATO = `CONTRATO DE APRESENTAÇÃO ARTÍSTICA
+        const MODELO_PADRAO_CONTRATO = `CONTRATO DE PRESTAÇÃO DE SERVIÇOS ARTÍSTICOS
 
-CONTRATANTE: {{cliente_nome}}, inscrito(a) sob CPF/CNPJ nº {{cliente_cpf_cnpj}}, RG/IE {{cliente_rg_ie}}, telefone/WhatsApp {{cliente_telefone}}, e-mail {{cliente_email}}.
+Pelo presente instrumento particular, as partes abaixo identificadas firmam o presente contrato de prestação de serviços artísticos, mediante as cláusulas e condições seguintes.
 
-CONTRATADO: BAILE DO TED.
+CONTRATANTE
+Nome/Razão Social: {{cliente_nome}}
+CPF/CNPJ: {{cliente_cpf_cnpj}}
+RG/IE: {{cliente_rg_ie}}
+Telefone/WhatsApp: {{cliente_telefone}}
+E-mail: {{cliente_email}}
 
-CLÁUSULA 1ª - OBJETO DO CONTRATO
-O presente contrato tem como objeto a apresentação artística do BAILE DO TED no evento {{evento_nome}}, que será realizado em {{evento_data}}, no local/endereço {{evento_local}}, com horário previsto de {{evento_horario}}.
+CONTRATADO
+BAILE DO TED, doravante denominado CONTRATADO, responsável pela apresentação artística objeto deste contrato.
 
-CLÁUSULA 2ª - VALOR TOTAL E SINAL
-O valor total combinado para a contratação é de {{valor_total}}. Para reserva da data, o CONTRATANTE deverá pagar o sinal correspondente a {{valor_sinal_percentual}} do valor total, equivalente a {{valor_sinal}}.
+CLÁUSULA 1ª - DO OBJETO
+O presente contrato tem como objeto a contratação do CONTRATADO para realização de apresentação artística/musical no evento denominado **{{evento_nome}}**.
 
-CLÁUSULA 3ª - VALOR RESTANTE
-Após o pagamento do sinal, ficará pendente o valor restante correspondente a {{valor_restante_percentual}} do valor total, equivalente a {{valor_restante}}, que deverá ser pago conforme combinado entre as partes.
+CLÁUSULA 2ª - DOS DADOS DO EVENTO
+Data do evento: **{{evento_data}}**
+Horário do evento: **{{evento_horario}}**
+Local/endereço do evento: **{{evento_local}}**
 
-CLÁUSULA 4ª - FORMA DE PAGAMENTO
-A forma de pagamento combinada será: {{forma_pagamento}}.
+As informações acima são essenciais para a reserva da data e organização da apresentação, devendo qualquer alteração ser comunicada previamente e aceita pelas partes.
 
-CLÁUSULA 5ª - OBSERVAÇÕES E COMBINADOS
-{{observacoes}}
+CLÁUSULA 3ª - DO VALOR CONTRATADO
+O valor total combinado para a contratação é de **{{valor_total}}**.
 
-E por estarem de acordo, as partes assinam o presente contrato.
+Para confirmação e reserva da data, o CONTRATANTE pagará o sinal correspondente a **{{valor_sinal_percentual}}** do valor total, equivalente a **{{valor_sinal}}**.
 
-{{data_hoje}}
+Após o pagamento do sinal, ficará pendente o valor restante correspondente a **{{valor_restante_percentual}}** do valor total, equivalente a **{{valor_restante}}**.
+
+CLÁUSULA 4ª - DA FORMA DE PAGAMENTO
+A forma de pagamento combinada entre as partes será: **{{forma_pagamento}}**.
+
+O pagamento do sinal confirma a reserva da data. O valor restante deverá ser pago conforme combinado entre as partes, respeitando as informações registradas neste contrato.
+
+CLÁUSULA 5ª - DAS OPÇÕES, INCLUSÕES E COMBINADOS MANUAIS
+As opções, inclusões, condições específicas e combinados manuais definidos para este evento são:
+
+**{{opcoes_manuais}}**
+
+CLÁUSULA 6ª - DAS OBRIGAÇÕES DO CONTRATANTE
+O CONTRATANTE se compromete a fornecer as informações corretas sobre o evento, local, horário, estrutura disponível e demais condições necessárias para a realização da apresentação.
+
+O CONTRATANTE também deverá garantir acesso adequado ao local do evento, condições mínimas para montagem e execução da apresentação, bem como cumprir os pagamentos acordados neste instrumento.
+
+CLÁUSULA 7ª - DAS OBRIGAÇÕES DO CONTRATADO
+O CONTRATADO se compromete a comparecer ao local do evento na data e horário combinados, realizando a apresentação artística conforme as condições acordadas entre as partes.
+
+CLÁUSULA 8ª - ALTERAÇÕES, CANCELAMENTOS E REMARCAÇÕES
+Qualquer alteração de data, horário, local ou condições da apresentação deverá ser informada com antecedência e dependerá da disponibilidade do CONTRATADO.
+
+Em caso de cancelamento por parte do CONTRATANTE, o sinal pago para reserva da data poderá não ser devolvido, considerando o bloqueio da agenda e a impossibilidade de venda da mesma data a terceiros.
+
+CLÁUSULA 9ª - OBSERVAÇÕES GERAIS
+**{{observacoes}}**
+
+CLÁUSULA 10ª - DA ACEITAÇÃO
+As partes declaram estar de acordo com todas as condições descritas neste contrato, comprometendo-se ao fiel cumprimento de suas obrigações.
+
+E por estarem justas e contratadas, firmam o presente instrumento para que produza seus efeitos legais.
+
+Data de emissão: {{data_hoje}}
+
 
 ____________________________________
 CONTRATANTE
+{{cliente_nome}}
+
 
 ____________________________________
+CONTRATADO
 BAILE DO TED`;
+
 
         window.inserirModeloContratoComVariaveis = function() {
             if (confirm("Isso vai substituir o texto atual do campo Modelo de Contrato pelo modelo com variáveis. Continuar?")) {
@@ -413,6 +465,12 @@ BAILE DO TED`;
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        }
+
+        function textoContratoParaHtml(texto) {
+            return escapeHtml(texto)
+                .replace(/\*\*([\s\S]*?)\*\*/g, "<strong>$1</strong>")
+                .replace(/\n/g, "<br>");
         }
 
         function slugify(texto) {
@@ -461,6 +519,7 @@ BAILE DO TED`;
                 valor_restante: formatarMoedaNumero(valorRestanteNum),
                 valor_restante_percentual: "90%",
                 forma_pagamento: document.getElementById("contratoFormaPagamento").value.trim(),
+                opcoes_manuais: document.getElementById("contratoOpcoesManuais").value.trim(),
                 observacoes: document.getElementById("contratoObservacoes").value.trim(),
                 data_hoje: new Date().toLocaleDateString("pt-BR")
             };
@@ -490,7 +549,7 @@ BAILE DO TED`;
         window.gerarPreviewContrato = function() {
             const textoFinal = montarTextoContrato();
             const temHtml = /<\/?[a-z][\s\S]*>/i.test(textoFinal);
-            const conteudo = temHtml ? textoFinal : escapeHtml(textoFinal).replace(/\n/g, "<br>");
+            const conteudo = temHtml ? textoFinal : textoContratoParaHtml(textoFinal);
 
             document.getElementById("previewContrato").innerHTML = `
                 <div id="areaContratoPdf">
