@@ -31,7 +31,25 @@
         .btn-excluir { background: #ff0000; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
         .btn-copiar { background: #00c853; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; transition: 0.2s; }
         .btn-copiar:active { transform: scale(0.95); }
+
+        /* GERADOR DE CONTRATO */
+        .contrato-box { margin-top: 40px; border-top: 2px solid #333; padding-top: 30px; }
+        .contrato-ajuda { background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 8px; color: #ddd; font-size: 13px; line-height: 1.5; margin-bottom: 20px; }
+        .contrato-ajuda code { background: #000; color: #00e676; padding: 2px 6px; border-radius: 4px; display: inline-block; margin: 2px; }
+        .contrato-acoes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+        @media(max-width: 768px) { .contrato-acoes { grid-template-columns: 1fr; } }
+        .btn-preview { background: #ff007f; color: #fff; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .btn-pdf { background: #ff9800; color: #111; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .btn-limpar { background: #666; color: #fff; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .preview-wrapper { background: #222; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-top: 20px; overflow: auto; }
+        #areaContratoPdf { width: 794px; min-height: 1123px; background: #fff; color: #111; padding: 55px; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.55; }
+        #areaContratoPdf h1, #areaContratoPdf h2, #areaContratoPdf h3 { color: #111; text-align: center; }
+        #areaContratoPdf p { margin: 0 0 12px 0; }
+
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -108,6 +126,116 @@
             </div>
             <button type="button" id="btn-salvar-textos" class="btn-salvar" style="background: #0088cc; margin-top: 10px;">💾 Salvar Modelos no Banco</button>
         </div>
+
+        <div class="contrato-box">
+            <h2>🧾 Gerador de Contrato em PDF</h2>
+
+            <div class="contrato-ajuda">
+                <strong>Como usar:</strong> no campo <strong>Modelo de Contrato</strong> acima, coloque o contrato usando variáveis.
+                Quando você preencher os dados abaixo, o sistema troca tudo automaticamente e gera o PDF.
+                <br><br>
+                <strong>Variáveis disponíveis:</strong><br>
+                <code>{{cliente_nome}}</code>
+                <code>{{cliente_cpf_cnpj}}</code>
+                <code>{{cliente_rg_ie}}</code>
+                <code>{{cliente_endereco}}</code>
+                <code>{{cliente_cidade_uf}}</code>
+                <code>{{cliente_telefone}}</code>
+                <code>{{cliente_email}}</code>
+                <code>{{evento_nome}}</code>
+                <code>{{evento_data}}</code>
+                <code>{{evento_local}}</code>
+                <code>{{evento_horario}}</code>
+                <code>{{valor_total}}</code>
+                <code>{{valor_sinal}}</code>
+                <code>{{valor_restante}}</code>
+                <code>{{forma_pagamento}}</code>
+                <code>{{observacoes}}</code>
+                <code>{{data_hoje}}</code>
+            </div>
+
+            <form id="form-contrato">
+                <div class="grid-form">
+                    <div class="form-group">
+                        <label>Nome do Cliente / Contratante:*</label>
+                        <input type="text" id="clienteNome" placeholder="Ex: João da Silva" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CPF ou CNPJ:*</label>
+                        <input type="text" id="clienteCpfCnpj" placeholder="Ex: 000.000.000-00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>RG / IE:</label>
+                        <input type="text" id="clienteRgIe" placeholder="Opcional">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone / WhatsApp:</label>
+                        <input type="text" id="clienteTelefone" placeholder="Ex: (41) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail:</label>
+                        <input type="email" id="clienteEmail" placeholder="cliente@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Endereço Completo:</label>
+                        <input type="text" id="clienteEndereco" placeholder="Rua, número, bairro">
+                    </div>
+                    <div class="form-group">
+                        <label>Cidade / UF:</label>
+                        <input type="text" id="clienteCidadeUf" placeholder="Ex: Curitiba / PR">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Evento / Show:*</label>
+                        <input type="text" id="contratoEventoNome" placeholder="Ex: Formatura 3º Ano" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Data do Evento:*</label>
+                        <input type="date" id="contratoEventoData" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Horário do Evento:</label>
+                        <input type="text" id="contratoEventoHorario" placeholder="Ex: 22h às 02h">
+                    </div>
+                    <div class="form-group">
+                        <label>Local do Evento:</label>
+                        <input type="text" id="contratoEventoLocal" placeholder="Nome da casa / endereço">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor Total:</label>
+                        <input type="text" id="contratoValorTotal" placeholder="Ex: 2500,00">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor do Sinal:</label>
+                        <input type="text" id="contratoValorSinal" placeholder="Ex: 500,00">
+                    </div>
+                    <div class="form-group">
+                        <label>Forma de Pagamento:</label>
+                        <input type="text" id="contratoFormaPagamento" placeholder="Ex: Pix / dinheiro / cartão">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Observações:</label>
+                        <textarea id="contratoObservacoes" rows="4" placeholder="Ex: estrutura, horários, exigências, combinados extras..."></textarea>
+                    </div>
+                </div>
+
+                <div class="contrato-acoes">
+                    <button type="button" onclick="gerarPreviewContrato()" class="btn-preview">👀 Gerar Prévia</button>
+                    <button type="button" onclick="gerarPdfContrato()" class="btn-pdf">📄 Baixar PDF</button>
+                    <button type="button" onclick="salvarContratoGerado()" class="btn-salvar" style="margin-top: 0; font-size: 15px;">💾 Salvar Contrato</button>
+                    <button type="button" onclick="limparContrato()" class="btn-limpar">🧹 Limpar</button>
+                </div>
+            </form>
+
+            <div class="preview-wrapper">
+                <div id="previewContrato">
+                    <div id="areaContratoPdf">
+                        <h2>Prévia do contrato</h2>
+                        <p>Preencha os dados acima e clique em <strong>Gerar Prévia</strong>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -217,6 +345,198 @@
             alert("Modelos salvos!");
         }
         window.copiarTexto = (id) => { navigator.clipboard.writeText(document.getElementById(id).value); alert("Copiado!"); }
+
+
+        const MODELO_PADRAO_CONTRATO = `CONTRATO DE APRESENTAÇÃO ARTÍSTICA
+
+CONTRATANTE: {{cliente_nome}}, inscrito(a) sob CPF/CNPJ nº {{cliente_cpf_cnpj}}, RG/IE {{cliente_rg_ie}}, residente/sediado(a) em {{cliente_endereco}}, {{cliente_cidade_uf}}, telefone {{cliente_telefone}}, e-mail {{cliente_email}}.
+
+CONTRATADO: BAILE DO TED.
+
+OBJETO DO CONTRATO:
+O presente contrato tem como objeto a apresentação artística no evento {{evento_nome}}, que será realizado em {{evento_data}}, no local {{evento_local}}, com horário previsto de {{evento_horario}}.
+
+VALORES E PAGAMENTO:
+O valor total combinado é de {{valor_total}}. O valor de sinal/entrada é de {{valor_sinal}}, restando o valor de {{valor_restante}}, conforme forma de pagamento: {{forma_pagamento}}.
+
+OBSERVAÇÕES:
+{{observacoes}}
+
+E por estarem de acordo, as partes assinam o presente contrato.
+
+{{data_hoje}}
+
+____________________________________
+CONTRATANTE
+
+____________________________________
+BAILE DO TED`;
+
+        function formatarDataBr(dataISO) {
+            if (!dataISO) return "";
+            const data = new Date(dataISO + "T12:00:00");
+            return data.toLocaleDateString("pt-BR");
+        }
+
+        function moedaParaNumero(valor) {
+            const limpo = String(valor || "")
+                .replace(/\s/g, "")
+                .replace(/R\$/gi, "")
+                .replace(/\./g, "")
+                .replace(",", ".")
+                .replace(/[^\d.-]/g, "");
+            return Number(limpo) || 0;
+        }
+
+        function formatarMoedaCampo(valor) {
+            if (!String(valor || "").trim()) return "";
+            const numero = moedaParaNumero(valor);
+            return numero.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+        }
+
+        function escapeHtml(texto) {
+            return String(texto || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function slugify(texto) {
+            return String(texto || "contrato")
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-zA-Z0-9]+/g, "-")
+                .replace(/(^-|-$)/g, "")
+                .toLowerCase();
+        }
+
+        function obterDadosContrato() {
+            const valorTotalNum = moedaParaNumero(document.getElementById("contratoValorTotal").value);
+            const valorSinalNum = moedaParaNumero(document.getElementById("contratoValorSinal").value);
+            const valorRestanteNum = Math.max(valorTotalNum - valorSinalNum, 0);
+
+            return {
+                cliente_nome: document.getElementById("clienteNome").value.trim(),
+                cliente_cpf_cnpj: document.getElementById("clienteCpfCnpj").value.trim(),
+                cliente_rg_ie: document.getElementById("clienteRgIe").value.trim(),
+                cliente_endereco: document.getElementById("clienteEndereco").value.trim(),
+                cliente_cidade_uf: document.getElementById("clienteCidadeUf").value.trim(),
+                cliente_telefone: document.getElementById("clienteTelefone").value.trim(),
+                cliente_email: document.getElementById("clienteEmail").value.trim(),
+                evento_nome: document.getElementById("contratoEventoNome").value.trim(),
+                evento_data: formatarDataBr(document.getElementById("contratoEventoData").value),
+                evento_local: document.getElementById("contratoEventoLocal").value.trim(),
+                evento_horario: document.getElementById("contratoEventoHorario").value.trim(),
+                valor_total: formatarMoedaCampo(document.getElementById("contratoValorTotal").value),
+                valor_sinal: formatarMoedaCampo(document.getElementById("contratoValorSinal").value),
+                valor_restante: valorRestanteNum.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+                forma_pagamento: document.getElementById("contratoFormaPagamento").value.trim(),
+                observacoes: document.getElementById("contratoObservacoes").value.trim(),
+                data_hoje: new Date().toLocaleDateString("pt-BR")
+            };
+        }
+
+        function montarTextoContrato() {
+            const dados = obterDadosContrato();
+            let modelo = document.getElementById("textoContrato").value.trim() || MODELO_PADRAO_CONTRATO;
+
+            Object.entries(dados).forEach(([chave, valor]) => {
+                const marcadores = [
+                    `{{${chave}}}`,
+                    `{${chave}}`,
+                    `[[${chave}]]`,
+                    `{{${chave.toUpperCase()}}}`,
+                    `{${chave.toUpperCase()}}`,
+                    `[[${chave.toUpperCase()}]]`
+                ];
+                marcadores.forEach((marcador) => {
+                    modelo = modelo.split(marcador).join(valor || "");
+                });
+            });
+
+            return modelo;
+        }
+
+        window.gerarPreviewContrato = function() {
+            const textoFinal = montarTextoContrato();
+            const temHtml = /<\/?[a-z][\s\S]*>/i.test(textoFinal);
+            const conteudo = temHtml ? textoFinal : escapeHtml(textoFinal).replace(/\n/g, "<br>");
+
+            document.getElementById("previewContrato").innerHTML = `
+                <div id="areaContratoPdf">
+                    ${conteudo}
+                </div>
+            `;
+        }
+
+        window.gerarPdfContrato = async function() {
+            gerarPreviewContrato();
+
+            const area = document.getElementById("areaContratoPdf");
+            const nomeCliente = document.getElementById("clienteNome").value.trim() || "cliente";
+            const nomeEvento = document.getElementById("contratoEventoNome").value.trim() || "evento";
+            const nomeArquivo = `contrato-${slugify(nomeCliente)}-${slugify(nomeEvento)}.pdf`;
+
+            const canvas = await html2canvas(area, {
+                scale: 2,
+                backgroundColor: "#ffffff",
+                useCORS: true
+            });
+
+            const imgData = canvas.toDataURL("image/png");
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF("p", "mm", "a4");
+
+            const margem = 10;
+            const larguraPdf = 210 - margem * 2;
+            const alturaPagina = 297 - margem * 2;
+            const alturaImg = (canvas.height * larguraPdf) / canvas.width;
+
+            let alturaRestante = alturaImg;
+            let posicaoY = margem;
+
+            pdf.addImage(imgData, "PNG", margem, posicaoY, larguraPdf, alturaImg);
+            alturaRestante -= alturaPagina;
+
+            while (alturaRestante > 0) {
+                pdf.addPage();
+                posicaoY = margem - (alturaImg - alturaRestante);
+                pdf.addImage(imgData, "PNG", margem, posicaoY, larguraPdf, alturaImg);
+                alturaRestante -= alturaPagina;
+            }
+
+            pdf.save(nomeArquivo);
+        }
+
+        window.salvarContratoGerado = async function() {
+            const dados = obterDadosContrato();
+            const contratoTexto = montarTextoContrato();
+
+            if (!dados.cliente_nome || !dados.cliente_cpf_cnpj || !dados.evento_nome || !dados.evento_data) {
+                alert("Preencha pelo menos nome do cliente, CPF/CNPJ, evento e data.");
+                return;
+            }
+
+            await addDoc(collection(db, "contratosGerados"), {
+                ...dados,
+                contratoTexto,
+                criadoEm: Date.now()
+            });
+
+            alert("Contrato salvo no banco!");
+        }
+
+        window.limparContrato = function() {
+            document.getElementById("form-contrato").reset();
+            document.getElementById("previewContrato").innerHTML = `
+                <div id="areaContratoPdf">
+                    <h2>Prévia do contrato</h2>
+                    <p>Preencha os dados acima e clique em <strong>Gerar Prévia</strong>.</p>
+                </div>
+            `;
+        }
 
         carregarEventosAdmin();
         carregarTextos();
