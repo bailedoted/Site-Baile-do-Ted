@@ -433,8 +433,16 @@
 
                         <div class="form-section-title">2. Dados do evento</div>
                         <div class="form-group">
-                            <label>Nome do Evento / Show:</label>
-                            <input type="text" id="contratoEventoNome" placeholder="Ex: Formatura 3º Ano">
+                            <label>Nome do Evento / Show:*</label>
+                            <input type="text" id="contratoEventoNome" placeholder="Ex: Formatura 3º Ano" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome da Casa / Estabelecimento:</label>
+                            <input type="text" id="contratoCasaNome" placeholder="Ex: Shed Curitiba, Clube X, Espaço Y">
+                        </div>
+                        <div class="form-group">
+                            <label>Instagram da Casa:</label>
+                            <input type="text" id="contratoCasaInstagram" placeholder="Ex: @nomedacasa">
                         </div>
                         <div class="form-group">
                             <label>Data do Evento:*</label>
@@ -445,8 +453,9 @@
                             <input type="text" id="contratoEventoHorario" placeholder="Ex: 23h30" required>
                         </div>
                         <div class="form-group">
-                            <label>Local / Endereço do Evento:*</label>
-                            <input type="text" id="contratoEventoLocal" placeholder="Ex: Nome da casa, rua, número, cidade/UF" required>
+                            <label>Endereço / Local do Evento:*</label>
+                            <input type="text" id="contratoEventoLocal" placeholder="Ex: Rua, número, bairro, cidade/UF" required>
+                            <span class="hint">O nome da casa fica no campo acima; aqui entra o endereço/local completo.</span>
                         </div>
                         <div class="form-group">
                             <label>Duração da Apresentação:</label>
@@ -667,10 +676,13 @@ Fone/WhatsApp: **{{cliente_telefone}}**
 E-mail: **{{cliente_email}}**
 
 DADOS DO EVENTO
+Nome do Evento / Show: **{{evento_nome}}**
 Atração: Baile do Ted
 Data do Evento: **{{evento_data}}**
-Local do Evento: **{{evento_local}}**
 Horário de Início do Show: **{{evento_horario}}**
+Nome da Casa / Local do Evento: **{{evento_casa_nome}}**
+Endereço / Local do Evento: **{{evento_endereco}}**
+Instagram da Casa: **{{evento_casa_instagram}}**
 Duração da Apresentação: **{{duracao_apresentacao}}**
 
 VALOR E FORMA DE PAGAMENTO
@@ -869,6 +881,13 @@ CONTRATANTE (CNPJ/CPF: **{{cliente_cpf_cnpj}}**)`;
             return maiusculo(valor || padrao);
         }
 
+        function instagramCampo(id) {
+            const valor = document.getElementById(id).value.trim();
+            if (!valor) return "NÃO INFORMADO";
+            const limpo = valor.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/$/, "").trim();
+            return maiusculo(limpo.startsWith("@") ? limpo : `@${limpo}`);
+        }
+
         function atualizarValoresAutomaticos() {
             const valorTotalNum = moedaParaNumero(document.getElementById("contratoValorTotal").value);
             const valorSinalNum = valorTotalNum * 0.10;
@@ -910,6 +929,9 @@ CONTRATANTE (CNPJ/CPF: **{{cliente_cpf_cnpj}}**)`;
                 cliente_email: valorCampo("clienteEmail"),
                 evento_nome: valorCampo("contratoEventoNome"),
                 evento_data: maiusculo(formatarDataEventoCompleta(document.getElementById("contratoEventoData").value) || "NÃO INFORMADO"),
+                evento_casa_nome: valorCampo("contratoCasaNome"),
+                evento_casa_instagram: instagramCampo("contratoCasaInstagram"),
+                evento_endereco: valorCampo("contratoEventoLocal"),
                 evento_local: valorCampo("contratoEventoLocal"),
                 evento_horario: valorCampo("contratoEventoHorario"),
                 duracao_apresentacao: valorCampo("contratoDuracao", "01H30 (UMA HORA E TRINTA MINUTOS)"),
@@ -999,8 +1021,8 @@ CONTRATANTE (CNPJ/CPF: **{{cliente_cpf_cnpj}}**)`;
             const contratoTexto = montarTextoContrato();
             const valorTotalNum = moedaParaNumero(document.getElementById("contratoValorTotal").value);
 
-            if (!document.getElementById("clienteNome").value.trim() || !document.getElementById("clienteCpfCnpj").value.trim() || !document.getElementById("contratoEventoData").value || !valorTotalNum) {
-                alert("Preencha pelo menos nome do cliente, CPF/CNPJ, data do evento e valor total.");
+            if (!document.getElementById("clienteNome").value.trim() || !document.getElementById("clienteCpfCnpj").value.trim() || !document.getElementById("contratoEventoNome").value.trim() || !document.getElementById("contratoEventoData").value || !document.getElementById("contratoEventoHorario").value.trim() || !document.getElementById("contratoEventoLocal").value.trim() || !valorTotalNum) {
+                alert("Preencha pelo menos nome do cliente, CPF/CNPJ, nome do evento, data, horário, endereço/local do evento e valor total.");
                 return;
             }
 
@@ -1029,7 +1051,7 @@ CONTRATANTE (CNPJ/CPF: **{{cliente_cpf_cnpj}}**)`;
 
         [
             "clienteNome", "clienteCpfCnpj", "clienteRgIe", "clienteRepresentante", "clienteRepresentanteCpf",
-            "clienteTelefone", "clienteEmail", "contratoEventoNome", "contratoEventoData", "contratoEventoHorario",
+            "clienteTelefone", "clienteEmail", "contratoEventoNome", "contratoCasaNome", "contratoCasaInstagram", "contratoEventoData", "contratoEventoHorario",
             "contratoEventoLocal", "contratoDuracao", "contratoFormaPagamento", "contratoOpcoesManuais", "contratoObservacoes"
         ].forEach((id) => {
             const el = document.getElementById(id);
