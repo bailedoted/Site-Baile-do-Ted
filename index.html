@@ -89,6 +89,137 @@
         .social-circle-btn.tiktok:hover { background: #00f2fe; color: #000; border-color: #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.5); }
         .social-circle-btn.yt:hover { background: #ff0000; border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); }
 
+
+        /* Carrossel de Comentários / Prints */
+        .comentarios-carousel-section {
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at top, rgba(255, 0, 127, 0.18), transparent 35%), #050505;
+            border-top: 1px solid #171717;
+            border-bottom: 1px solid #171717;
+        }
+
+        .comentarios-intro {
+            max-width: 760px;
+            margin: 0 auto 35px auto;
+            text-align: center;
+            color: #aaa;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .comentarios-carousel-wrap {
+            position: relative;
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 58px;
+        }
+
+        .comentarios-carousel-viewport {
+            overflow: hidden;
+            width: 100%;
+            border-radius: 22px;
+        }
+
+        .comentarios-carousel-track {
+            display: flex;
+            gap: 22px;
+            transition: transform 0.55s cubic-bezier(.2,.75,.2,1);
+            will-change: transform;
+        }
+
+        .comentario-slide {
+            flex: 0 0 calc((100% - 44px) / 3);
+            min-width: 0;
+        }
+
+        .comentario-card {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.55);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .comentario-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255,0,127,0.65);
+            box-shadow: 0 20px 55px rgba(255,0,127,0.18);
+        }
+
+        .comentario-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .comentarios-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.16);
+            background: rgba(12,12,12,0.82);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 3;
+            font-size: 1.7rem;
+            line-height: 1;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .comentarios-nav:hover {
+            background: linear-gradient(90deg, #ff007f, #b300ff);
+            border-color: transparent;
+            box-shadow: 0 0 25px rgba(255,0,127,0.35);
+        }
+
+        .comentarios-nav.prev { left: 0; }
+        .comentarios-nav.next { right: 0; }
+
+        .comentarios-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 28px;
+        }
+
+        .comentarios-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            border: none;
+            background: #333;
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        .comentarios-dot.active {
+            width: 28px;
+            border-radius: 999px;
+            background: #ff007f;
+            box-shadow: 0 0 16px rgba(255,0,127,0.55);
+        }
+
+        @media(max-width: 760px) {
+            .comentarios-carousel-wrap { padding: 0 42px; }
+            .comentarios-carousel-track { gap: 10px; }
+            .comentario-slide { flex: 0 0 calc((100% - 20px) / 3); }
+            .comentario-card { border-radius: 14px; }
+            .comentarios-nav { width: 34px; height: 34px; font-size: 1.25rem; }
+        }
+
         /* Orçamento Compacto Layout */
         .input-orcamento-group {
             display: flex; gap: 10px; margin-bottom: 15px;
@@ -276,6 +407,37 @@
             <h2>Agenda Oficial</h2>
             <div id="container-destaque"></div>
             <div id="grid-calendario" class="grid-calendario"></div>
+        </div>
+    </section>
+
+
+    <section id="comentarios" class="section comentarios-carousel-section">
+        <div class="container">
+            <h2>Quem já viu, comenta</h2>
+            <p class="comentarios-intro">Prints e comentários da galera sobre a experiência do Baile do Ted: atração principal, DJ no funk, copos de brinde, brincadeiras e interação com o público.</p>
+
+            <div class="comentarios-carousel-wrap" aria-label="Carrossel de comentários do Baile do Ted">
+                <button class="comentarios-nav prev" type="button" aria-label="Comentário anterior" data-comentarios-prev>‹</button>
+
+                <div class="comentarios-carousel-viewport">
+                    <div class="comentarios-carousel-track" data-comentarios-track>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/01.png" alt="Comentário sobre o Baile do Ted no WhatsApp" loading="lazy"></div></div>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/02.png" alt="Comentário sobre o Baile do Ted no WhatsApp" loading="lazy"></div></div>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/03.png" alt="Comentário sobre o Baile do Ted no WhatsApp" loading="lazy"></div></div>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/04.png" alt="Comentário sobre o Baile do Ted no WhatsApp" loading="lazy"></div></div>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/05.png" alt="Comentário sobre o Baile do Ted no WhatsApp" loading="lazy"></div></div>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/06.png" alt="Comentário sobre o Baile do Ted no Instagram" loading="lazy"></div></div>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/07.png" alt="Comentário sobre o Baile do Ted no Instagram" loading="lazy"></div></div>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/08.png" alt="Comentário sobre o Baile do Ted no Instagram" loading="lazy"></div></div>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/09.png" alt="Comentário sobre o Baile do Ted no Direct do Instagram" loading="lazy"></div></div>
+                        <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/10.png" alt="Comentário sobre o Baile do Ted no Direct do Instagram" loading="lazy"></div></div>
+                    </div>
+                </div>
+
+                <button class="comentarios-nav next" type="button" aria-label="Próximos comentários" data-comentarios-next>›</button>
+            </div>
+
+            <div class="comentarios-dots" data-comentarios-dots></div>
         </div>
     </section>
 
@@ -467,6 +629,86 @@
             });
         </script>
     </div>
+
+
+    <script>
+        // Carrossel dos comentários: mostra sempre 3 imagens por vez
+        (function iniciarCarrosselComentarios() {
+            const track = document.querySelector('[data-comentarios-track]');
+            const btnPrev = document.querySelector('[data-comentarios-prev]');
+            const btnNext = document.querySelector('[data-comentarios-next]');
+            const dotsBox = document.querySelector('[data-comentarios-dots]');
+
+            if (!track || !btnPrev || !btnNext || !dotsBox) return;
+
+            const slides = Array.from(track.children);
+            const visiveis = 3;
+            let indiceAtual = 0;
+            let autoplay;
+
+            function getMaxIndice() {
+                return Math.max(0, slides.length - visiveis);
+            }
+
+            function getPasso() {
+                const primeiroSlide = slides[0];
+                const estilo = window.getComputedStyle(track);
+                const gap = parseFloat(estilo.columnGap || estilo.gap || 0);
+                return primeiroSlide.getBoundingClientRect().width + gap;
+            }
+
+            function montarDots() {
+                dotsBox.innerHTML = '';
+                for (let i = 0; i <= getMaxIndice(); i++) {
+                    const dot = document.createElement('button');
+                    dot.type = 'button';
+                    dot.className = 'comentarios-dot';
+                    dot.setAttribute('aria-label', `Ir para comentário ${i + 1}`);
+                    dot.addEventListener('click', () => {
+                        indiceAtual = i;
+                        atualizarCarrossel();
+                        reiniciarAutoplay();
+                    });
+                    dotsBox.appendChild(dot);
+                }
+            }
+
+            function atualizarCarrossel() {
+                const maxIndice = getMaxIndice();
+                if (indiceAtual > maxIndice) indiceAtual = maxIndice;
+                if (indiceAtual < 0) indiceAtual = 0;
+
+                track.style.transform = `translateX(-${indiceAtual * getPasso()}px)`;
+
+                Array.from(dotsBox.children).forEach((dot, i) => {
+                    dot.classList.toggle('active', i === indiceAtual);
+                });
+            }
+
+            function proximo() {
+                indiceAtual = indiceAtual >= getMaxIndice() ? 0 : indiceAtual + 1;
+                atualizarCarrossel();
+            }
+
+            function anterior() {
+                indiceAtual = indiceAtual <= 0 ? getMaxIndice() : indiceAtual - 1;
+                atualizarCarrossel();
+            }
+
+            function reiniciarAutoplay() {
+                clearInterval(autoplay);
+                autoplay = setInterval(proximo, 3500);
+            }
+
+            btnNext.addEventListener('click', () => { proximo(); reiniciarAutoplay(); });
+            btnPrev.addEventListener('click', () => { anterior(); reiniciarAutoplay(); });
+            window.addEventListener('resize', atualizarCarrossel);
+
+            montarDots();
+            atualizarCarrossel();
+            reiniciarAutoplay();
+        })();
+    </script>
 
 </body>
 </html>
