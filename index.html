@@ -289,29 +289,51 @@
         }
         .hero-visual {
             position: relative;
-            min-height: 560px;
+            min-height: 660px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .hero-card {
             position: relative;
-            width: min(430px, 100%);
+            width: min(370px, 100%);
             border-radius: 34px;
-            padding: 16px;
+            padding: 14px;
             background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.04));
             border: 1px solid rgba(255,255,255,.16);
             box-shadow: var(--shadow);
             transform: rotate(2deg);
         }
-        .hero-card img {
+
+        /* PADRÃO TED PARA ARTES: use imagens em formato Stories 9:16.
+           Tamanho recomendado para as artes: 1080x1920px.
+           O object-fit: contain mostra a arte inteira, sem cortar no Windows, Mac e celular. */
+        .story-frame {
             width: 100%;
-            height: 520px;
-            object-fit: cover;
+            aspect-ratio: 9 / 16;
+            background:
+                radial-gradient(circle at 50% 20%, rgba(255,0,127,.16), transparent 32%),
+                #050505;
             border-radius: 26px;
-            display: block;
-            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .story-media,
+        .story-frame img,
+        .story-frame video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+            background: #000;
+        }
+        .story-frame--cover .story-media,
+        .story-frame--cover img,
+        .story-frame--cover video { object-fit: cover; }
+        .hero-card .story-media { cursor: zoom-in; }
         .floating-badge {
             position: absolute;
             left: -18px;
@@ -420,13 +442,17 @@
             padding: 26px;
             overflow: hidden;
         }
-        .release-media img {
+        .release-media {
             width: 100%;
-            height: 460px;
-            object-fit: cover;
-            border-radius: 24px;
-            cursor: pointer;
+            max-width: 390px;
+            margin: 0 auto;
         }
+        .release-media .story-frame {
+            border-radius: 26px;
+            border: 1px solid rgba(255,255,255,.12);
+            box-shadow: 0 18px 55px rgba(0,0,0,.40);
+        }
+        .release-media .story-media { cursor: zoom-in; }
         .release-text {
             color: #d9d9e5;
             font-size: 1.03rem;
@@ -475,6 +501,29 @@
         }
         .card-evento img,
         .js-open-art { cursor: zoom-in; }
+        .agenda-story-frame {
+            width: 100%;
+            aspect-ratio: 9 / 16;
+            background: #050505;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .agenda-story-frame img,
+        .agenda-story-frame video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+            background: #000;
+        }
+        .agenda-story-frame img { cursor: zoom-in; }
+        .agenda-story-frame--destaque {
+            border-radius: 22px;
+            border: 1px solid rgba(255,255,255,.12);
+        }
         .event-cta-after {
             margin-top: 38px;
             padding: 26px;
@@ -723,8 +772,7 @@
             .hero-grid,
             .release-box { grid-template-columns: 1fr; }
             .hero-visual { min-height: auto; }
-            .hero-card { width: 100%; max-width: 420px; margin: 0 auto; }
-            .hero-card img { height: 440px; }
+            .hero-card { width: 100%; max-width: 360px; margin: 0 auto; }
             .cards-grid { grid-template-columns: repeat(2, 1fr); }
             .event-types { grid-template-columns: repeat(2, 1fr); }
             .proof-quotes { grid-template-columns: 1fr; }
@@ -738,10 +786,10 @@
             .hero h1 { font-size: clamp(3rem, 18vw, 5rem); }
             .hero-actions { display: grid; grid-template-columns: 1fr; }
             .btn-primary, .btn-secondary, .btn-booking { width: 100%; }
-            .hero-card img { height: 380px; }
+            .hero-card { max-width: 330px; }
             .floating-badge { left: 12px; bottom: 26px; max-width: 205px; }
             .cards-grid, .event-types, .check-list { grid-template-columns: 1fr; }
-            .release-media img { height: 360px; }
+            .release-media { max-width: 330px; }
             .comentarios-carousel-wrap { padding: 0 42px; }
             .comentarios-carousel-track { gap: 10px; }
             .comentario-slide { flex: 0 0 calc((100% - 20px) / 3); }
@@ -776,6 +824,41 @@
 
         function onlyNumbers(value) {
             return String(value || '').replace(/\D/g, '');
+        }
+
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function isVideoMedia(url) {
+            return /\.(mp4|webm|ogg|mov|m4v)(\?|#|$)/i.test(String(url || ''));
+        }
+
+        function videoMimeType(url) {
+            const clean = String(url || '').split('?')[0].split('#')[0].toLowerCase();
+            if (clean.endsWith('.webm')) return 'video/webm';
+            if (clean.endsWith('.ogg')) return 'video/ogg';
+            return 'video/mp4';
+        }
+
+        function renderStoryMedia(src, alt, loading = 'lazy') {
+            const safeSrc = escapeHtml(src || 'img/tedsite.png');
+            const safeAlt = escapeHtml(alt || 'Arte do Baile do Ted');
+
+            if (isVideoMedia(safeSrc)) {
+                return `
+                    <video class="story-media" autoplay muted loop playsinline preload="metadata" aria-label="${safeAlt}">
+                        <source src="${safeSrc}" type="${videoMimeType(safeSrc)}">
+                    </video>
+                `;
+            }
+
+            return `<img class="story-media js-open-art" src="${safeSrc}" data-full="${safeSrc}" alt="${safeAlt}" loading="${loading}">`;
         }
 
         async function carregarEventos() {
@@ -817,8 +900,8 @@
                     <div class="show-destaque" style="position:relative; background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035)); border:1px solid rgba(255,255,255,.12); padding:26px; border-radius:28px; margin-bottom:34px; box-shadow:0 24px 70px rgba(0,0,0,.36); overflow:hidden;">
                         <div style="position:absolute; top:-80px; left:50%; transform:translateX(-50%); width:340px; height:340px; background:#ff007f; filter:blur(130px); opacity:.22; pointer-events:none;"></div>
                         <div style="position:relative; z-index:1; display:grid; grid-template-columns:minmax(260px, 390px) 1fr; gap:26px; align-items:center;">
-                            <div style="background:#000; border-radius:22px; overflow:hidden; border:1px solid rgba(255,255,255,.12);">
-                                <img class="js-open-art" src="${imagemDestaque}" data-full="${imagemDestaque}" alt="${proximoShow.nome || 'Próximo show do Baile do Ted'}" style="width:100%; height:auto; display:block; object-fit:contain;" loading="lazy">
+                            <div class="agenda-story-frame agenda-story-frame--destaque">
+                                ${renderStoryMedia(imagemDestaque, proximoShow.nome || 'Próximo show do Baile do Ted')}
                             </div>
                             <div>
                                 <span class="eyebrow">🔥 Próximo show confirmado</span>
@@ -850,7 +933,9 @@
                     gridCalendario.insertAdjacentHTML('beforeend', `
                         <div class="card-evento">
                             <div style="position:relative; background:#050505; border-bottom:1px solid rgba(255,255,255,.10);">
-                                <img class="js-open-art" src="${imagem}" data-full="${imagem}" alt="${evento.nome || 'Arte do evento'}" style="width:100%; height:230px; object-fit:contain; display:block;" loading="lazy">
+                                <div class="agenda-story-frame">
+                                    ${renderStoryMedia(imagem, evento.nome || 'Arte do evento')}
+                                </div>
                                 <div style="position:absolute; top:10px; right:10px; background:#ff007f; color:#fff; padding:6px 12px; border-radius:12px; text-align:center; box-shadow:0 8px 16px rgba(0,0,0,.5);">
                                     <span style="display:block; font-size:.78rem; text-transform:uppercase; font-weight:850;">${evento.mesAbas || ''}</span>
                                     <span style="display:block; font-size:1.5rem; font-weight:950;">${evento.diaNum || ''}</span>
@@ -921,7 +1006,15 @@
             </div>
             <div class="hero-visual">
                 <div class="hero-card">
-                    <img class="js-open-art" src="img/tedsite.png" data-full="img/tedsite.png" alt="Baile do Ted em ação" loading="eager">
+                    <div class="story-frame">
+                        <img class="story-media js-open-art" src="img/tedsite.png" data-full="img/tedsite.png" alt="Baile do Ted em ação" loading="eager">
+
+                        <!-- PARA USAR VÍDEO SEM ÁUDIO NO FUTURO, troque a tag IMG acima por este bloco:
+                        <video class="story-media" autoplay muted loop playsinline preload="metadata">
+                            <source src="img/video-ted.mp4" type="video/mp4">
+                        </video>
+                        -->
+                    </div>
                     <div class="floating-badge">
                         <strong>Conteúdo garantido</strong>
                         <span>O público tira foto, grava vídeo e compartilha.</span>
@@ -973,7 +1066,15 @@
         <div class="container">
             <div class="release-box">
                 <div class="release-media">
-                    <img class="js-open-art" src="img/tedsite.png" data-full="img/tedsite.png" alt="Baile do Ted para eventos" loading="lazy">
+                    <div class="story-frame">
+                        <img class="story-media js-open-art" src="img/tedsite.png" data-full="img/tedsite.png" alt="Baile do Ted para eventos" loading="lazy">
+
+                        <!-- PARA USAR VÍDEO SEM ÁUDIO NESTE CAMPO:
+                        <video class="story-media" autoplay muted loop playsinline preload="metadata">
+                            <source src="img/video-ted.mp4" type="video/mp4">
+                        </video>
+                        -->
+                    </div>
                 </div>
                 <div class="release-text">
                     <span class="eyebrow">🔥 O projeto</span>
