@@ -989,6 +989,157 @@
             }
         }
 
+
+        /* =========================================================
+           AJUSTE MOBILE FINAL: primeira dobra limpa no celular
+           - evita restauração de rolagem cortando o começo
+           - reduz altura do hero no mobile
+           - mostra título, texto, botões e arte de forma organizada
+           ========================================================= */
+        @media (max-width: 640px) {
+            html, body {
+                overflow-x: hidden !important;
+                scroll-padding-top: 0 !important;
+            }
+
+            .topbar {
+                position: relative !important;
+                top: auto !important;
+                background: rgba(5,5,8,.96) !important;
+            }
+
+            .topbar-inner {
+                min-height: 64px !important;
+                padding: 10px 0 !important;
+            }
+
+            .brand img {
+                width: 40px !important;
+                height: 40px !important;
+            }
+
+            .brand strong {
+                font-size: .95rem !important;
+            }
+
+            .hero {
+                display: block !important;
+                min-height: auto !important;
+                padding: 18px 0 34px !important;
+                overflow: visible !important;
+                background:
+                    linear-gradient(180deg, rgba(5,5,8,.72) 0%, rgba(8,4,12,.94) 44%, rgba(5,5,8,.98) 100%),
+                    var(--hero-bg-image) center top / cover no-repeat !important;
+            }
+
+            .hero::before,
+            .hero::after {
+                pointer-events: none !important;
+            }
+
+            .hero-grid {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 22px !important;
+            }
+
+            .hero-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                text-align: center !important;
+                padding-top: 0 !important;
+            }
+
+            .hero-kicker {
+                display: none !important;
+            }
+
+            .hero h1 {
+                display: block !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                font-size: clamp(2.35rem, 14vw, 3.55rem) !important;
+                line-height: .92 !important;
+                letter-spacing: -.055em !important;
+                text-align: center !important;
+                overflow: visible !important;
+            }
+
+            .hero h1 span {
+                display: block !important;
+            }
+
+            .hero .tagline {
+                max-width: 100% !important;
+                margin: 14px auto 0 !important;
+                font-size: .96rem !important;
+                line-height: 1.42 !important;
+                font-weight: 750 !important;
+            }
+
+            .hero-actions {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+                margin-top: 16px !important;
+            }
+
+            .hero-actions .btn-primary,
+            .hero-actions .btn-secondary {
+                min-height: 48px !important;
+                width: 100% !important;
+                font-size: .86rem !important;
+                padding: 0 16px !important;
+            }
+
+            .hero-pills {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+                margin-top: 14px !important;
+                width: 100% !important;
+            }
+
+            .hero-pill {
+                width: 100% !important;
+                text-align: center !important;
+                font-size: .76rem !important;
+                line-height: 1.15 !important;
+                padding: 9px 8px !important;
+            }
+
+            .hero-visual {
+                width: 100% !important;
+                min-height: auto !important;
+                margin-top: 2px !important;
+            }
+
+            .hero-card {
+                width: min(315px, 88vw) !important;
+                max-width: min(315px, 88vw) !important;
+                margin: 0 auto !important;
+                padding: 9px !important;
+                border-radius: 22px !important;
+                transform: none !important;
+            }
+
+            .story-frame {
+                border-radius: 18px !important;
+            }
+
+            .floating-badge {
+                display: none !important;
+            }
+
+            .quick-whatsapp {
+                width: 54px !important;
+                height: 54px !important;
+                left: 14px !important;
+                bottom: 18px !important;
+            }
+        }
+
     </style>
 
     <script type="module">
@@ -1231,6 +1382,39 @@
     </script>
 </head>
 <body>
+
+    <script>
+        /* No celular, alguns navegadores restauram a rolagem antiga e abrem o site já no meio do hero.
+           Isso força o carregamento inicial sempre no começo quando não existe uma âncora específica. */
+        (function evitarCorteInicialMobile() {
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
+
+            function deveVoltarAoTopo() {
+                return !window.location.hash || window.location.hash === '#topo';
+            }
+
+            function irAoTopo() {
+                if (deveVoltarAoTopo()) {
+                    window.scrollTo(0, 0);
+                    document.documentElement.scrollTop = 0;
+                    document.body.scrollTop = 0;
+                }
+            }
+
+            window.addEventListener('pageshow', function () {
+                irAoTopo();
+                setTimeout(irAoTopo, 80);
+                setTimeout(irAoTopo, 350);
+            });
+
+            window.addEventListener('load', function () {
+                irAoTopo();
+                setTimeout(irAoTopo, 150);
+            });
+        })();
+    </script>
     <nav class="topbar">
         <div class="topbar-inner">
             <a class="brand" href="#topo" aria-label="Baile do Ted">
