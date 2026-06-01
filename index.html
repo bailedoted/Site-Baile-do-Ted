@@ -3,160 +3,529 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baile do Ted | Official Booking</title>
-    
+    <title>Baile do Ted | Contrate para Festas, Shows e Eventos</title>
+    <meta name="description" content="Contrate o Baile do Ted para festas, shows, eventos corporativos, aniversários e ações promocionais. Personagem, música, interação, fotos e muita animação.">
+    <meta name="theme-color" content="#09090f">
+
+    <meta property="og:title" content="Baile do Ted | Contrate para seu evento">
+    <meta property="og:description" content="Uma atração divertida, marcante e cheia de energia para festas, shows e eventos.">
+    <meta property="og:image" content="https://bailedoted.com.br/img/tedsite.png">
+    <meta property="og:url" content="https://bailedoted.com.br/">
+    <meta property="og:type" content="website">
+
     <link rel="icon" type="image/png" href="img/ted.png">
-    
     <link rel="apple-touch-icon" sizes="180x180" href="img/icone.png">
     <link rel="icon" type="image/png" sizes="192x192" href="img/icone.png">
     <link rel="icon" type="image/png" sizes="512x512" href="img/icone.png">
-    
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#111111">
-    
     <link rel="stylesheet" href="style.css">
-    
+
     <style>
-        /* Estilo da Rádio (Canto Inferior Direito) */
-        .caixa-radio {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border-radius: 3px; 
+        :root {
+            --bg: #050508;
+            --bg-2: #090910;
+            --card: rgba(255, 255, 255, 0.055);
+            --card-2: rgba(255, 255, 255, 0.085);
+            --line: rgba(255, 255, 255, 0.12);
+            --text: #ffffff;
+            --muted: #b7b7c8;
+            --pink: #ff007f;
+            --purple: #8b2cff;
+            --cyan: #00e5ff;
+            --green: #00d084;
+            --yellow: #ffd400;
+            --radius: 24px;
+            --shadow: 0 24px 70px rgba(0,0,0,.45);
         }
 
-        /* WhatsApp Flutuante (Canto Inferior Esquerdo) */
-        .btn-flutuante-wa {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 60px;
-            height: 60px;
-            background-color: #25d366;
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(255, 0, 127, .20), transparent 34%),
+                radial-gradient(circle at 85% 18%, rgba(139, 44, 255, .22), transparent 30%),
+                radial-gradient(circle at 50% 95%, rgba(0, 229, 255, .10), transparent 28%),
+                var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            overflow-x: hidden;
+        }
+        body.lightbox-open { overflow: hidden; }
+        a { color: inherit; }
+        img { max-width: 100%; }
+
+        .container {
+            width: min(1160px, calc(100% - 36px));
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 88px 0;
+            position: relative;
+        }
+        .section.dark-bg {
+            background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.01));
+            border-top: 1px solid rgba(255,255,255,.07);
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+        .section-title {
+            max-width: 780px;
+            margin: 0 auto 38px;
+            text-align: center;
+        }
+        .section-title .eyebrow,
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--yellow);
+            font-size: .82rem;
+            font-weight: 900;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+        .section-title h2,
+        .section h2 {
+            font-size: clamp(2.1rem, 5vw, 4.2rem);
+            line-height: .95;
+            margin: 0 0 16px;
+            text-transform: uppercase;
+            letter-spacing: -0.055em;
+        }
+        .section-title p {
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.75;
+            margin: 0;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--pink), var(--yellow), var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .btn-booking,
+        .btn-primary,
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            border: 0;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 950;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            border-radius: 999px;
+            min-height: 52px;
+            padding: 0 24px;
+            transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+            white-space: nowrap;
+        }
+        .btn-booking,
+        .btn-primary {
             color: #fff;
+            background: linear-gradient(90deg, var(--pink), var(--purple));
+            box-shadow: 0 14px 35px rgba(255, 0, 127, .25);
+        }
+        .btn-primary:hover,
+        .btn-booking:hover { transform: translateY(-3px); box-shadow: 0 18px 45px rgba(255, 0, 127, .35); }
+        .btn-secondary {
+            color: #fff;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.16);
+        }
+        .btn-secondary:hover { transform: translateY(-3px); background: rgba(255,255,255,.12); }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(5,5,8,.74);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+        .topbar-inner {
+            width: min(1220px, calc(100% - 28px));
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 13px 0;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            min-width: max-content;
+        }
+        .brand img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+        }
+        .brand strong {
+            font-size: 1.05rem;
+            letter-spacing: -.03em;
+            text-transform: uppercase;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            color: #d9d9e6;
+            font-size: .92rem;
+            font-weight: 800;
+        }
+        .nav-links a { text-decoration: none; opacity: .86; }
+        .nav-links a:hover { color: var(--yellow); opacity: 1; }
+        .topbar .btn-primary { min-height: 42px; padding: 0 18px; font-size: .82rem; }
+
+        .hero {
+            min-height: 88vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 72px 0 54px;
+            background:
+                linear-gradient(90deg, rgba(5,5,8,.96), rgba(5,5,8,.74), rgba(5,5,8,.92)),
+                url('img/tedsite.png') center right / contain no-repeat;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(255, 0, 127, .30), transparent 25%),
+                radial-gradient(circle at 70% 70%, rgba(255, 212, 0, .12), transparent 20%),
+                linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+            background-size: auto, auto, 62px 62px, 62px 62px;
+            opacity: .65;
+            pointer-events: none;
+        }
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 680px;
+            height: 680px;
+            right: -300px;
+            bottom: -300px;
+            background: radial-gradient(circle, rgba(255,0,127,.30), transparent 65%);
+            pointer-events: none;
+        }
+        .hero-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1.05fr .95fr;
+            align-items: center;
+            gap: 42px;
+        }
+        .hero-content { max-width: 690px; }
+        .hero-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background: rgba(255, 0, 127, .12);
+            border: 1px solid rgba(255, 0, 127, .30);
+            border-radius: 999px;
+            padding: 9px 14px;
+            color: #fff;
+            font-weight: 900;
+            font-size: .82rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-bottom: 20px;
+        }
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(3.5rem, 11vw, 8.5rem);
+            line-height: .82;
+            letter-spacing: -0.075em;
+            text-transform: uppercase;
+            text-shadow: 0 18px 60px rgba(0,0,0,.55);
+        }
+        .hero h1 span { display: block; }
+        .hero .tagline {
+            margin: 24px 0 0;
+            max-width: 610px;
+            color: #f4f4ff;
+            font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+            line-height: 1.55;
+            font-weight: 700;
+        }
+        .hero .tagline strong { color: var(--yellow); }
+        .hero-actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .hero-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 26px;
+        }
+        .hero-pill {
+            padding: 11px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.12);
+            color: #ededff;
+            font-size: .92rem;
+            font-weight: 850;
+        }
+        .hero-visual {
+            position: relative;
+            min-height: 560px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero-card {
+            position: relative;
+            width: min(430px, 100%);
+            border-radius: 34px;
+            padding: 16px;
+            background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.04));
+            border: 1px solid rgba(255,255,255,.16);
+            box-shadow: var(--shadow);
+            transform: rotate(2deg);
+        }
+        .hero-card img {
+            width: 100%;
+            height: 520px;
+            object-fit: cover;
+            border-radius: 26px;
+            display: block;
+            cursor: pointer;
+        }
+        .floating-badge {
+            position: absolute;
+            left: -18px;
+            bottom: 52px;
+            background: #111;
+            border: 1px solid rgba(255,255,255,.15);
+            padding: 13px 16px;
+            border-radius: 18px;
+            box-shadow: 0 14px 45px rgba(0,0,0,.38);
+            font-weight: 900;
+            max-width: 230px;
+        }
+        .floating-badge strong { color: var(--yellow); display: block; font-size: 1.05rem; }
+        .floating-badge span { color: var(--muted); font-size: .88rem; }
+
+        .quick-whatsapp {
+            position: fixed;
+            left: 18px;
+            bottom: 18px;
+            z-index: 10000;
+            width: 62px;
+            height: 62px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
-            z-index: 10000;
-            transition: all 0.3s ease;
+            color: #fff;
+            background: #25d366;
+            box-shadow: 0 10px 35px rgba(37, 211, 102, .45);
             text-decoration: none;
+            transition: .25s ease;
         }
-        .btn-flutuante-wa:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.7);
-        }
-        .btn-flutuante-wa svg {
-            width: 35px;
-            height: 35px;
-            fill: currentColor;
+        .quick-whatsapp:hover { transform: translateY(-4px) scale(1.04); }
+        .quick-whatsapp svg { width: 34px; height: 34px; fill: currentColor; }
+
+        .caixa-radio {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 9990;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 35px rgba(0,0,0,.45);
         }
 
-        /* Estilo dos Cards de Calendário */
-        .card-evento {
-            display: flex;
-            flex-direction: column;
-            background: #111;
-            border-radius: 15px;
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+        .info-card {
+            padding: 26px;
+            background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035));
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: var(--radius);
+            box-shadow: 0 16px 42px rgba(0,0,0,.24);
+            min-height: 170px;
+            transition: transform .25s ease, border-color .25s ease;
+        }
+        .info-card:hover { transform: translateY(-6px); border-color: rgba(255,0,127,.52); }
+        .info-card .icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--pink), var(--purple));
+            box-shadow: 0 13px 30px rgba(255,0,127,.25);
+            margin-bottom: 16px;
+            font-size: 1.4rem;
+        }
+        .info-card h3 {
+            margin: 0 0 10px;
+            font-size: 1.22rem;
+            letter-spacing: -.03em;
+        }
+        .info-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.58;
+        }
+
+        .event-types {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .event-type {
+            background: rgba(255,255,255,.055);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 18px;
+            padding: 16px;
+            color: #fff;
+            font-weight: 900;
+            text-align: center;
+        }
+
+        .release-box {
+            display: grid;
+            grid-template-columns: .95fr 1.05fr;
+            gap: 30px;
+            align-items: center;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 32px;
+            padding: 26px;
             overflow: hidden;
-            border: 1px solid #222;
-            transition: all 0.3s ease;
         }
-        .card-evento:hover {
-            transform: translateY(-5px);
-            border-color: #ff007f;
-            box-shadow: 0 8px 20px rgba(255, 0, 127, 0.2);
+        .release-media img {
+            width: 100%;
+            height: 460px;
+            object-fit: cover;
+            border-radius: 24px;
+            cursor: pointer;
         }
+        .release-text {
+            color: #d9d9e5;
+            font-size: 1.03rem;
+            line-height: 1.8;
+        }
+        .release-text p { margin: 0 0 18px; }
+        .release-text strong { color: #fff; }
+        .check-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f4f4ff;
+            font-weight: 800;
+            background: rgba(255,255,255,.055);
+            border: 1px solid rgba(255,255,255,.09);
+            border-radius: 14px;
+            padding: 11px 12px;
+        }
+        .check-item span { color: var(--green); }
+
         .grid-calendario {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            gap: 22px;
         }
-
-        /* Ícones Redes Sociais Rodapé */
-        .social-circle-btn {
-            display: flex; align-items: center; justify-content: center;
-            width: 50px; height: 50px; border-radius: 50%; background: #1a1a1a;
-            color: #fff; border: 1px solid #333; transition: all 0.3s ease; text-decoration: none;
+        .card-evento {
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all .3s ease;
+            min-height: 100%;
         }
-        .social-circle-btn svg { width: 22px; height: 22px; fill: currentColor; }
-        .social-circle-btn.insta:hover { background: #e1306c; border-color: #e1306c; box-shadow: 0 0 15px rgba(225, 48, 108, 0.5); }
-        .social-circle-btn.tiktok:hover { background: #00f2fe; color: #000; border-color: #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.5); }
-        .social-circle-btn.yt:hover { background: #ff0000; border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); }
+        .card-evento:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255,0,127,.62);
+            box-shadow: 0 20px 55px rgba(255,0,127,.14);
+        }
+        .card-evento img,
+        .js-open-art { cursor: zoom-in; }
+        .event-cta-after {
+            margin-top: 38px;
+            padding: 26px;
+            border-radius: 24px;
+            background: linear-gradient(90deg, rgba(255,0,127,.16), rgba(139,44,255,.16));
+            border: 1px solid rgba(255,255,255,.12);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+        .event-cta-after h3 { margin: 0 0 6px; font-size: 1.35rem; }
+        .event-cta-after p { margin: 0; color: var(--muted); }
 
-
-        /* Carrossel de Comentários / Prints */
         .comentarios-carousel-section {
             position: relative;
             overflow: hidden;
-            background: radial-gradient(circle at top, rgba(255, 0, 127, 0.18), transparent 35%), #050505;
+            background: radial-gradient(circle at top, rgba(255,0,127,.18), transparent 35%), #050505;
             border-top: 1px solid #171717;
             border-bottom: 1px solid #171717;
         }
-
-        .comentarios-intro {
-            max-width: 760px;
-            margin: 0 auto 35px auto;
-            text-align: center;
-            color: #aaa;
-            font-size: 1.05rem;
-            line-height: 1.7;
-        }
-
         .comentarios-carousel-wrap {
             position: relative;
             max-width: 1180px;
             margin: 0 auto;
             padding: 0 58px;
         }
-
-        .comentarios-carousel-viewport {
-            overflow: hidden;
-            width: 100%;
-            border-radius: 22px;
-        }
-
+        .comentarios-carousel-viewport { overflow: hidden; width: 100%; border-radius: 22px; }
         .comentarios-carousel-track {
             display: flex;
             gap: 22px;
-            transition: transform 0.55s cubic-bezier(.2,.75,.2,1);
+            transition: transform .55s cubic-bezier(.2,.75,.2,1);
             will-change: transform;
         }
-
-        .comentario-slide {
-            flex: 0 0 calc((100% - 44px) / 3);
-            min-width: 0;
-        }
-
+        .comentario-slide { flex: 0 0 calc((100% - 44px) / 3); min-width: 0; }
         .comentario-card {
             position: relative;
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 1/1;
             background: #111;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,.08);
             border-radius: 22px;
             overflow: hidden;
-            box-shadow: 0 18px 45px rgba(0,0,0,0.55);
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 18px 45px rgba(0,0,0,.55);
+            transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
         }
-
         .comentario-card:hover {
             transform: translateY(-6px);
-            border-color: rgba(255,0,127,0.65);
-            box-shadow: 0 20px 55px rgba(255,0,127,0.18);
+            border-color: rgba(255,0,127,.65);
+            box-shadow: 0 20px 55px rgba(255,0,127,.18);
         }
-
-        .comentario-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
+        .comentario-card img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
         .comentarios-nav {
             position: absolute;
             top: 50%;
@@ -164,8 +533,8 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.16);
-            background: rgba(12,12,12,0.82);
+            border: 1px solid rgba(255,255,255,.16);
+            background: rgba(12,12,12,.82);
             color: #fff;
             display: flex;
             align-items: center;
@@ -174,202 +543,219 @@
             z-index: 3;
             font-size: 1.7rem;
             line-height: 1;
-            transition: all 0.3s ease;
+            transition: all .3s ease;
             backdrop-filter: blur(8px);
         }
-
-        .comentarios-nav:hover {
-            background: linear-gradient(90deg, #ff007f, #b300ff);
-            border-color: transparent;
-            box-shadow: 0 0 25px rgba(255,0,127,0.35);
-        }
-
+        .comentarios-nav:hover { background: linear-gradient(90deg, var(--pink), var(--purple)); border-color: transparent; }
         .comentarios-nav.prev { left: 0; }
         .comentarios-nav.next { right: 0; }
-
-        .comentarios-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 28px;
-        }
-
+        .comentarios-dots { display: flex; justify-content: center; gap: 8px; margin-top: 28px; }
         .comentarios-dot {
             width: 9px;
             height: 9px;
             border-radius: 50%;
-            border: none;
+            border: 0;
             background: #333;
             cursor: pointer;
             padding: 0;
-            transition: all 0.3s ease;
+            transition: all .3s ease;
+        }
+        .comentarios-dot.active { width: 28px; border-radius: 999px; background: var(--pink); box-shadow: 0 0 16px rgba(255,0,127,.55); }
+        .proof-quotes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 34px;
+        }
+        .proof-quote {
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 18px;
+            padding: 18px;
+            color: #fff;
+            font-weight: 850;
+            line-height: 1.5;
         }
 
-        .comentarios-dot.active {
-            width: 28px;
+        .orcamento-card {
+            max-width: 820px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035));
+            border: 1px solid rgba(255,255,255,.13);
+            border-radius: 28px;
+            padding: 26px;
+            box-shadow: var(--shadow);
+        }
+        .input-orcamento-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .field,
+        .input-orcamento-group input,
+        .input-orcamento-group select {
+            width: 100%;
+            min-height: 52px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,.14);
+            background: rgba(0,0,0,.28);
+            color: #fff;
+            padding: 0 14px;
+            font-size: 1rem;
+            outline: none;
+        }
+        .field:focus,
+        .input-orcamento-group input:focus,
+        .input-orcamento-group select:focus { border-color: rgba(255,0,127,.72); box-shadow: 0 0 0 4px rgba(255,0,127,.12); }
+        .orcamento-card button { width: 100%; margin-top: 4px; font-size: .96rem; }
+        #loading-box,
+        #resultado-box {
+            margin-top: 22px;
+            border-top: 1px solid rgba(255,255,255,.12);
+            padding-top: 22px;
+        }
+        @keyframes encherBarra { 0% { width: 0%; } 100% { width: 100%; } }
+        @keyframes brilhoNeon { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .social-circle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.06);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,.12);
+            transition: all .3s ease;
+            text-decoration: none;
+        }
+        .social-circle-btn svg { width: 22px; height: 22px; fill: currentColor; }
+        .social-circle-btn.insta:hover { background: #e1306c; border-color: #e1306c; }
+        .social-circle-btn.tiktok:hover { background: #00f2fe; color: #000; border-color: #00f2fe; }
+        .social-circle-btn.yt:hover { background: #ff0000; border-color: #ff0000; }
+
+        .final-cta {
+            padding: 72px 0;
+            background:
+                linear-gradient(90deg, rgba(255,0,127,.88), rgba(139,44,255,.90)),
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,.28), transparent 30%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .final-cta h2 {
+            margin: 0 auto 16px;
+            max-width: 850px;
+            font-size: clamp(2.4rem, 7vw, 5rem);
+            line-height: .92;
+            text-transform: uppercase;
+            letter-spacing: -.06em;
+        }
+        .final-cta p { max-width: 700px; margin: 0 auto 28px; color: rgba(255,255,255,.88); font-size: 1.12rem; line-height: 1.65; }
+        footer { text-align: center; padding: 24px 0; border-top: 1px solid rgba(255,255,255,.08); color: #8e8ea1; }
+        footer a { color: #fff; text-decoration: none; font-weight: 900; }
+
+        .art-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 30000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            background: rgba(0,0,0,.92);
+            backdrop-filter: blur(10px);
+        }
+        .art-lightbox.active { display: flex; }
+        .art-lightbox-inner {
+            position: relative;
+            width: min(100%, 980px);
+            height: min(100%, 92vh);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .art-lightbox-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 18px;
+            box-shadow: 0 28px 80px rgba(0,0,0,.75);
+        }
+        .art-lightbox-close,
+        .art-lightbox-back {
+            position: absolute;
+            z-index: 2;
+            border: 1px solid rgba(255,255,255,.22);
+            background: rgba(10,10,12,.84);
+            color: #fff;
             border-radius: 999px;
-            background: #ff007f;
-            box-shadow: 0 0 16px rgba(255,0,127,0.55);
+            cursor: pointer;
+            font-weight: 900;
+            backdrop-filter: blur(8px);
         }
+        .art-lightbox-close {
+            top: -6px;
+            right: -6px;
+            width: 44px;
+            height: 44px;
+            font-size: 1.45rem;
+            line-height: 1;
+        }
+        .art-lightbox-back {
+            top: -6px;
+            left: -6px;
+            min-height: 44px;
+            padding: 0 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .95rem;
+        }
+        .art-lightbox-close:hover,
+        .art-lightbox-back:hover { background: linear-gradient(90deg, var(--pink), var(--purple)); border-color: transparent; }
 
-        @media(max-width: 760px) {
+        @media (max-width: 980px) {
+            .nav-links { display: none; }
+            .hero { min-height: auto; padding: 54px 0 46px; background-size: cover; }
+            .hero-grid,
+            .release-box { grid-template-columns: 1fr; }
+            .hero-visual { min-height: auto; }
+            .hero-card { width: 100%; max-width: 420px; margin: 0 auto; }
+            .hero-card img { height: 440px; }
+            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .event-types { grid-template-columns: repeat(2, 1fr); }
+            .proof-quotes { grid-template-columns: 1fr; }
+            .event-cta-after { flex-direction: column; align-items: flex-start; }
+        }
+        @media (max-width: 640px) {
+            .container { width: min(100% - 24px, 1160px); }
+            .section { padding: 64px 0; }
+            .topbar .btn-primary { display: none; }
+            .brand strong { font-size: .92rem; }
+            .hero h1 { font-size: clamp(3rem, 18vw, 5rem); }
+            .hero-actions { display: grid; grid-template-columns: 1fr; }
+            .btn-primary, .btn-secondary, .btn-booking { width: 100%; }
+            .hero-card img { height: 380px; }
+            .floating-badge { left: 12px; bottom: 26px; max-width: 205px; }
+            .cards-grid, .event-types, .check-list { grid-template-columns: 1fr; }
+            .release-media img { height: 360px; }
             .comentarios-carousel-wrap { padding: 0 42px; }
             .comentarios-carousel-track { gap: 10px; }
             .comentario-slide { flex: 0 0 calc((100% - 20px) / 3); }
             .comentario-card { border-radius: 14px; }
             .comentarios-nav { width: 34px; height: 34px; font-size: 1.25rem; }
+            .input-orcamento-group { grid-template-columns: 1fr; }
+            .caixa-radio { display: none; }
+            .quick-whatsapp { width: 58px; height: 58px; }
+            .art-lightbox { padding: 12px; }
+            .art-lightbox-inner { height: 88vh; }
+            .art-lightbox-back { top: 8px; left: 8px; }
+            .art-lightbox-close { top: 8px; right: 8px; }
         }
-
-        /* Orçamento Compacto Layout */
-        .input-orcamento-group {
-            display: flex; gap: 10px; margin-bottom: 15px;
-        }
-        @media(max-width: 600px) {
-            .input-orcamento-group { flex-direction: column; }
-        }
-
-        /* Animações da Barra de Progresso do Orçamento */
-        @keyframes encherBarra {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-        @keyframes brilhoNeon {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    
-        /* Lightbox das artes: abre a imagem grande sem sair da página */
-        body.lightbox-aberto {
-            overflow: hidden;
-            touch-action: none;
-        }
-
-        body img {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        #agenda img,
-        #comentarios img,
-        .arte-expandivel {
-            cursor: zoom-in;
-        }
-
-        .lightbox-arte {
-            position: fixed;
-            inset: 0;
-            z-index: 999999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-            background: rgba(0, 0, 0, 0.94);
-            backdrop-filter: blur(8px);
-        }
-
-        .lightbox-arte.ativo {
-            display: flex;
-        }
-
-        .lightbox-arte__conteudo {
-            position: relative;
-            width: min(96vw, 980px);
-            height: min(92vh, 980px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lightbox-arte__imagem {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            display: block;
-            border-radius: 14px;
-            box-shadow: 0 0 35px rgba(255, 0, 127, 0.22);
-            background: #000;
-        }
-
-        .lightbox-arte__voltar {
-            position: fixed;
-            top: 18px;
-            left: 18px;
-            z-index: 1000000;
-            border: 1px solid rgba(255,255,255,0.18);
-            background: rgba(15,15,15,0.86);
-            color: #fff;
-            border-radius: 999px;
-            padding: 11px 18px;
-            font-size: 0.95rem;
-            font-weight: 900;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.55);
-        }
-
-        .lightbox-arte__voltar:hover {
-            background: linear-gradient(90deg, #ff007f, #b300ff);
-            border-color: transparent;
-        }
-
-        .lightbox-arte__fechar {
-            position: fixed;
-            top: 18px;
-            right: 18px;
-            z-index: 1000000;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.18);
-            background: rgba(15,15,15,0.86);
-            color: #fff;
-            font-size: 2rem;
-            line-height: 1;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.55);
-        }
-
-        .lightbox-arte__fechar:hover {
-            background: #ff007f;
-            border-color: #ff007f;
-        }
-
-        @media(max-width: 600px) {
-            .lightbox-arte {
-                padding: 10px;
-            }
-
-            .lightbox-arte__conteudo {
-                width: 100vw;
-                height: 88vh;
-            }
-
-            .lightbox-arte__imagem {
-                border-radius: 10px;
-            }
-
-            .lightbox-arte__voltar {
-                top: 12px;
-                left: 12px;
-                padding: 10px 14px;
-                font-size: 0.9rem;
-            }
-
-            .lightbox-arte__fechar {
-                top: 12px;
-                right: 12px;
-                width: 40px;
-                height: 40px;
-                font-size: 1.8rem;
-            }
-        }
-
-</style>
+    </style>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -388,122 +774,110 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        function onlyNumbers(value) {
+            return String(value || '').replace(/\D/g, '');
+        }
+
         async function carregarEventos() {
             const containerDestaque = document.getElementById("container-destaque");
             const gridCalendario = document.getElementById("grid-calendario");
-            
-            // Mensagem de Loading para o cliente não ver o site vazio enquanto as imagens chegam
+            if (!containerDestaque || !gridCalendario) return;
+
             containerDestaque.innerHTML = "<p style='color:#ff007f; text-align:center; font-size: 1.2rem; font-weight: bold;'>Buscando a agenda mais braba... 🐻🎶</p>";
-            
+
             try {
                 const q = query(collection(db, "eventos"), orderBy("dataTimestamp", "asc"));
                 const querySnapshot = await getDocs(q);
-                
-                let eventos = [];
-                querySnapshot.forEach((doc) => {
-                    eventos.push({ id: doc.id, ...doc.data() });
-                });
+                const eventos = [];
+                querySnapshot.forEach((doc) => eventos.push({ id: doc.id, ...doc.data() }));
 
                 if (eventos.length === 0) {
-                    containerDestaque.innerHTML = "<p style='color:#aaa; text-align:center;'>Nenhum show agendado no momento. Acompanhe nossas redes!</p>";
+                    containerDestaque.innerHTML = `
+                        <div class="event-cta-after" style="justify-content:center; text-align:center;">
+                            <div>
+                                <h3>Nenhum show público cadastrado no momento.</h3>
+                                <p>Chame no WhatsApp para consultar datas particulares e disponibilidade.</p>
+                            </div>
+                            <a class="btn-primary" href="https://wa.me/5541995906901?text=Olá! Quero consultar a agenda do Baile do Ted." target="_blank">Consultar agenda</a>
+                        </div>`;
                     return;
                 }
 
                 const proximoShow = eventos[0];
-                
-                let localDestaque = proximoShow.localNome ? `📍 ${proximoShow.localNome}` : '📍 Local Privado';
-                let enderecoDestaque = proximoShow.localEndereco ? `<span style="display:block; color: #aaa; font-size: 0.95rem; margin-top: 5px;">${proximoShow.localEndereco}</span>` : '';
-                
-                let instagramFinal = proximoShow.instagram || '@bailedoted';
-                let contatoFinal = proximoShow.localContato || '(41) 99590-6901';
-                let numeroWhatsLimpo = contatoFinal.replace(/\D/g, ''); 
-                
-                let linkVendasFinal = proximoShow.linkIngresso || 'https://abreaporta.com.br';
-                let textoBotaoPrincipal = proximoShow.linkIngresso ? '🎫 Comprar Ingressos' : '📲 Mais Informações';
+                const localDestaque = proximoShow.localNome ? `📍 ${proximoShow.localNome}` : '📍 Local privado';
+                const enderecoDestaque = proximoShow.localEndereco ? `<span style="display:block; color:#aaa; font-size:.96rem; margin-top:6px;">${proximoShow.localEndereco}</span>` : '';
+                const instagramFinal = proximoShow.instagram || '@bailedoted';
+                const contatoFinal = proximoShow.localContato || '(41) 99590-6901';
+                const numeroWhatsLimpo = onlyNumbers(contatoFinal);
+                const linkVendasFinal = proximoShow.linkIngresso || 'https://wa.me/5541995906901?text=Olá! Quero mais informações sobre o próximo show do Baile do Ted.';
+                const textoBotaoPrincipal = proximoShow.linkIngresso ? '🎫 Comprar ingressos' : '📲 Mais informações';
+                const imagemDestaque = proximoShow.imagem || 'img/tedsite.png';
 
                 containerDestaque.innerHTML = `
-                    <div class="show-destaque" style="position: relative; background: #0a0a0a; border: 1px solid #333; padding: 40px 20px; border-radius: 20px; margin-bottom: 40px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.8); overflow: hidden;">
-                        
-                        <div style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 250px; height: 250px; background: #ff007f; filter: blur(120px); opacity: 0.25; z-index: 0; pointer-events: none;"></div>
-
-                        <div style="position: relative; z-index: 1;">
-                            <span style="background: linear-gradient(90deg, #ff007f, #b300ff); color: #fff; padding: 8px 25px; border-radius: 30px; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; display: inline-block; box-shadow: 0 4px 15px rgba(255, 0, 127, 0.4);">🔥 O Próximo Show</span>
-                            
-                            <div style="width: 100%; max-width: 380px; margin: 0 auto 25px auto; overflow: hidden; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); border: 1px solid #222; background: #000;">
-                                <img src="${proximoShow.imagem || 'img/tedsite.png'}" alt="${proximoShow.nome}" style="width: 100%; height: auto; display: block; object-fit: contain;">
+                    <div class="show-destaque" style="position:relative; background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035)); border:1px solid rgba(255,255,255,.12); padding:26px; border-radius:28px; margin-bottom:34px; box-shadow:0 24px 70px rgba(0,0,0,.36); overflow:hidden;">
+                        <div style="position:absolute; top:-80px; left:50%; transform:translateX(-50%); width:340px; height:340px; background:#ff007f; filter:blur(130px); opacity:.22; pointer-events:none;"></div>
+                        <div style="position:relative; z-index:1; display:grid; grid-template-columns:minmax(260px, 390px) 1fr; gap:26px; align-items:center;">
+                            <div style="background:#000; border-radius:22px; overflow:hidden; border:1px solid rgba(255,255,255,.12);">
+                                <img class="js-open-art" src="${imagemDestaque}" data-full="${imagemDestaque}" alt="${proximoShow.nome || 'Próximo show do Baile do Ted'}" style="width:100%; height:auto; display:block; object-fit:contain;" loading="lazy">
                             </div>
-
-                            <h3 style="font-size: 2.5rem; margin: 0 0 15px 0; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">${proximoShow.nome}</h3>
-                            
-                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; max-width: 500px; margin: 0 auto 25px auto; backdrop-filter: blur(10px);">
-                                <p style="font-size: 1.6rem; color: #ff007f; font-weight: 900; margin: 0 0 10px 0; text-shadow: 0 2px 15px rgba(255,0,127,0.3);">${proximoShow.dataTexto}</p>
-                                <p style="font-size: 1.1rem; color: #fff; margin: 0; font-weight: bold;">${localDestaque} ${enderecoDestaque}</p>
+                            <div>
+                                <span class="eyebrow">🔥 Próximo show confirmado</span>
+                                <h3 style="font-size:clamp(2rem, 6vw, 4rem); line-height:.94; margin:0 0 14px; text-transform:uppercase; letter-spacing:-.055em;">${proximoShow.nome || 'Baile do Ted'}</h3>
+                                <div style="background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.10); padding:18px; border-radius:18px; margin-bottom:20px;">
+                                    <p style="font-size:1.55rem; color:#ff007f; font-weight:950; margin:0 0 8px;">${proximoShow.dataTexto || 'Data em breve'}</p>
+                                    <p style="font-size:1.05rem; color:#fff; margin:0; font-weight:800;">${localDestaque}${enderecoDestaque}</p>
+                                </div>
+                                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+                                    <a class="btn-secondary" href="https://instagram.com/${instagramFinal.replace('@', '')}" target="_blank" style="min-height:44px; padding:0 16px;">Instagram</a>
+                                    <a class="btn-secondary" href="https://wa.me/55${numeroWhatsLimpo}" target="_blank" style="min-height:44px; padding:0 16px;">WhatsApp local</a>
+                                </div>
+                                <a href="${linkVendasFinal}" target="_blank" class="btn-primary">${textoBotaoPrincipal}</a>
                             </div>
-
-                            <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap;">
-                                <a href="https://instagram.com/${instagramFinal.replace('@', '')}" target="_blank" title="${instagramFinal}" style="display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; background: rgba(255,0,127,0.1); color: #ff007f; border-radius: 50%; text-decoration: none; border: 1px solid rgba(255,0,127,0.3); transition: all 0.3s ease;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-                                </a>
-                                
-                                <a href="https://wa.me/55${numeroWhatsLimpo}" target="_blank" title="Chamar no WhatsApp" style="display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; background: rgba(0,200,83,0.1); color: #00c853; border-radius: 50%; text-decoration: none; border: 1px solid rgba(0,200,83,0.3); transition: all 0.3s ease;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.411 0 11.981 0c3.184.001 6.177 1.242 8.426 3.496 2.249 2.254 3.487 5.244 3.486 8.428-.003 6.623-5.354 11.972-11.924 11.972-1.996-.001-3.956-.501-5.699-1.45L0 24zm6.59-4.846c1.666.988 3.311 1.485 5.333 1.486 5.517 0 10.005-4.477 10.008-9.986.002-2.669-1.036-5.178-2.925-7.069C17.175 1.693 14.673.655 12.002.655 6.485.655 1.997 5.132 1.994 10.64c0 2.083.547 4.11 1.585 5.86l-.99 3.616 3.704-.962h.354zM16.52 14.92c-.233-.117-1.384-.683-1.597-.762-.214-.078-.37-.117-.526.117-.156.234-.604.762-.741.918-.137.156-.273.175-.506.058-.233-.117-.988-.363-1.88-1.161-.694-.618-1.163-1.382-1.3-1.616-.137-.234-.015-.361.102-.477.106-.105.234-.273.349-.41.117-.136.156-.233.234-.39.078-.155.038-.292-.019-.41-.059-.117-.526-1.267-.721-1.735-.19-.459-.383-.396-.526-.404-.136-.007-.293-.008-.449-.008-.156 0-.41.059-.624.292-.214.234-.818.8-.818 1.95 0 1.15.838 2.261.955 2.417.117.156 1.648 2.516 3.993 3.527.558.241 1.002.385 1.345.495.561.178 1.07.153 1.472.093.448-.067 1.384-.565 1.579-1.111.195-.547.195-1.015.137-1.111-.059-.098-.215-.156-.449-.274z"/></svg>
-                                </a>
-                            </div>
-
-                            <a href="${linkVendasFinal}" target="_blank" class="btn-booking" style="display: inline-block; padding: 12px 35px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; border-radius: 50px; background: linear-gradient(90deg, #ff007f, #b300ff); box-shadow: 0 5px 20px rgba(255,0,127,0.4); border: none; font-weight: 900; color: #fff; text-decoration: none;">${textoBotaoPrincipal}</a>
                         </div>
                     </div>
                 `;
 
                 gridCalendario.innerHTML = "";
-                const demaisEventos = eventos.slice(1);
+                eventos.slice(1).forEach((evento) => {
+                    const localLista = evento.localNome || 'Evento restrito';
+                    const cidadeLista = evento.localEndereco || '';
+                    const linkBotaoLista = evento.linkIngresso || 'https://wa.me/5541995906901?text=Olá! Quero detalhes de um show do Baile do Ted.';
+                    const instaCard = evento.instagram || '@bailedoted';
+                    const contatoCard = evento.localContato || '(41) 99590-6901';
+                    const whatsCardLimpo = onlyNumbers(contatoCard);
+                    const imagem = evento.imagem || 'img/tedsite.png';
 
-                demaisEventos.forEach((evento) => {
-                    let localLista = evento.localNome ? evento.localNome : 'Evento Restrito';
-                    let cidadeLista = evento.localEndereco ? evento.localEndereco : '';
-                    let linkBotaoLista = evento.linkIngresso || 'https://abreaporta.com.br';
-                    
-                    let instaCard = evento.instagram || '@bailedoted';
-                    let contatoCard = evento.localContato || '(41) 99590-6901';
-                    let whatsCardLimpo = contatoCard.replace(/\D/g, '');
-
-                    gridCalendario.innerHTML += `
+                    gridCalendario.insertAdjacentHTML('beforeend', `
                         <div class="card-evento">
-                            <div style="position: relative; background: #050505; border-bottom: 1px solid #222;">
-                                <img src="${evento.imagem || 'img/tedsite.png'}" alt="${evento.nome}" style="width: 100%; height: 220px; object-fit: contain; display: block;" loading="lazy">
-                                
-                                <div style="position: absolute; top: 10px; right: 10px; background: #ff007f; color: #fff; padding: 5px 12px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                                    <span style="display: block; font-size: 0.8rem; text-transform: uppercase;">${evento.mesAbas}</span>
-                                    <span style="display: block; font-size: 1.5rem; font-weight: bold;">${evento.diaNum}</span>
+                            <div style="position:relative; background:#050505; border-bottom:1px solid rgba(255,255,255,.10);">
+                                <img class="js-open-art" src="${imagem}" data-full="${imagem}" alt="${evento.nome || 'Arte do evento'}" style="width:100%; height:230px; object-fit:contain; display:block;" loading="lazy">
+                                <div style="position:absolute; top:10px; right:10px; background:#ff007f; color:#fff; padding:6px 12px; border-radius:12px; text-align:center; box-shadow:0 8px 16px rgba(0,0,0,.5);">
+                                    <span style="display:block; font-size:.78rem; text-transform:uppercase; font-weight:850;">${evento.mesAbas || ''}</span>
+                                    <span style="display:block; font-size:1.5rem; font-weight:950;">${evento.diaNum || ''}</span>
                                 </div>
                             </div>
-                            
-                            <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
-                                <h4 style="color: #fff; font-size: 1.2rem; margin: 0 0 10px 0; font-weight: 800;">${evento.nome}</h4>
-                                
-                                <p style="color: #ff007f; font-size: 0.95rem; margin: 0 0 5px 0; font-weight: bold;">📍 ${localLista}</p>
-                                ${cidadeLista ? `<p style="color: #aaa; font-size: 0.85rem; margin: 0 0 15px 0;">🌍 ${cidadeLista}</p>` : ''}
-                                
-                                <div style="display: flex; gap: 10px; margin-bottom: 20px; margin-top: auto;">
-                                    <a href="https://instagram.com/${instaCard.replace('@', '')}" target="_blank" title="${instaCard}" style="display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; background: rgba(255,0,127,0.1); color: #ff007f; border-radius: 50%; text-decoration: none; border: 1px solid rgba(255,0,127,0.3); transition: all 0.3s ease;" onmouseover="this.style.background='#ff007f'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,0,127,0.1)'; this.style.color='#ff007f'">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-                                    </a>
-                                    
-                                    <a href="https://wa.me/55${whatsCardLimpo}" target="_blank" title="WhatsApp" style="display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; background: rgba(0,200,83,0.1); color: #00c853; border-radius: 50%; text-decoration: none; border: 1px solid rgba(0,200,83,0.3); transition: all 0.3s ease;" onmouseover="this.style.background='#00c853'; this.style.color='#fff'" onmouseout="this.style.background='rgba(0,200,83,0.1)'; this.style.color='#00c853'">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.411 0 11.981 0c3.184.001 6.177 1.242 8.426 3.496 2.249 2.254 3.487 5.244 3.486 8.428-.003 6.623-5.354 11.972-11.924 11.972-1.996-.001-3.956-.501-5.699-1.45L0 24zm6.59-4.846c1.666.988 3.311 1.485 5.333 1.486 5.517 0 10.005-4.477 10.008-9.986.002-2.669-1.036-5.178-2.925-7.069C17.175 1.693 14.673.655 12.002.655 6.485.655 1.997 5.132 1.994 10.64c0 2.083.547 4.11 1.585 5.86l-.99 3.616 3.704-.962h.354zM16.52 14.92c-.233-.117-1.384-.683-1.597-.762-.214-.078-.37-.117-.526.117-.156.234-.604.762-.741.918-.137.156-.273.175-.506.058-.233-.117-.988-.363-1.88-1.161-.694-.618-1.163-1.382-1.3-1.616-.137-.234-.015-.361.102-.477.106-.105.234-.273.349-.41.117-.136.156-.233.234-.39.078-.155.038-.292-.019-.41-.059-.117-.526-1.267-.721-1.735-.19-.459-.383-.396-.526-.404-.136-.007-.293-.008-.449-.008-.156 0-.41.059-.624.292-.214.234-.818.8-.818 1.95 0 1.15.838 2.261.955 2.417.117.156 1.648 2.516 3.993 3.527.558.241 1.002.385 1.345.495.561.178 1.07.153 1.472.093.448-.067 1.384-.565 1.579-1.111.195-.547.195-1.015.137-1.111-.059-.098-.215-.156-.449-.274z"/></svg>
-                                    </a>
+                            <div style="padding:20px; display:flex; flex-direction:column; flex-grow:1;">
+                                <h4 style="color:#fff; font-size:1.18rem; margin:0 0 10px; font-weight:950; line-height:1.25;">${evento.nome || 'Baile do Ted'}</h4>
+                                <p style="color:#ff007f; font-size:.96rem; margin:0 0 6px; font-weight:850;">📍 ${localLista}</p>
+                                ${cidadeLista ? `<p style="color:#aaa; font-size:.86rem; margin:0 0 16px;">🌍 ${cidadeLista}</p>` : ''}
+                                <div style="display:flex; gap:10px; margin-bottom:18px; margin-top:auto;">
+                                    <a href="https://instagram.com/${instaCard.replace('@', '')}" target="_blank" title="${instaCard}" style="display:flex; align-items:center; justify-content:center; width:38px; height:38px; background:rgba(255,0,127,.10); color:#ff007f; border-radius:50%; text-decoration:none; border:1px solid rgba(255,0,127,.30); font-weight:900;">IG</a>
+                                    <a href="https://wa.me/55${whatsCardLimpo}" target="_blank" title="WhatsApp" style="display:flex; align-items:center; justify-content:center; width:38px; height:38px; background:rgba(0,200,83,.10); color:#00c853; border-radius:50%; text-decoration:none; border:1px solid rgba(0,200,83,.30); font-weight:900;">WA</a>
                                 </div>
-                                
-                                <a href="${linkBotaoLista}" target="_blank" style="display: block; width: 100%; text-align: center; background: #1a1a1a; color: #fff; text-decoration: none; padding: 12px 0; border-radius: 8px; font-weight: bold; border: 1px solid #333; transition: all 0.3s ease; text-transform: uppercase; font-size: 0.9rem;" onmouseover="this.style.background='#ff007f'; this.style.borderColor='#ff007f'; this.style.boxShadow='0 4px 15px rgba(255,0,127,0.4)'" onmouseout="this.style.background='#1a1a1a'; this.style.borderColor='#333'; this.style.boxShadow='none'">
-                                    🎫 Ver Detalhes
-                                </a>
+                                <a href="${linkBotaoLista}" target="_blank" class="btn-secondary" style="width:100%; min-height:46px; border-radius:12px;">🎫 Ver detalhes</a>
                             </div>
-                        </div>
-                    `;
+                        </div>`);
                 });
-
             } catch (error) {
                 console.error("Erro ao carregar banco de dados: ", error);
+                containerDestaque.innerHTML = `
+                    <div class="event-cta-after" style="justify-content:center; text-align:center;">
+                        <div>
+                            <h3>Não foi possível carregar a agenda agora.</h3>
+                            <p>Chame no WhatsApp para consultar disponibilidade.</p>
+                        </div>
+                        <a class="btn-primary" href="https://wa.me/5541995906901?text=Olá! Quero consultar a agenda do Baile do Ted." target="_blank">Chamar no WhatsApp</a>
+                    </div>`;
             }
         }
 
@@ -511,43 +885,149 @@
     </script>
 </head>
 <body>
+    <nav class="topbar">
+        <div class="topbar-inner">
+            <a class="brand" href="#topo" aria-label="Baile do Ted">
+                <img src="img/icone.png" alt="Logo Baile do Ted" onerror="this.src='img/ted.png'">
+                <strong>Baile do Ted</strong>
+            </a>
+            <div class="nav-links">
+                <a href="#experiencia">Experiência</a>
+                <a href="#eventos">Eventos</a>
+                <a href="#agenda">Agenda</a>
+                <a href="#comentarios">Prova social</a>
+                <a href="#contato">Orçamento</a>
+            </div>
+            <a class="btn-primary" href="https://wa.me/5541995906901?text=Olá! Quero contratar o Baile do Ted para meu evento." target="_blank">Contratar</a>
+        </div>
+    </nav>
 
-    <header class="hero">
-        <div class="hero-content">
-            <h1>BAILE DO TED</h1>
-            <p class="tagline">A experiência definitiva em Música e Dança.</p>
-            <a href="#contato" class="btn-booking">Leve o Baile para sua Festa</a>
+    <header id="topo" class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <div class="hero-kicker">🐻 personagem • música • interação • fotos</div>
+                <h1><span>Baile</span><span class="gradient-text">do Ted</span></h1>
+                <p class="tagline">O personagem que transforma qualquer evento em uma experiência inesquecível. <strong>Interação, fotos, música, presença marcante e muita energia</strong> para festas, shows, casas noturnas e ações promocionais.</p>
+                <div class="hero-actions">
+                    <a class="btn-primary" href="https://wa.me/5541995906901?text=Olá! Quero solicitar um orçamento do Baile do Ted para meu evento." target="_blank">Solicitar orçamento</a>
+                    <a class="btn-secondary" href="#agenda">Ver agenda oficial</a>
+                </div>
+                <div class="hero-pills" aria-label="Destaques do Baile do Ted">
+                    <div class="hero-pill">Desde 2018</div>
+                    <div class="hero-pill">+7 estados</div>
+                    <div class="hero-pill">Ideal para eventos</div>
+                    <div class="hero-pill">Simulação online</div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <img class="js-open-art" src="img/tedsite.png" data-full="img/tedsite.png" alt="Baile do Ted em ação" loading="eager">
+                    <div class="floating-badge">
+                        <strong>Conteúdo garantido</strong>
+                        <span>O público tira foto, grava vídeo e compartilha.</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section id="release" class="section dark-bg">
+    <section id="eventos" class="section">
         <div class="container">
-            <h2>O Projeto</h2>
-            <div class="release-text">
-                <p>O <strong>Baile do Ted</strong> é um projeto musical que nasceu em 2018, no Rio Grande do Sul, idealizado pelo <strong>DJ Neto</strong>. Desde o início, a proposta foi ir além de um simples show: criar uma experiência envolvente, onde a música e a interação com o público caminham juntas, transformando cada apresentação em um momento único.</p>
-                <br>
-                <p>Com uma identidade marcante, o Baile do Ted mistura os ritmos do <strong>funk e do eletrofunk</strong>, trazendo batidas intensas, energia contagiante e uma forte conexão com a pista. O projeto rapidamente ganhou destaque pela sua originalidade e pela forma dinâmica como se comunica com o público, tornando cada evento uma verdadeira celebração.</p>
-                <br>
-                <p>Ao longo de sua trajetória, o Baile do Ted já percorreu <strong>mais de sete estados brasileiros</strong>, consolidando sua presença em diferentes regiões do país e conquistando uma base de fãs cada vez mais fiel. Cada apresentação carrega a essência do projeto: animação, proximidade com o público e uma entrega musical que não deixa ninguém parado.</p>
+            <div class="section-title">
+                <span class="eyebrow">🎉 Para quem é</span>
+                <h2>Uma atração para <span class="gradient-text">fazer o público lembrar</span></h2>
+                <p>O Baile do Ted funciona como atração principal, presença especial, ação de marketing ou reforço de animação para vários tipos de evento.</p>
+            </div>
+            <div class="event-types">
+                <div class="event-type">Casas noturnas</div>
+                <div class="event-type">Aniversários</div>
+                <div class="event-type">Formaturas</div>
+                <div class="event-type">Eventos corporativos</div>
+                <div class="event-type">Feiras</div>
+                <div class="event-type">Inaugurações</div>
+                <div class="event-type">Ações promocionais</div>
+                <div class="event-type">Festas universitárias</div>
             </div>
         </div>
     </section>
 
-    <section id="agenda" class="section">
+    <section id="experiencia" class="section dark-bg">
         <div class="container">
-            <h2>Agenda Oficial</h2>
-            <div id="container-destaque"></div>
-            <div id="grid-calendario" class="grid-calendario"></div>
+            <div class="section-title">
+                <span class="eyebrow">⚡ O que você contrata</span>
+                <h2>Mais que presença: <span class="gradient-text">uma experiência</span></h2>
+                <p>O Ted entra para gerar impacto, aproximar o público e transformar a festa em fotos, vídeos e momentos compartilháveis.</p>
+            </div>
+            <div class="cards-grid">
+                <article class="info-card"><div class="icon">🐻</div><h3>Personagem marcante</h3><p>Visual forte, carisma e presença para destacar seu evento desde a chegada.</p></article>
+                <article class="info-card"><div class="icon">📸</div><h3>Fotos e vídeos</h3><p>O público interage, registra e compartilha, aumentando a lembrança da festa.</p></article>
+                <article class="info-card"><div class="icon">🎶</div><h3>Música e animação</h3><p>Energia de pista, entrada impactante e conexão com a galera durante o evento.</p></article>
+                <article class="info-card"><div class="icon">🚀</div><h3>Divulgação forte</h3><p>Ajuda a criar expectativa antes do evento e movimento durante a noite.</p></article>
+                <article class="info-card"><div class="icon">🤝</div><h3>Interação com público</h3><p>Recepção, fotos, brincadeiras e presença especial para encantar convidados.</p></article>
+                <article class="info-card"><div class="icon">💼</div><h3>Eventos e marcas</h3><p>Ótimo para ativações, inaugurações, promoções e ações corporativas.</p></article>
+            </div>
         </div>
     </section>
 
+    <section id="release" class="section">
+        <div class="container">
+            <div class="release-box">
+                <div class="release-media">
+                    <img class="js-open-art" src="img/tedsite.png" data-full="img/tedsite.png" alt="Baile do Ted para eventos" loading="lazy">
+                </div>
+                <div class="release-text">
+                    <span class="eyebrow">🔥 O projeto</span>
+                    <h2 style="text-align:left; margin-bottom:18px;">O Baile que vira assunto</h2>
+                    <p>O <strong>Baile do Ted</strong> nasceu em 2018, no Rio Grande do Sul, idealizado pelo <strong>DJ Neto</strong>. Desde o início, a proposta foi ir além de um simples show: criar uma experiência envolvente, onde música, personagem e interação caminham juntos.</p>
+                    <p>Com uma identidade marcante, o projeto mistura <strong>funk e eletrofunk</strong>, presença visual e conexão com a pista. Cada apresentação carrega animação, proximidade com o público e entrega musical para não deixar ninguém parado.</p>
+                    <div class="check-list">
+                        <div class="check-item"><span>✓</span> Interação com convidados</div>
+                        <div class="check-item"><span>✓</span> Fotos e vídeos</div>
+                        <div class="check-item"><span>✓</span> Entrada marcante</div>
+                        <div class="check-item"><span>✓</span> Energia de pista</div>
+                    </div>
+                    <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
+                        <a class="btn-primary" href="https://wa.me/5541995906901?text=Olá! Quero contratar o Baile do Ted." target="_blank">Quero contratar</a>
+                        <a class="btn-secondary" href="presskit.pdf" target="_blank">Baixar presskit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="agenda" class="section dark-bg">
+        <div class="container">
+            <div class="section-title">
+                <span class="eyebrow">📅 Agenda oficial</span>
+                <h2>Próximos shows <span class="gradient-text">do Ted</span></h2>
+                <p>Veja onde o Baile do Ted estará e clique nas artes para ampliar.</p>
+            </div>
+            <div id="container-destaque"></div>
+            <div id="grid-calendario" class="grid-calendario"></div>
+            <div class="event-cta-after">
+                <div>
+                    <h3>Quer ver o Ted na sua cidade?</h3>
+                    <p>Consulte disponibilidade de data e leve essa atração para o seu evento.</p>
+                </div>
+                <a class="btn-primary" href="https://wa.me/5541995906901?text=Olá! Quero saber se o Baile do Ted tem data disponível para minha cidade." target="_blank">Consultar disponibilidade</a>
+            </div>
+        </div>
+    </section>
 
     <section id="comentarios" class="section comentarios-carousel-section">
         <div class="container">
-            <h2>Quem já viu, comenta</h2>
+            <div class="section-title">
+                <span class="eyebrow">💬 Prova social</span>
+                <h2>Quem já viu, <span class="gradient-text">comenta</span></h2>
+                <p>Prints e comentários reais ajudam quem ainda não conhece a sentir a energia do projeto.</p>
+            </div>
+            <div class="proof-quotes">
+                <div class="proof-quote">“Foi o ponto alto da festa.”</div>
+                <div class="proof-quote">“Todo mundo quis tirar foto com o Ted.”</div>
+                <div class="proof-quote">“Animação do início ao fim.”</div>
+            </div>
             <div class="comentarios-carousel-wrap" aria-label="Carrossel de comentários do Baile do Ted">
                 <button class="comentarios-nav prev" type="button" aria-label="Comentário anterior" data-comentarios-prev>‹</button>
-
                 <div class="comentarios-carousel-viewport">
                     <div class="comentarios-carousel-track" data-comentarios-track>
                         <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/01.png" alt="Comentário sobre o Baile do Ted no WhatsApp" loading="lazy"></div></div>
@@ -562,180 +1042,78 @@
                         <div class="comentario-slide"><div class="comentario-card"><img src="img/comentarios/10.png" alt="Comentário sobre o Baile do Ted no Direct do Instagram" loading="lazy"></div></div>
                     </div>
                 </div>
-
                 <button class="comentarios-nav next" type="button" aria-label="Próximos comentários" data-comentarios-next>›</button>
             </div>
-
             <div class="comentarios-dots" data-comentarios-dots></div>
         </div>
     </section>
 
-    <section id="contato" class="section dark-bg" style="border-top: 1px solid #222;">
-        <div class="container" style="max-width: 700px;">
-            
-            <h2 style="margin-bottom: 10px;">Simule seu Orçamento</h2>
-            <p style="color: #aaa; margin-bottom: 20px;">Descubra uma estimativa de deslocamento para levar o Baile do Ted até a sua cidade.</p>
+    <section id="contato" class="section">
+        <div class="container">
+            <div class="section-title">
+                <span class="eyebrow">💰 orçamento rápido</span>
+                <h2>Simule e chame <span class="gradient-text">no WhatsApp</span></h2>
+                <p>Informe sua cidade e receba uma estimativa base de deslocamento para conversar sobre a contratação.</p>
+            </div>
 
-            <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 12px; border: 1px solid #333; margin-bottom: 50px;">
+            <div class="orcamento-card">
                 <div class="input-orcamento-group">
-                    <input type="text" id="cidade-destino" placeholder="Digite sua Cidade e Estado (Ex: Lagoa Vermelha, RS)" style="flex: 1; padding: 14px; border-radius: 8px; border: 1px solid #444; background: #222; color: #fff; font-size: 15px; margin: 0;">
-                    <button onclick="calcularOrcamento()" id="btn-calcular" style="background: linear-gradient(90deg, #ff007f, #b300ff); color: #fff; border: none; padding: 14px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; margin: 0; min-width: 180px;">Calcular Estimativa</button>
+                    <input type="text" id="cidade-destino" placeholder="Cidade e Estado. Ex: Candelária, RS">
+                    <input type="text" id="tipo-evento" placeholder="Tipo de evento. Ex: Aniversário, boate, formatura">
                 </div>
+                <div class="input-orcamento-group">
+                    <input type="date" id="data-evento" aria-label="Data desejada">
+                    <input type="text" id="nome-cliente" placeholder="Seu nome ou nome da empresa">
+                </div>
+                <button onclick="calcularOrcamento()" id="btn-calcular" class="btn-primary">Calcular estimativa</button>
 
-                <div id="loading-box" style="display: none; margin-top: 25px; text-align: center;">
-                    <p id="msg-ted" style="color: #ff007f; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px;"></p>
-                    <div style="width: 100%; height: 12px; background: #222; border-radius: 10px; overflow: hidden; border: 1px solid #444;">
-                        <div id="barra-progresso" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ff007f, #b300ff, #00c853, #ff007f); background-size: 300% 100%;"></div>
+                <div id="loading-box" style="display:none; text-align:center;">
+                    <p id="msg-ted" style="color:#ff007f; font-weight:900; font-size:1.05rem; margin:0 0 15px;"></p>
+                    <div style="width:100%; height:12px; background:#17171d; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.14);">
+                        <div id="barra-progresso" style="height:100%; width:0%; background:linear-gradient(90deg,#ff007f,#b300ff,#00c853,#ff007f); background-size:300% 100%;"></div>
                     </div>
                 </div>
 
-                <div id="resultado-box" style="display: none; margin-top: 20px; border-top: 1px solid #444; padding-top: 20px;">
-                    <p id="msg-erro" style="color: #ff007f; font-weight: bold; margin: 0 0 15px 0; display: none;"></p>
-                    
-                    <div id="dados-orcamento">
-                        <h3 style="color: #ff007f; margin: 0 0 10px 0; font-size: 1.5rem;">Estimativa Base: R$ <span id="res-total">--</span></h3>
-                        <p style="color: #888; font-size: 0.85rem; margin: 0 0 20px 0;">* Despesas com hospedagem e alimentação na cidade não inclusas nesta simulação rápida.</p>
-                        <a id="btn-whats-orcamento" href="#" target="_blank" style="display: inline-block; background: #00c853; color: #fff; padding: 12px 30px; border-radius: 30px; font-weight: bold; text-decoration: none;">Enviar Cotação pelo WhatsApp</a>
+                <div id="resultado-box" style="display:none;">
+                    <p id="msg-erro" style="color:#ff4fa7; font-weight:900; margin:0 0 15px; display:none;"></p>
+                    <div id="dados-orcamento" style="display:none;">
+                        <h3 style="color:#fff; margin:0 0 8px; font-size:1.65rem;">Estimativa base: <span style="color:#ffd400;">R$ <span id="res-total">--</span></span></h3>
+                        <p style="color:#aaa; font-size:.92rem; margin:0 0 18px; line-height:1.55;">* Despesas com hospedagem e alimentação na cidade não inclusas nesta simulação rápida. O valor final pode variar conforme data, formato e estrutura do evento.</p>
+                        <a id="btn-whats-orcamento" href="#" target="_blank" class="btn-primary">Enviar cotação pelo WhatsApp</a>
                     </div>
                 </div>
             </div>
 
-            <div style="text-align: center; margin-top: 40px; padding-top: 40px; border-top: 1px solid #222;">
-                <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Conecte-se com o Baile</h3>
-                <p style="color: #aaa; margin-bottom: 25px;">Poste seus melhores momentos com a tag #bailedoted</p>
-                
-                <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px;">
-                    <a href="https://www.instagram.com/bailedoted/" target="_blank" class="social-circle-btn insta" title="Instagram">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-                    </a>
-                    <a href="https://www.tiktok.com/@bailedoted0?_r=1&_t=ZS-96j8t03LKxo" target="_blank" class="social-circle-btn tiktok" title="TikTok do Baile do Ted">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-                    </a>
-                    <a href="https://www.youtube.com/channel/UCTWVhvbqsDj7csEh-owrOVA" target="_blank" class="social-circle-btn yt" title="YouTube">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.582 6.186a2.684 2.684 0 0 0-1.884-1.898C17.986 3.8 12 3.8 12 3.8s-5.986 0-7.698.488a2.684 2.684 0 0 0-1.884 1.898C2 7.914 2 12 2 12s0 4.086.418 5.814a2.684 2.684 0 0 0 1.884 1.898C5.986 20.2 12 20.2 12 20.2s5.986 0 7.698-.488a2.684 2.684 0 0 0 1.884-1.898C22 16.086 22 12 22 12s0-4.086-.418-5.814zM9.9 15.5v-7l6.6 3.5-6.6 3.5z"/></svg>
-                    </a>
+            <div style="text-align:center; margin-top:48px; padding-top:38px; border-top:1px solid rgba(255,255,255,.10);">
+                <h3 style="font-size:1.55rem; margin:0 0 10px;">Conecte-se com o Baile</h3>
+                <p style="color:#aaa; margin:0 0 25px;">Poste seus melhores momentos com a tag #bailedoted</p>
+                <div style="display:flex; justify-content:center; gap:16px; margin-bottom:28px;">
+                    <a href="https://www.instagram.com/bailedoted/" target="_blank" class="social-circle-btn insta" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+                    <a href="https://www.tiktok.com/@bailedoted0?_r=1&_t=ZS-96j8t03LKxo" target="_blank" class="social-circle-btn tiktok" title="TikTok"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg></a>
+                    <a href="https://www.youtube.com/channel/UCTWVhvbqsDj7csEh-owrOVA" target="_blank" class="social-circle-btn yt" title="YouTube"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.582 6.186a2.684 2.684 0 0 0-1.884-1.898C17.986 3.8 12 3.8 12 3.8s-5.986 0-7.698.488a2.684 2.684 0 0 0-1.884 1.898C2 7.914 2 12 2 12s0 4.086.418 5.814a2.684 2.684 0 0 0 1.884 1.898C5.986 20.2 12 20.2 12 20.2s5.986 0 7.698-.488a2.684 2.684 0 0 0 1.884-1.898C22 16.086 22 12 22 12s0-4.086-.418-5.814zM9.9 15.5v-7l6.6 3.5-6.6 3.5z"/></svg></a>
                 </div>
-
-                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                    <a href="presskit.pdf" target="_blank" style="display: inline-block; background: transparent; border: 1px solid #0088cc; color: #0088cc; padding: 10px 25px; border-radius: 30px; font-weight: bold; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='#0088cc'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color='#0088cc'">Baixar Presskit PDF</a>
-                    
-                    <a href="https://play.google.com/store/apps/details?id=app.radios.com.py.bailedoted&pcampaignid=web_share" target="_blank" style="display: inline-block; background: transparent; border: 1px solid #00c853; color: #00c853; padding: 10px 25px; border-radius: 30px; font-weight: bold; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='#00c853'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color='#00c853'">📻 App da Rádio</a>
+                <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+                    <a href="presskit.pdf" target="_blank" class="btn-secondary">Baixar presskit PDF</a>
+                    <a href="https://play.google.com/store/apps/details?id=app.radios.com.py.bailedoted&pcampaignid=web_share" target="_blank" class="btn-secondary">📻 App da rádio</a>
                 </div>
             </div>
-
         </div>
-
-        <script>
-            async function calcularOrcamento() {
-                const cidadeInput = document.getElementById('cidade-destino').value;
-                const btnWhats = document.getElementById('btn-whats-orcamento');
-                const btnCalcular = document.getElementById('btn-calcular');
-                const loadingBox = document.getElementById('loading-box');
-                const resultadoBox = document.getElementById('resultado-box');
-                const dadosOrcamento = document.getElementById('dados-orcamento');
-                const msgErro = document.getElementById('msg-erro');
-                const barraProgresso = document.getElementById('barra-progresso');
-                const msgTed = document.getElementById('msg-ted');
-
-                // Reseta a tela
-                resultadoBox.style.display = 'none';
-                dadosOrcamento.style.display = 'none';
-                msgErro.style.display = 'none';
-                loadingBox.style.display = 'none';
-                barraProgresso.style.animation = 'none';
-
-                if (!cidadeInput) {
-                    resultadoBox.style.display = 'block';
-                    msgErro.innerText = "🚨 Digite o nome da cidade, parceiro!";
-                    msgErro.style.display = 'block';
-                    return;
-                }
-
-                // Frases engraçadas do Ted
-                const frasesTed = [
-                    "Calma aí, parceiro de trovão! Tô calculando essa rota enquanto abro uma gelada... ⚡🐻🍻",
-                    "Acordando o Ted da ressaca para ver quantos KM dá até aí... aguenta! 🐻💤",
-                    "Preparando o cooler e medindo a distância... Já vou avisando que a equipe bebe muito! 🐻🍻",
-                    "Sai pra lá, trovão! O Ted tá focado calculando os custos dessa viagem... ⚡🐻"
-                ];
-                msgTed.innerText = frasesTed[Math.floor(Math.random() * frasesTed.length)];
-                
-                // Mostra animação de loading travada por 3 segundos
-                loadingBox.style.display = 'block';
-                btnCalcular.disabled = true;
-                btnCalcular.innerText = "Calculando...";
-                
-                // Reinicia animações CSS da barra
-                setTimeout(() => {
-                    barraProgresso.style.animation = 'encherBarra 5s linear forwards, brilhoNeon 2s ease infinite';
-                }, 10);
-
-                // Promessa de 3 Segundos (Delay obrigatório)
-                const delayPromise = new Promise(resolve => setTimeout(resolve, 3000));
-
-                // Promessa do calculo da API
-                const calculoPromise = (async () => {
-                    const resGeo = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cidadeInput)}`);
-                    const geoData = await resGeo.json();
-                    if (geoData.length === 0) throw new Error("Cidade não encontrada. Digite no formato 'Cidade, Estado'.");
-                    
-                    const latDestino = geoData[0].lat;
-                    const lonDestino = geoData[0].lon;
-                    const latCwb = -25.4284;
-                    const lonCwb = -49.2733;
-
-                    const resRota = await fetch(`https://router.project-osrm.org/route/v1/driving/${lonCwb},${latCwb};${lonDestino},${latDestino}?overview=false`);
-                    const rotaData = await resRota.json();
-                    if (rotaData.code !== 'Ok') throw new Error("Não foi possível traçar uma rota de carro para este destino.");
-                    
-                    const distanciaMetros = rotaData.routes[0].distance;
-                    const kmIda = distanciaMetros / 1000;
-                    const kmIdaVolta = kmIda * 2;
-                    
-                    let valorShow = 0;
-                    if (kmIdaVolta <= 200) { valorShow = 1500; } 
-                    else if (kmIdaVolta <= 300) { valorShow = 2000; } 
-                    else if (kmIdaVolta <= 500) { valorShow = 2500; } 
-                    else { valorShow = 3000; }
-                    
-                    return (kmIdaVolta * 0.68) + valorShow;
-                })();
-
-                // Roda o Delay e o Calculo ao mesmo tempo
-                try {
-                    const [_, valorTotal] = await Promise.all([delayPromise, calculoPromise]);
-                    
-                    // Sucesso! Mostra os dados
-                    loadingBox.style.display = 'none';
-                    document.getElementById('res-total').innerText = valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                    resultadoBox.style.display = 'block';
-                    dadosOrcamento.style.display = 'block';
-
-                    const msgWhats = `Olá! Fiz uma simulação no site para o Baile do Ted em *${cidadeInput}*.%0A%0A*Estimativa Base:* R$ ${valorTotal.toFixed(2)}%0A_(Obs: Despesas com hospedagem e alimentação não inclusas na simulação)_.%0A%0AGostaria de conversar sobre as datas disponíveis!`;
-                    btnWhats.href = `https://wa.me/5541995906901?text=${msgWhats}`;
-                } catch (error) {
-                    // Erro
-                    await delayPromise; // Garante que a barra andou os 3 segudos antes de dar erro
-                    loadingBox.style.display = 'none';
-                    resultadoBox.style.display = 'block';
-                    msgErro.style.display = 'block';
-                    msgErro.innerText = error.message || "Erro ao calcular. Tente digitar apenas o nome da cidade e a sigla do estado.";
-                } finally {
-                    btnCalcular.disabled = false;
-                    btnCalcular.innerText = "Calcular Novamente";
-                }
-            }
-        </script>
     </section>
 
-    <footer style="text-align: center; padding: 20px 0; border-top: 1px solid #111;">
-        <p style="margin: 0; color: #888;">&copy; 2026 Baile do Ted. Todos os direitos reservados.</p>
-        <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 5px;">
-            Desenvolvido por <a href="https://abreaporta.com.br/" target="_blank" style="color: #ffffff; text-decoration: none; font-weight: bold;">Abre a Porta</a>
-        </p>
+    <section class="final-cta">
+        <div class="container">
+            <h2>Quer o Baile do Ted no seu evento?</h2>
+            <p>Leve uma atração diferente, divertida e memorável para surpreender o público, gerar fotos, vídeos e deixar sua festa marcada na memória.</p>
+            <a class="btn-secondary" href="https://wa.me/5541995906901?text=Olá! Quero contratar o Baile do Ted para meu evento." target="_blank" style="background:#fff; color:#111; border-color:#fff;">Chamar agora no WhatsApp</a>
+        </div>
+    </section>
+
+    <footer>
+        <p style="margin:0;">&copy; 2026 Baile do Ted. Todos os direitos reservados.</p>
+        <p style="font-size:.82rem; opacity:.72; margin:6px 0 0;">Desenvolvido por <a href="https://abreaporta.com.br/" target="_blank">Abre a Porta</a></p>
     </footer>
 
-    <a href="https://wa.me/5541995906901" target="_blank" class="btn-flutuante-wa" title="Falar com Atendimento">
+    <a href="https://wa.me/5541995906901?text=Olá! Quero contratar o Baile do Ted." target="_blank" class="quick-whatsapp" title="Falar com atendimento" aria-label="Falar com atendimento no WhatsApp">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.411 0 11.981 0c3.184.001 6.177 1.242 8.426 3.496 2.249 2.254 3.487 5.244 3.486 8.428-.003 6.623-5.354 11.972-11.924 11.972-1.996-.001-3.956-.501-5.699-1.45L0 24zm6.59-4.846c1.666.988 3.311 1.485 5.333 1.486 5.517 0 10.005-4.477 10.008-9.986.002-2.669-1.036-5.178-2.925-7.069C17.175 1.693 14.673.655 12.002.655 6.485.655 1.997 5.132 1.994 10.64c0 2.083.547 4.11 1.585 5.86l-.99 3.616 3.704-.962h.354zM16.52 14.92c-.233-.117-1.384-.683-1.597-.762-.214-.078-.37-.117-.526.117-.156.234-.604.762-.741.918-.137.156-.273.175-.506.058-.233-.117-.988-.363-1.88-1.161-.694-.618-1.163-1.382-1.3-1.616-.137-.234-.015-.361.102-.477.106-.105.234-.273.349-.41.117-.136.156-.233.234-.39.078-.155.038-.292-.019-.41-.059-.117-.526-1.267-.721-1.735-.19-.459-.383-.396-.526-.404-.136-.007-.293-.008-.449-.008-.156 0-.41.059-.624.292-.214.234-.818.8-.818 1.95 0 1.15.838 2.261.955 2.417.117.156 1.648 2.516 3.993 3.527.558.241 1.002.385 1.345.495.561.178 1.07.153 1.472.093.448-.067 1.384-.565 1.579-1.111.195-.547.195-1.015.137-1.111-.059-.098-.215-.156-.449-.274z"/></svg>
     </a>
 
@@ -746,7 +1124,7 @@
                 'url':'https://cdn.streaming.com.py:7012/stream',
                 'codec':'',
                 'volume':100,
-                'autoplay':true,
+                'autoplay':false,
                 'forceHTML5':true,
                 'jsevents':false,
                 'buffering':0,
@@ -759,15 +1137,174 @@
         </script>
     </div>
 
+    <div id="art-lightbox" class="art-lightbox" aria-hidden="true">
+        <div class="art-lightbox-inner">
+            <button type="button" class="art-lightbox-back" data-lightbox-back>← Voltar</button>
+            <button type="button" class="art-lightbox-close" data-lightbox-close aria-label="Fechar imagem">×</button>
+            <img class="art-lightbox-img" src="" alt="Arte ampliada do Baile do Ted">
+        </div>
+    </div>
 
     <script>
-        // Carrossel dos comentários: mostra sempre 3 imagens por vez
+        async function calcularOrcamento() {
+            const cidadeInput = document.getElementById('cidade-destino').value.trim();
+            const tipoEvento = document.getElementById('tipo-evento').value.trim();
+            const dataEvento = document.getElementById('data-evento').value;
+            const nomeCliente = document.getElementById('nome-cliente').value.trim();
+            const btnWhats = document.getElementById('btn-whats-orcamento');
+            const btnCalcular = document.getElementById('btn-calcular');
+            const loadingBox = document.getElementById('loading-box');
+            const resultadoBox = document.getElementById('resultado-box');
+            const dadosOrcamento = document.getElementById('dados-orcamento');
+            const msgErro = document.getElementById('msg-erro');
+            const barraProgresso = document.getElementById('barra-progresso');
+            const msgTed = document.getElementById('msg-ted');
+
+            resultadoBox.style.display = 'none';
+            dadosOrcamento.style.display = 'none';
+            msgErro.style.display = 'none';
+            loadingBox.style.display = 'none';
+            barraProgresso.style.animation = 'none';
+
+            if (!cidadeInput) {
+                resultadoBox.style.display = 'block';
+                msgErro.innerText = "🚨 Digite a cidade e o estado do evento.";
+                msgErro.style.display = 'block';
+                return;
+            }
+
+            const frasesTed = [
+                "Calma aí, parceiro de trovão! Tô calculando essa rota... ⚡🐻",
+                "Acordando o Ted para ver quantos KM dá até aí... 🐻",
+                "Preparando a equipe e medindo a distância... já volto! 🎶🐻",
+                "O Ted tá calculando os custos dessa viagem... ⚡🐻"
+            ];
+            msgTed.innerText = frasesTed[Math.floor(Math.random() * frasesTed.length)];
+
+            loadingBox.style.display = 'block';
+            btnCalcular.disabled = true;
+            btnCalcular.innerText = "Calculando...";
+            setTimeout(() => {
+                barraProgresso.style.animation = 'encherBarra 5s linear forwards, brilhoNeon 2s ease infinite';
+            }, 10);
+
+            const delayPromise = new Promise(resolve => setTimeout(resolve, 3000));
+
+            const calculoPromise = (async () => {
+                const resGeo = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cidadeInput)}`);
+                const geoData = await resGeo.json();
+                if (!geoData.length) throw new Error("Cidade não encontrada. Digite no formato 'Cidade, Estado'.");
+
+                const latDestino = geoData[0].lat;
+                const lonDestino = geoData[0].lon;
+                const latCwb = -25.4284;
+                const lonCwb = -49.2733;
+
+                const resRota = await fetch(`https://router.project-osrm.org/route/v1/driving/${lonCwb},${latCwb};${lonDestino},${latDestino}?overview=false`);
+                const rotaData = await resRota.json();
+                if (rotaData.code !== 'Ok') throw new Error("Não foi possível traçar uma rota de carro para este destino.");
+
+                const distanciaMetros = rotaData.routes[0].distance;
+                const kmIda = distanciaMetros / 1000;
+                const kmIdaVolta = kmIda * 2;
+
+                let valorShow = 0;
+                if (kmIdaVolta <= 200) valorShow = 1500;
+                else if (kmIdaVolta <= 300) valorShow = 2000;
+                else if (kmIdaVolta <= 500) valorShow = 2500;
+                else valorShow = 3000;
+
+                return (kmIdaVolta * 0.68) + valorShow;
+            })();
+
+            try {
+                const [_, valorTotal] = await Promise.all([delayPromise, calculoPromise]);
+                loadingBox.style.display = 'none';
+                document.getElementById('res-total').innerText = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                resultadoBox.style.display = 'block';
+                dadosOrcamento.style.display = 'block';
+
+                const msgWhats = `Olá! Fiz uma simulação no site para contratar o Baile do Ted.%0A%0A` +
+                    `*Cidade:* ${cidadeInput}%0A` +
+                    `${tipoEvento ? `*Tipo de evento:* ${tipoEvento}%0A` : ''}` +
+                    `${dataEvento ? `*Data desejada:* ${dataEvento}%0A` : ''}` +
+                    `${nomeCliente ? `*Nome:* ${nomeCliente}%0A` : ''}` +
+                    `%0A*Estimativa base:* R$ ${valorTotal.toFixed(2)}%0A` +
+                    `_(Obs: hospedagem e alimentação não inclusas na simulação)._ %0A%0AGostaria de conversar sobre disponibilidade e fechamento.`;
+                btnWhats.href = `https://wa.me/5541995906901?text=${msgWhats}`;
+            } catch (error) {
+                await delayPromise;
+                loadingBox.style.display = 'none';
+                resultadoBox.style.display = 'block';
+                msgErro.style.display = 'block';
+                msgErro.innerText = error.message || "Erro ao calcular. Tente digitar apenas cidade e sigla do estado.";
+            } finally {
+                btnCalcular.disabled = false;
+                btnCalcular.innerText = "Calcular novamente";
+            }
+        }
+
+        (function iniciarLightboxDasArtes() {
+            const lightbox = document.getElementById('art-lightbox');
+            if (!lightbox) return;
+            const lightboxImg = lightbox.querySelector('.art-lightbox-img');
+            const btnClose = lightbox.querySelector('[data-lightbox-close]');
+            const btnBack = lightbox.querySelector('[data-lightbox-back]');
+            let aberto = false;
+
+            function abrir(src, alt) {
+                if (!src) return;
+                lightboxImg.src = src;
+                lightboxImg.alt = alt || 'Arte ampliada do Baile do Ted';
+                lightbox.classList.add('active');
+                lightbox.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('lightbox-open');
+                aberto = true;
+                if (!history.state || !history.state.lightboxTed) {
+                    history.pushState({ lightboxTed: true }, '', window.location.href.split('#')[0] + '#arte');
+                }
+            }
+
+            function fecharSemHistorico() {
+                lightbox.classList.remove('active');
+                lightbox.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('lightbox-open');
+                lightboxImg.src = '';
+                aberto = false;
+            }
+
+            function fechar() {
+                if (aberto && history.state && history.state.lightboxTed) {
+                    history.back();
+                } else {
+                    fecharSemHistorico();
+                }
+            }
+
+            document.addEventListener('click', function(event) {
+                const img = event.target.closest('.js-open-art, .comentario-card img, .card-evento img');
+                if (img) {
+                    event.preventDefault();
+                    abrir(img.dataset.full || img.currentSrc || img.src, img.alt);
+                    return;
+                }
+                if (event.target === lightbox) fechar();
+            });
+            btnClose.addEventListener('click', fechar);
+            btnBack.addEventListener('click', fechar);
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && aberto) fechar();
+            });
+            window.addEventListener('popstate', function() {
+                if (aberto) fecharSemHistorico();
+            });
+        })();
+
         (function iniciarCarrosselComentarios() {
             const track = document.querySelector('[data-comentarios-track]');
             const btnPrev = document.querySelector('[data-comentarios-prev]');
             const btnNext = document.querySelector('[data-comentarios-next]');
             const dotsBox = document.querySelector('[data-comentarios-dots]');
-
             if (!track || !btnPrev || !btnNext || !dotsBox) return;
 
             const slides = Array.from(track.children);
@@ -775,17 +1312,13 @@
             let indiceAtual = 0;
             let autoplay;
 
-            function getMaxIndice() {
-                return Math.max(0, slides.length - visiveis);
-            }
-
+            function getMaxIndice() { return Math.max(0, slides.length - visiveis); }
             function getPasso() {
                 const primeiroSlide = slides[0];
                 const estilo = window.getComputedStyle(track);
                 const gap = parseFloat(estilo.columnGap || estilo.gap || 0);
                 return primeiroSlide.getBoundingClientRect().width + gap;
             }
-
             function montarDots() {
                 dotsBox.innerHTML = '';
                 for (let i = 0; i <= getMaxIndice(); i++) {
@@ -793,144 +1326,28 @@
                     dot.type = 'button';
                     dot.className = 'comentarios-dot';
                     dot.setAttribute('aria-label', `Ir para comentário ${i + 1}`);
-                    dot.addEventListener('click', () => {
-                        indiceAtual = i;
-                        atualizarCarrossel();
-                        reiniciarAutoplay();
-                    });
+                    dot.addEventListener('click', () => { indiceAtual = i; atualizarCarrossel(); reiniciarAutoplay(); });
                     dotsBox.appendChild(dot);
                 }
             }
-
             function atualizarCarrossel() {
                 const maxIndice = getMaxIndice();
                 if (indiceAtual > maxIndice) indiceAtual = maxIndice;
                 if (indiceAtual < 0) indiceAtual = 0;
-
                 track.style.transform = `translateX(-${indiceAtual * getPasso()}px)`;
-
-                Array.from(dotsBox.children).forEach((dot, i) => {
-                    dot.classList.toggle('active', i === indiceAtual);
-                });
+                Array.from(dotsBox.children).forEach((dot, i) => dot.classList.toggle('active', i === indiceAtual));
             }
-
-            function proximo() {
-                indiceAtual = indiceAtual >= getMaxIndice() ? 0 : indiceAtual + 1;
-                atualizarCarrossel();
-            }
-
-            function anterior() {
-                indiceAtual = indiceAtual <= 0 ? getMaxIndice() : indiceAtual - 1;
-                atualizarCarrossel();
-            }
-
-            function reiniciarAutoplay() {
-                clearInterval(autoplay);
-                autoplay = setInterval(proximo, 3500);
-            }
+            function proximo() { indiceAtual = indiceAtual >= getMaxIndice() ? 0 : indiceAtual + 1; atualizarCarrossel(); }
+            function anterior() { indiceAtual = indiceAtual <= 0 ? getMaxIndice() : indiceAtual - 1; atualizarCarrossel(); }
+            function reiniciarAutoplay() { clearInterval(autoplay); autoplay = setInterval(proximo, 3500); }
 
             btnNext.addEventListener('click', () => { proximo(); reiniciarAutoplay(); });
             btnPrev.addEventListener('click', () => { anterior(); reiniciarAutoplay(); });
             window.addEventListener('resize', atualizarCarrossel);
-
             montarDots();
             atualizarCarrossel();
             reiniciarAutoplay();
         })();
     </script>
-
-
-    <!-- Lightbox das artes: abre a imagem grande e o botão voltar fecha a arte, sem sair do site -->
-    <div id="lightbox-arte" class="lightbox-arte" aria-hidden="true">
-        <button type="button" class="lightbox-arte__voltar" id="lightbox-voltar" aria-label="Voltar para a página">← Voltar</button>
-        <button type="button" class="lightbox-arte__fechar" id="lightbox-fechar" aria-label="Fechar imagem">×</button>
-        <div class="lightbox-arte__conteudo">
-            <img id="lightbox-img" class="lightbox-arte__imagem" src="" alt="">
-        </div>
-    </div>
-
-    <script>
-        // Clique em qualquer arte/imagem da página: abre em tela cheia sem navegar para fora.
-        // Ao apertar "voltar" no navegador/celular, a imagem fecha e a pessoa continua na página do Ted.
-        (function iniciarLightboxDasArtes() {
-            const lightbox = document.getElementById('lightbox-arte');
-            const lightboxImg = document.getElementById('lightbox-img');
-            const btnVoltar = document.getElementById('lightbox-voltar');
-            const btnFechar = document.getElementById('lightbox-fechar');
-
-            if (!lightbox || !lightboxImg || !btnVoltar || !btnFechar) return;
-
-            let aberto = false;
-            let historicoCriado = false;
-
-            function abrirLightbox(img) {
-                if (!img || !img.src) return;
-
-                lightboxImg.src = img.currentSrc || img.src;
-                lightboxImg.alt = img.alt || 'Arte do Baile do Ted';
-                lightbox.classList.add('ativo');
-                lightbox.setAttribute('aria-hidden', 'false');
-                document.body.classList.add('lightbox-aberto');
-                aberto = true;
-
-                if (!historicoCriado) {
-                    history.pushState({ lightboxArte: true }, '', window.location.href);
-                    historicoCriado = true;
-                }
-            }
-
-            function fecharLightboxSemMexerNoHistorico() {
-                lightbox.classList.remove('ativo');
-                lightbox.setAttribute('aria-hidden', 'true');
-                document.body.classList.remove('lightbox-aberto');
-                lightboxImg.src = '';
-                aberto = false;
-                historicoCriado = false;
-            }
-
-            function fecharLightbox() {
-                if (aberto && historicoCriado) {
-                    history.back();
-                } else {
-                    fecharLightboxSemMexerNoHistorico();
-                }
-            }
-
-            document.addEventListener('click', function(event) {
-                const img = event.target.closest('img');
-                if (!img) return;
-
-                // Não abre imagens marcadas para ignorar.
-                if (img.dataset.noLightbox === 'true') return;
-
-                // Como a página praticamente só tem artes/fotos no corpo, aplica em todas as imagens.
-                // Caso queira excluir alguma imagem no futuro, adicione data-no-lightbox="true" nela.
-                event.preventDefault();
-                abrirLightbox(img);
-            });
-
-            btnVoltar.addEventListener('click', fecharLightbox);
-            btnFechar.addEventListener('click', fecharLightbox);
-
-            lightbox.addEventListener('click', function(event) {
-                if (event.target === lightbox) {
-                    fecharLightbox();
-                }
-            });
-
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape' && aberto) {
-                    fecharLightbox();
-                }
-            });
-
-            window.addEventListener('popstate', function() {
-                if (aberto) {
-                    fecharLightboxSemMexerNoHistorico();
-                }
-            });
-        })();
-    </script>
-
 </body>
 </html>
