@@ -37,6 +37,7 @@
             --shadow: 0 24px 70px rgba(0,0,0,.45);
             /* Fundo original do topo: se sua imagem principal tiver outro nome, troque só aqui. */
             --hero-bg-image: url('img/tedsite.png');
+            --hero-logo-image: url('img/icone.png');
         }
 
         * { box-sizing: border-box; }
@@ -179,6 +180,21 @@
             letter-spacing: -.03em;
             text-transform: uppercase;
         }
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 24px;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.12);
+            color: var(--yellow);
+            font-size: .68rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
         .nav-links {
             display: flex;
             align-items: center;
@@ -200,8 +216,8 @@
             overflow: hidden;
             padding: clamp(44px, 7vw, 82px) 0 clamp(48px, 7vw, 74px);
             background:
-                linear-gradient(90deg, rgba(5,5,8,.96) 0%, rgba(25,4,24,.86) 45%, rgba(5,5,8,.78) 100%),
-                linear-gradient(180deg, rgba(5,5,8,.46), rgba(5,5,8,.95)),
+                linear-gradient(90deg, rgba(5,5,8,.72) 0%, rgba(25,4,24,.52) 42%, rgba(5,5,8,.58) 100%),
+                linear-gradient(180deg, rgba(5,5,8,.18), rgba(5,5,8,.74)),
                 var(--hero-bg-image) center center / cover no-repeat;
         }
         #topo { scroll-margin-top: 86px; }
@@ -215,7 +231,7 @@
                 linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
             background-size: auto, auto, 62px 62px, 62px 62px;
-            opacity: .65;
+            opacity: .42;
             pointer-events: none;
         }
         .hero::after {
@@ -251,6 +267,74 @@
             text-transform: uppercase;
             letter-spacing: .08em;
             margin-bottom: 20px;
+        }
+        .hero-logo-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.16);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 12px 30px rgba(0,0,0,.18);
+        }
+        .hero-logo-chip img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,.18);
+        }
+        .hero-logo-chip span {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.05;
+        }
+        .hero-logo-chip small {
+            color: var(--yellow);
+            font-size: .68rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            font-weight: 900;
+        }
+        .hero-logo-chip strong {
+            color: #fff;
+            font-size: .96rem;
+            font-weight: 950;
+            text-transform: uppercase;
+            letter-spacing: -.02em;
+        }
+        .hero-logo-watermark {
+            position: absolute;
+            right: 7%;
+            top: 7%;
+            width: min(140px, 16vw);
+            opacity: .14;
+            filter: drop-shadow(0 14px 36px rgba(0,0,0,.28));
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero-logo-watermark img {
+            width: 100%;
+            display: block;
+        }
+        .hero-content,
+        .hero-visual {
+            position: relative;
+            z-index: 1;
+        }
+        .hero-content-panel {
+            display: inline-block;
+            max-width: 100%;
+            padding: 16px 18px 18px;
+            border-radius: 28px;
+            background: linear-gradient(180deg, rgba(8,8,12,.22), rgba(8,8,12,.12));
+            border: 1px solid rgba(255,255,255,.08);
+            backdrop-filter: blur(6px);
         }
         .hero h1 {
             margin: 0;
@@ -748,6 +832,29 @@
         .final-cta p { max-width: 700px; margin: 0 auto 28px; color: rgba(255,255,255,.88); font-size: 1.12rem; line-height: 1.65; }
         footer { text-align: center; padding: 24px 0; border-top: 1px solid rgba(255,255,255,.08); color: #8e8ea1; }
         footer a { color: #fff; text-decoration: none; font-weight: 900; }
+        .footer-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.08);
+        }
+        .footer-brand img {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+        }
+        .footer-brand strong {
+            color: #fff;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -.02em;
+        }
 
         .art-lightbox {
             position: fixed;
@@ -838,15 +945,21 @@
             .topbar .btn-primary { display: none; }
             .brand img { width: 38px; height: 38px; }
             .brand strong { font-size: .92rem; }
+            .brand-badge { display: none; }
             .hero {
                 padding: 30px 0 42px;
                 background:
-                    linear-gradient(180deg, rgba(5,5,8,.66) 0%, rgba(7,4,12,.92) 42%, rgba(5,5,8,.98) 100%),
+                    linear-gradient(180deg, rgba(5,5,8,.44) 0%, rgba(7,4,12,.78) 42%, rgba(5,5,8,.94) 100%),
                     var(--hero-bg-image) center top / cover no-repeat;
             }
             #topo { scroll-margin-top: 72px; }
             .hero-grid { gap: 28px; }
             .hero-kicker { font-size: .7rem; padding: 8px 11px; margin-bottom: 14px; }
+            .hero-logo-chip { margin-bottom: 14px; padding: 8px 12px; }
+            .hero-logo-chip img { width: 38px; height: 38px; }
+            .hero-logo-chip strong { font-size: .88rem; }
+            .hero-logo-watermark { width: 88px; top: 14px; right: 12px; opacity: .13; }
+            .hero-content-panel { padding: 12px 14px 14px; border-radius: 22px; }
             .hero h1 {
                 font-size: clamp(2.7rem, 15.6vw, 4.4rem);
                 line-height: .9;
@@ -1021,6 +1134,7 @@
             .brand strong {
                 font-size: .95rem !important;
             }
+            .brand-badge { display: none !important; }
 
             .hero {
                 display: block !important;
@@ -1028,7 +1142,7 @@
                 padding: 18px 0 34px !important;
                 overflow: visible !important;
                 background:
-                    linear-gradient(180deg, rgba(5,5,8,.72) 0%, rgba(8,4,12,.94) 44%, rgba(5,5,8,.98) 100%),
+                    linear-gradient(180deg, rgba(5,5,8,.42) 0%, rgba(8,4,12,.76) 44%, rgba(5,5,8,.94) 100%),
                     var(--hero-bg-image) center top / cover no-repeat !important;
             }
 
@@ -1052,6 +1166,36 @@
             }
 
             .hero-kicker {
+                display: none !important;
+            }
+
+            .hero-logo-chip {
+                margin: 0 auto 12px !important;
+                padding: 8px 12px !important;
+                display: inline-flex !important;
+            }
+
+            .hero-logo-chip img {
+                width: 36px !important;
+                height: 36px !important;
+            }
+
+            .hero-logo-chip small {
+                font-size: .62rem !important;
+            }
+
+            .hero-logo-chip strong {
+                font-size: .84rem !important;
+            }
+
+            .hero-content-panel {
+                width: 100% !important;
+                padding: 12px 12px 14px !important;
+                border-radius: 18px !important;
+                background: linear-gradient(180deg, rgba(8,8,12,.18), rgba(8,8,12,.10)) !important;
+            }
+
+            .hero-logo-watermark {
                 display: none !important;
             }
 
@@ -1420,6 +1564,7 @@
             <a class="brand" href="#topo" aria-label="Baile do Ted">
                 <img src="img/icone.png" alt="Logo Baile do Ted" onerror="this.src='img/ted.png'">
                 <strong>Baile do Ted</strong>
+                <span class="brand-badge">Oficial</span>
             </a>
             <div class="nav-links">
                 <a href="#experiencia">Experiência</a>
@@ -1433,20 +1578,27 @@
     </nav>
 
     <header id="topo" class="hero">
+        <div class="hero-logo-watermark" aria-hidden="true"><img src="img/icone.png" alt="" onerror="this.src='img/ted.png'"></div>
         <div class="container hero-grid">
             <div class="hero-content">
-                <div class="hero-kicker">🐻 personagem • música • interação • fotos</div>
-                <h1><span>Baile</span><span class="gradient-text">do Ted</span></h1>
-                <p class="tagline">O personagem que transforma qualquer evento em uma experiência inesquecível. <strong>Interação, fotos, música, presença marcante e muita energia</strong> para festas, shows, casas noturnas e ações promocionais.</p>
-                <div class="hero-actions">
-                    <a class="btn-primary" href="https://wa.me/5541995906901?text=Olá! Quero solicitar um orçamento do Baile do Ted para meu evento." target="_blank">Solicitar orçamento</a>
-                    <a class="btn-secondary" href="#agenda">Ver agenda oficial</a>
-                </div>
-                <div class="hero-pills" aria-label="Destaques do Baile do Ted">
-                    <div class="hero-pill">Desde 2018</div>
-                    <div class="hero-pill">+7 estados</div>
-                    <div class="hero-pill">Ideal para eventos</div>
-                    <div class="hero-pill">Simulação online</div>
+                <div class="hero-content-panel">
+                    <div class="hero-kicker">🐻 personagem • música • interação • fotos</div>
+                    <div class="hero-logo-chip">
+                        <img src="img/icone.png" alt="Logo oficial do Baile do Ted" onerror="this.src='img/ted.png'">
+                        <span><small>Identidade oficial</small><strong>Logo do Baile do Ted</strong></span>
+                    </div>
+                    <h1><span>Baile</span><span class="gradient-text">do Ted</span></h1>
+                    <p class="tagline">O personagem que transforma qualquer evento em uma experiência inesquecível. <strong>Interação, fotos, música, presença marcante e muita energia</strong> para festas, shows, casas noturnas e ações promocionais.</p>
+                    <div class="hero-actions">
+                        <a class="btn-primary" href="https://wa.me/5541995906901?text=Olá! Quero solicitar um orçamento do Baile do Ted para meu evento." target="_blank">Solicitar orçamento</a>
+                        <a class="btn-secondary" href="#agenda">Ver agenda oficial</a>
+                    </div>
+                    <div class="hero-pills" aria-label="Destaques do Baile do Ted">
+                        <div class="hero-pill">Desde 2018</div>
+                        <div class="hero-pill">+7 estados</div>
+                        <div class="hero-pill">Ideal para eventos</div>
+                        <div class="hero-pill">Simulação online</div>
+                    </div>
                 </div>
             </div>
             <div class="hero-visual">
@@ -1643,6 +1795,10 @@
     </section>
 
     <footer>
+        <div class="footer-brand">
+            <img src="img/icone.png" alt="Logo Baile do Ted" onerror="this.src='img/ted.png'">
+            <strong>Baile do Ted</strong>
+        </div>
         <p style="margin:0;">&copy; 2026 Baile do Ted. Todos os direitos reservados.</p>
         <p style="font-size:.82rem; opacity:.72; margin:6px 0 0;">Desenvolvido por <a href="https://abreaporta.com.br/" target="_blank">Abre a Porta</a></p>
     </footer>
