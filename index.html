@@ -18,6 +18,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="img/icone.png">
     <link rel="icon" type="image/png" sizes="512x512" href="img/icone.png">
     <link rel="stylesheet" href="style.css">
+    <link rel="preload" as="image" href="img/logo-oficial-ted.png">
 
     <style>
         :root {
@@ -1143,12 +1144,11 @@
     
         /* =========================================================
            LOGO OFICIAL + FUNDO MAIS APARENTE + CORREÇÃO WINDOWS
-           Esta versão não depende de upload extra da logo:
-           a logo enviada foi embutida diretamente no HTML.
+           Logo oficial mantida como arquivo externo para não pesar o HTML.
            ========================================================= */
         .ted-logo-img {
             display: inline-block;
-            background-image: url('img/ted.png');
+            background-image: url('img/logo-oficial-ted.png');
             background-repeat: no-repeat;
             background-position: center;
             background-size: contain;
