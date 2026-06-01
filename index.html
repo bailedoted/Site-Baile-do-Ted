@@ -238,7 +238,138 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-    </style>
+    
+        /* Lightbox das artes: abre a imagem grande sem sair da página */
+        body.lightbox-aberto {
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        body img {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #agenda img,
+        #comentarios img,
+        .arte-expandivel {
+            cursor: zoom-in;
+        }
+
+        .lightbox-arte {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(0, 0, 0, 0.94);
+            backdrop-filter: blur(8px);
+        }
+
+        .lightbox-arte.ativo {
+            display: flex;
+        }
+
+        .lightbox-arte__conteudo {
+            position: relative;
+            width: min(96vw, 980px);
+            height: min(92vh, 980px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-arte__imagem {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            border-radius: 14px;
+            box-shadow: 0 0 35px rgba(255, 0, 127, 0.22);
+            background: #000;
+        }
+
+        .lightbox-arte__voltar {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 1000000;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(15,15,15,0.86);
+            color: #fff;
+            border-radius: 999px;
+            padding: 11px 18px;
+            font-size: 0.95rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.55);
+        }
+
+        .lightbox-arte__voltar:hover {
+            background: linear-gradient(90deg, #ff007f, #b300ff);
+            border-color: transparent;
+        }
+
+        .lightbox-arte__fechar {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 1000000;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(15,15,15,0.86);
+            color: #fff;
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.55);
+        }
+
+        .lightbox-arte__fechar:hover {
+            background: #ff007f;
+            border-color: #ff007f;
+        }
+
+        @media(max-width: 600px) {
+            .lightbox-arte {
+                padding: 10px;
+            }
+
+            .lightbox-arte__conteudo {
+                width: 100vw;
+                height: 88vh;
+            }
+
+            .lightbox-arte__imagem {
+                border-radius: 10px;
+            }
+
+            .lightbox-arte__voltar {
+                top: 12px;
+                left: 12px;
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+
+            .lightbox-arte__fechar {
+                top: 12px;
+                right: 12px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.8rem;
+            }
+        }
+
+</style>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -705,6 +836,99 @@
             montarDots();
             atualizarCarrossel();
             reiniciarAutoplay();
+        })();
+    </script>
+
+
+    <!-- Lightbox das artes: abre a imagem grande e o botão voltar fecha a arte, sem sair do site -->
+    <div id="lightbox-arte" class="lightbox-arte" aria-hidden="true">
+        <button type="button" class="lightbox-arte__voltar" id="lightbox-voltar" aria-label="Voltar para a página">← Voltar</button>
+        <button type="button" class="lightbox-arte__fechar" id="lightbox-fechar" aria-label="Fechar imagem">×</button>
+        <div class="lightbox-arte__conteudo">
+            <img id="lightbox-img" class="lightbox-arte__imagem" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        // Clique em qualquer arte/imagem da página: abre em tela cheia sem navegar para fora.
+        // Ao apertar "voltar" no navegador/celular, a imagem fecha e a pessoa continua na página do Ted.
+        (function iniciarLightboxDasArtes() {
+            const lightbox = document.getElementById('lightbox-arte');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const btnVoltar = document.getElementById('lightbox-voltar');
+            const btnFechar = document.getElementById('lightbox-fechar');
+
+            if (!lightbox || !lightboxImg || !btnVoltar || !btnFechar) return;
+
+            let aberto = false;
+            let historicoCriado = false;
+
+            function abrirLightbox(img) {
+                if (!img || !img.src) return;
+
+                lightboxImg.src = img.currentSrc || img.src;
+                lightboxImg.alt = img.alt || 'Arte do Baile do Ted';
+                lightbox.classList.add('ativo');
+                lightbox.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('lightbox-aberto');
+                aberto = true;
+
+                if (!historicoCriado) {
+                    history.pushState({ lightboxArte: true }, '', window.location.href);
+                    historicoCriado = true;
+                }
+            }
+
+            function fecharLightboxSemMexerNoHistorico() {
+                lightbox.classList.remove('ativo');
+                lightbox.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('lightbox-aberto');
+                lightboxImg.src = '';
+                aberto = false;
+                historicoCriado = false;
+            }
+
+            function fecharLightbox() {
+                if (aberto && historicoCriado) {
+                    history.back();
+                } else {
+                    fecharLightboxSemMexerNoHistorico();
+                }
+            }
+
+            document.addEventListener('click', function(event) {
+                const img = event.target.closest('img');
+                if (!img) return;
+
+                // Não abre imagens marcadas para ignorar.
+                if (img.dataset.noLightbox === 'true') return;
+
+                // Como a página praticamente só tem artes/fotos no corpo, aplica em todas as imagens.
+                // Caso queira excluir alguma imagem no futuro, adicione data-no-lightbox="true" nela.
+                event.preventDefault();
+                abrirLightbox(img);
+            });
+
+            btnVoltar.addEventListener('click', fecharLightbox);
+            btnFechar.addEventListener('click', fecharLightbox);
+
+            lightbox.addEventListener('click', function(event) {
+                if (event.target === lightbox) {
+                    fecharLightbox();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && aberto) {
+                    fecharLightbox();
+                }
+            });
+
+            window.addEventListener('popstate', function() {
+                if (aberto) {
+                    fecharLightboxSemMexerNoHistorico();
+                }
+            });
         })();
     </script>
 
