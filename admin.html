@@ -616,10 +616,13 @@
             const q = query(collection(db, "eventos"), orderBy("dataTimestamp", "asc"));
             const ss = await getDocs(q);
             lista.innerHTML = "";
+            const inicioDeHoje = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime();
             ss.forEach((docSnap) => {
                 const e = docSnap.data();
                 const json = JSON.stringify({id: docSnap.id, ...e}).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-                lista.innerHTML += `<div class="evento-item"><div><strong>${e.nome || "Evento sem nome"}</strong><small>${e.dataTexto || "Sem data"} ${e.localNome ? " • " + e.localNome : ""}</small></div><div class="botoes-acao"><button class="btn-editar" onclick="editarEvento('${json}')">Editar</button><button class="btn-excluir" onclick="deletarEvento('${docSnap.id}')">Excluir</button></div></div>`;
+                const jaPassou = typeof e.dataTimestamp === 'number' && e.dataTimestamp < inicioDeHoje;
+                const badgePassou = jaPassou ? ` <span style="color:#ff4fa7; font-weight:800; font-size:.78rem; border:1px solid #ff4fa7; border-radius:6px; padding:1px 6px; margin-left:4px;">(passou)</span>` : '';
+                lista.innerHTML += `<div class="evento-item"${jaPassou ? ' style="opacity:.55;"' : ''}><div><strong>${e.nome || "Evento sem nome"}</strong>${badgePassou}<small>${e.dataTexto || "Sem data"} ${e.localNome ? " • " + e.localNome : ""}</small></div><div class="botoes-acao"><button class="btn-editar" onclick="editarEvento('${json}')">Editar</button><button class="btn-excluir" onclick="deletarEvento('${docSnap.id}')">Excluir</button></div></div>`;
             });
         }
 
