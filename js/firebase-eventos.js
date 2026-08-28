@@ -125,6 +125,33 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
             }
         }
 
+        function timestampEvento(evento) {
+            const valor = evento.dataTimestamp || evento.timestamp || evento.data || evento.dataEvento || evento.createdAt;
+            if (!valor) return 9999999999999;
+            if (typeof valor === 'number') return valor;
+            if (valor.seconds) return valor.seconds * 1000;
+            const parsed = Date.parse(valor);
+            return Number.isNaN(parsed) ? 9999999999999 : parsed;
+        }
+
+        function eventoEstaVisivel(evento) {
+            const status = String(evento.status || evento.situacao || '').toLowerCase().trim();
+            if (evento.ativo === false || evento.publico === false || evento.oculto === true) return false;
+            if (['cancelado', 'cancelada', 'inativo', 'inativa', 'rascunho', 'excluido', 'excluida'].includes(status)) return false;
+            return true;
+        }
+
+        // Correção do bug de agenda: um evento com data já passada nunca deve aparecer
+        // como "próximo show". Eventos sem data definida (dataTimestamp ausente) não são
+        // considerados "passados" — eles caem no fim da lista e continuam visíveis.
+        function eventoJaPassou(evento) {
+            const ts = timestampEvento(evento);
+            if (ts >= 9999999999999) return false;
+            const hoje = new Date();
+            const inicioDeHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()).getTime();
+            return ts < inicioDeHoje;
+        }
+
         async function carregarEventos() {
             const containerDestaque = document.getElementById("container-destaque");
             const gridCalendario = document.getElementById("grid-calendario");
@@ -133,22 +160,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
             containerDestaque.innerHTML = "<p style='color:#ff007f; text-align:center; font-size: 1.2rem; font-weight: bold;'>Buscando a agenda mais braba... 🐻🎶</p>";
             gridCalendario.innerHTML = "";
 
-            function timestampEvento(evento) {
-                const valor = evento.dataTimestamp || evento.timestamp || evento.data || evento.dataEvento || evento.createdAt;
-                if (!valor) return 9999999999999;
-                if (typeof valor === 'number') return valor;
-                if (valor.seconds) return valor.seconds * 1000;
-                const parsed = Date.parse(valor);
-                return Number.isNaN(parsed) ? 9999999999999 : parsed;
-            }
-
-            function eventoEstaVisivel(evento) {
-                const status = String(evento.status || evento.situacao || '').toLowerCase().trim();
-                if (evento.ativo === false || evento.publico === false || evento.oculto === true) return false;
-                if (['cancelado', 'cancelada', 'inativo', 'inativa', 'rascunho', 'excluido', 'excluida'].includes(status)) return false;
-                return true;
-            }
-
             try {
                 // Busca simples, sem orderBy obrigatório. Assim a agenda não some caso algum evento antigo esteja sem dataTimestamp
                 // ou caso o Firebase bloqueie a consulta ordenada por índice/regra.
@@ -156,7 +167,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
                 const eventos = [];
                 querySnapshot.forEach((doc) => {
                     const dados = { id: doc.id, ...doc.data() };
-                    if (eventoEstaVisivel(dados)) eventos.push(dados);
+                    if (eventoEstaVisivel(dados) && !eventoJaPassou(dados)) eventos.push(dados);
                 });
 
                 eventos.sort((a, b) => timestampEvento(a) - timestampEvento(b));
@@ -165,8 +176,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
                     containerDestaque.innerHTML = `
                         <div class="event-cta-after" style="justify-content:center; text-align:center;">
                             <div>
-                                <h3>Nenhum show público cadastrado no momento.</h3>
-                                <p>Chame no WhatsApp para consultar datas particulares e disponibilidade.</p>
+                                <h3>Sua data pode ser a próxima.</h3>
+                                <p>Ainda não temos shows públicos confirmados no momento — chame no WhatsApp para consultar disponibilidade e fechar a agenda do seu evento.</p>
                             </div>
                             <a class="btn-primary" href="https://wa.me/5541995906901?text=Olá! Quero consultar a agenda do Baile do Ted." target="_blank">Consultar agenda</a>
                         </div>`;
@@ -175,7 +186,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
 
                 const proximoShow = eventos[0];
                 const localDestaque = proximoShow.localNome ? `📍 ${escapeHtml(proximoShow.localNome)}` : '📍 Local privado';
-                const enderecoDestaque = proximoShow.localEndereco ? `<span style="display:block; color:#aaa; font-size:.96rem; margin-top:6px;">${escapeHtml(proximoShow.localEndereco)}</span>` : '';
+                const enderecoDestaque = proximoShow.localEndereco ? `<small>${escapeHtml(proximoShow.localEndereco)}</small>` : '';
                 const instagramFinal = proximoShow.instagram || '@bailedoted';
                 const contatoFinal = proximoShow.localContato || '(41) 99590-6901';
                 const numeroWhatsLimpo = onlyNumbers(contatoFinal);
@@ -184,18 +195,18 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
                 const imagemDestaque = proximoShow.imagem || 'img/tedsite.png';
 
                 containerDestaque.innerHTML = `
-                    <div class="show-destaque" style="position:relative; background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035)); border:1px solid rgba(255,255,255,.12); padding:26px; border-radius:28px; margin-bottom:34px; box-shadow:0 24px 70px rgba(0,0,0,.36); overflow:hidden;">
-                        <div style="position:absolute; top:-80px; left:50%; transform:translateX(-50%); width:340px; height:340px; background:#ff007f; filter:blur(130px); opacity:.22; pointer-events:none;"></div>
-                        <div style="position:relative; z-index:1; display:grid; grid-template-columns:minmax(260px, 390px) 1fr; gap:26px; align-items:center;">
+                    <div class="show-destaque">
+                        <div class="show-destaque__glow"></div>
+                        <div class="show-destaque__grid">
                             <div class="agenda-story-frame agenda-story-frame--destaque">
                                 ${renderStoryMedia(imagemDestaque, proximoShow.nome || 'Próximo show do Baile do Ted')}
                             </div>
                             <div>
-                                <span class="eyebrow">🔥 Próximo show confirmado</span>
-                                <h3 style="font-size:clamp(2rem, 6vw, 4rem); line-height:.94; margin:0 0 14px; text-transform:uppercase; letter-spacing:-.055em;">${escapeHtml(proximoShow.nome || 'Baile do Ted')}</h3>
-                                <div style="background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.10); padding:18px; border-radius:18px; margin-bottom:20px;">
-                                    <p style="font-size:1.55rem; color:#ff007f; font-weight:950; margin:0 0 8px;">${escapeHtml(proximoShow.dataTexto || 'Data em breve')}</p>
-                                    <p style="font-size:1.05rem; color:#fff; margin:0; font-weight:800;">${localDestaque}${enderecoDestaque}</p>
+                                <span class="show-destaque__badge"><span class="show-destaque__dot"></span> Próximo show confirmado</span>
+                                <h3>${escapeHtml(proximoShow.nome || 'Baile do Ted')}</h3>
+                                <div class="show-destaque__meta">
+                                    <p class="show-destaque__date">${escapeHtml(proximoShow.dataTexto || 'Data em breve')}</p>
+                                    <p class="show-destaque__place">${localDestaque}${enderecoDestaque}</p>
                                 </div>
                                 <div class="mini-social-row" style="margin-bottom:20px;">
                                     ${socialAction('instagram', instagramFinal, instagramUrl(instagramFinal), instagramFinal)}
@@ -218,24 +229,24 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
 
                     gridCalendario.insertAdjacentHTML('beforeend', `
                         <div class="card-evento">
-                            <div style="position:relative; background:#050505; border-bottom:1px solid rgba(255,255,255,.10);">
+                            <div class="card-evento__top">
                                 <div class="agenda-story-frame">
                                     ${renderStoryMedia(imagem, evento.nome || 'Arte do evento')}
                                 </div>
-                                <div style="position:absolute; top:10px; right:10px; background:#ff007f; color:#fff; padding:6px 12px; border-radius:12px; text-align:center; box-shadow:0 8px 16px rgba(0,0,0,.5);">
-                                    <span style="display:block; font-size:.78rem; text-transform:uppercase; font-weight:850;">${escapeHtml(evento.mesAbas || '')}</span>
-                                    <span style="display:block; font-size:1.5rem; font-weight:950;">${escapeHtml(evento.diaNum || '')}</span>
+                                <div class="card-evento__date">
+                                    <span class="mes">${escapeHtml(evento.mesAbas || '')}</span>
+                                    <span class="dia">${escapeHtml(evento.diaNum || '')}</span>
                                 </div>
                             </div>
-                            <div style="padding:20px; display:flex; flex-direction:column; flex-grow:1;">
-                                <h4 style="color:#fff; font-size:1.18rem; margin:0 0 10px; font-weight:950; line-height:1.25;">${escapeHtml(evento.nome || 'Baile do Ted')}</h4>
-                                <p style="color:#ff007f; font-size:.96rem; margin:0 0 6px; font-weight:850;">📍 ${escapeHtml(localLista)}</p>
-                                ${cidadeLista ? `<p style="color:#aaa; font-size:.86rem; margin:0 0 16px;">🌍 ${escapeHtml(cidadeLista)}</p>` : ''}
-                                <div class="mini-social-row" style="margin-bottom:18px; margin-top:auto;">
+                            <div class="card-evento__body">
+                                <h4>${escapeHtml(evento.nome || 'Baile do Ted')}</h4>
+                                <p class="card-evento__local">📍 ${escapeHtml(localLista)}</p>
+                                ${cidadeLista ? `<p class="card-evento__cidade">🌍 ${escapeHtml(cidadeLista)}</p>` : ''}
+                                <div class="mini-social-row">
                                     ${socialAction('instagram', instaCard, instagramUrl(instaCard), instaCard)}
                                     ${socialAction('whatsapp', 'WhatsApp', whatsappUrl(whatsCardLimpo), 'Chamar no WhatsApp')}
                                 </div>
-                                <a href="${escapeHtml(linkBotaoLista)}" target="_blank" class="btn-secondary" style="width:100%; min-height:46px; border-radius:12px;">🎫 Ver detalhes</a>
+                                <a href="${escapeHtml(linkBotaoLista)}" target="_blank" class="btn-secondary">🎫 Ver detalhes</a>
                             </div>
                         </div>`);
                 });
