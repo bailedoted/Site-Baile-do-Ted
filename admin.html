@@ -194,22 +194,6 @@
         .btn-limpar { background: #626274; }
         .btn-blue { background: var(--blue); }
 
-        .arte-preview-box {
-            width: 120px;
-            aspect-ratio: 9 / 16;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #0d0d13;
-            border: 1px solid var(--border-strong);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            text-align: center;
-        }
-        .arte-preview-box img { width: 100%; height: 100%; object-fit: cover; }
-        .arte-preview-box span { color: var(--muted); font-size: 11px; padding: 8px; line-height: 1.4; }
-
         .evento-item {
             display: flex;
             justify-content: space-between;
@@ -364,26 +348,10 @@
                         <label>Link de Ingressos:</label>
                         <input type="url" id="linkIngresso" placeholder="Vazio = Abre a Porta">
                     </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Arte do Evento (formato Stories, vertical 9:16):</label>
-                        <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
-                            <div class="arte-preview-box" id="arte-preview-box">
-                                <img id="arte-preview-img" alt="Prévia da arte" style="display:none;">
-                                <span id="arte-preview-placeholder">Sem arte<br>(usa a padrão)</span>
-                            </div>
-                            <div style="flex:1; min-width:220px;">
-                                <input type="file" id="imagemArquivo" accept="image/*">
-                                <span class="hint">Envie uma imagem vertical (proporção 9:16, tipo story do Instagram). Fotos grandes são redimensionadas e compactadas automaticamente antes do envio — não precisa editar antes. Se não enviar nada, o site usa a arte padrão automaticamente.</span>
-                                <div style="margin-top:10px;">
-                                    <button type="button" class="btn-limpar" id="btn-remover-arte" onclick="removerArteSelecionada()" style="display:none;">Remover arte enviada</button>
-                                </div>
-                                <div style="margin-top:12px;">
-                                    <label style="font-size:12px; color:var(--muted); font-weight:700;">Ou cole um caminho/link manualmente (avançado):</label>
-                                    <input type="text" id="imagemTexto" placeholder="Ex: img/formatura.png">
-                                </div>
-                            </div>
-                        </div>
-                        <input type="hidden" id="imagemStoragePathAtual">
+                    <div class="form-group">
+                        <label>Caminho da Imagem:</label>
+                        <input type="text" id="imagemTexto" placeholder="Ex: img/formatura.png">
+                        <span class="hint">Suba a imagem para a pasta img/ do repositório no GitHub e cole aqui o caminho (ex: img/formatura.png). Deixe em branco para usar a arte padrão.</span>
                     </div>
                 </div>
                 <button type="submit" class="btn-salvar" id="btn-salvar">Cadastrar Show</button>
@@ -583,7 +551,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA_yKDVhp4n8YDgIhtzOPT5DJX24dip_X4",
@@ -595,106 +562,6 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const storage = getStorage(app);
-
-        // Guardam o estado da arte no momento em que um evento é carregado para edição,
-        // para sabermos se o admin trocou/removeu a arte (e precisamos apagar a antiga
-        // do Storage) ou se deixou como estava (mantém o mesmo arquivo).
-        let storagePathOriginalAoEditar = '';
-        let imagemOriginalAoEditar = '';
-
-        function atualizarPreviewArte(src) {
-            const img = document.getElementById('arte-preview-img');
-            const placeholder = document.getElementById('arte-preview-placeholder');
-            const btnRemover = document.getElementById('btn-remover-arte');
-            if (src) {
-                img.src = src;
-                img.style.display = 'block';
-                placeholder.style.display = 'none';
-                btnRemover.style.display = 'inline-block';
-            } else {
-                img.removeAttribute('src');
-                img.style.display = 'none';
-                placeholder.style.display = 'block';
-                btnRemover.style.display = 'none';
-            }
-        }
-
-        document.getElementById('imagemArquivo').addEventListener('change', (e) => {
-            const arquivo = e.target.files[0];
-            if (arquivo) atualizarPreviewArte(URL.createObjectURL(arquivo));
-        });
-
-        window.removerArteSelecionada = () => {
-            document.getElementById('imagemArquivo').value = '';
-            document.getElementById('imagemTexto').value = '';
-            atualizarPreviewArte(null);
-        };
-
-        const TAMANHO_MAXIMO_ARQUIVO = 25 * 1024 * 1024; // 25MB — acima disso nem tentamos processar.
-        const LARGURA_MAXIMA_ARTE = 1080; // resolução padrão de story (1080x1920)
-
-        // Reduz e compacta a imagem no próprio navegador antes do envio, pra fotos de
-        // celular (que chegam a 5-15MB em resolução altíssima) não travarem o upload.
-        // Se o navegador não conseguir decodificar o arquivo (ex: formatos exóticos como
-        // HEIC de iPhone), devolve o arquivo original sem travar o fluxo.
-        async function comprimirImagem(file, larguraMaxima = LARGURA_MAXIMA_ARTE, qualidade = 0.85) {
-            if (!/^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) return file;
-            try {
-                const bitmap = await createImageBitmap(file);
-                let { width, height } = bitmap;
-                if (width > larguraMaxima) {
-                    const escala = larguraMaxima / width;
-                    width = Math.round(width * escala);
-                    height = Math.round(height * escala);
-                }
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(bitmap, 0, 0, width, height);
-                if (bitmap.close) bitmap.close();
-                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', qualidade));
-                return blob || file;
-            } catch (erroCompressao) {
-                console.warn('Não foi possível compactar a imagem, enviando original:', erroCompressao);
-                return file;
-            }
-        }
-
-        // Envia com barra de progresso (callback) e cancela sozinho se travar por muito
-        // tempo — assim, em vez do site "congelar" esperando pra sempre, o admin recebe
-        // um erro claro em poucos segundos.
-        function enviarArteComProgresso(caminhoStorage, blob, aoProgredir) {
-            return new Promise((resolve, reject) => {
-                const arteRef = ref(storage, caminhoStorage);
-                const tarefa = uploadBytesResumable(arteRef, blob);
-                const tempoLimite = setTimeout(() => {
-                    tarefa.cancel();
-                    reject(new Error('TIMEOUT_ENVIO'));
-                }, 45000);
-
-                tarefa.on('state_changed',
-                    (snapshot) => {
-                        if (aoProgredir && snapshot.totalBytes) {
-                            aoProgredir(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
-                        }
-                    },
-                    (erro) => {
-                        clearTimeout(tempoLimite);
-                        reject(erro);
-                    },
-                    async () => {
-                        clearTimeout(tempoLimite);
-                        try {
-                            resolve(await getDownloadURL(arteRef));
-                        } catch (erro) {
-                            reject(erro);
-                        }
-                    }
-                );
-            });
-        }
 
         function processarData(dataISO) {
             const diasSemana = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
@@ -717,32 +584,6 @@
             const dataBruta = document.getElementById('data').value;
             const dataFormatada = processarData(dataBruta);
             try {
-                let imagemFinal = document.getElementById('imagemTexto').value.trim() || 'img/tedsite.png';
-                let storagePathFinal = '';
-                const arquivo = document.getElementById('imagemArquivo').files[0];
-
-                if (arquivo) {
-                    if (arquivo.size > TAMANHO_MAXIMO_ARQUIVO) {
-                        throw new Error('ARQUIVO_MUITO_GRANDE');
-                    }
-                    btn.innerText = "Preparando arte...";
-                    const blobFinal = await comprimirImagem(arquivo);
-                    const extensao = blobFinal.type === 'image/jpeg'
-                        ? 'jpg'
-                        : ((arquivo.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg');
-                    const idArquivo = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-                    const caminhoStorage = `eventos-artes/${idArquivo}.${extensao}`;
-                    imagemFinal = await enviarArteComProgresso(caminhoStorage, blobFinal, (pct) => {
-                        btn.innerText = `Enviando arte... ${pct}%`;
-                    });
-                    storagePathFinal = caminhoStorage;
-                    btn.innerText = "Salvando...";
-                } else if (storagePathOriginalAoEditar && document.getElementById('imagemTexto').value.trim() === imagemOriginalAoEditar.trim()) {
-                    // Não mexeu na arte que já estava enviada: mantém o mesmo arquivo no Storage.
-                    storagePathFinal = storagePathOriginalAoEditar;
-                    imagemFinal = imagemOriginalAoEditar || 'img/tedsite.png';
-                }
-
                 const dados = {
                     nome: document.getElementById('nome').value,
                     dataBruta: dataBruta,
@@ -755,34 +596,16 @@
                     localContato: document.getElementById('localContato').value,
                     instagram: document.getElementById('instagram').value,
                     linkIngresso: document.getElementById('linkIngresso').value,
-                    imagem: imagemFinal,
-                    imagemStoragePath: storagePathFinal
+                    imagem: document.getElementById('imagemTexto').value || 'img/tedsite.png'
                 };
                 if (eventoId) { await updateDoc(doc(db, "eventos", eventoId), dados); }
                 else { await addDoc(collection(db, "eventos"), dados); }
-
-                // Trocou ou removeu a arte enviada anteriormente: apaga o arquivo antigo do Storage
-                // para não deixar resquício de imagens não usadas no banco.
-                if (storagePathOriginalAoEditar && storagePathOriginalAoEditar !== storagePathFinal) {
-                    deleteObject(ref(storage, storagePathOriginalAoEditar)).catch(() => {});
-                }
-
                 alert("Sucesso!");
                 resetarFormulario();
                 carregarEventosAdmin();
             } catch (e) {
                 console.error(e);
-                if (e && e.message === 'ARQUIVO_MUITO_GRANDE') {
-                    alert("Essa imagem é muito pesada (mais de 25MB). Escolha uma arte mais leve ou reduza o tamanho antes de enviar.");
-                } else if (e && e.message === 'TIMEOUT_ENVIO') {
-                    alert("O envio da arte demorou demais e foi cancelado automaticamente. Verifique sua internet e tente novamente — se persistir, tente com uma imagem mais leve.");
-                } else if (e && e.code === 'storage/unauthorized') {
-                    alert("Não foi possível enviar a arte: o Firebase Storage está bloqueando o envio por permissão. É preciso liberar as regras do Storage no painel do Firebase.");
-                } else if (e && e.code === 'storage/canceled') {
-                    alert("O envio da arte foi cancelado.");
-                } else {
-                    alert("Erro ao salvar o show.");
-                }
+                alert("Erro ao salvar o show.");
             } finally {
                 btn.innerText = "Cadastrar Show";
                 btn.disabled = false;
@@ -800,7 +623,7 @@
                 const json = JSON.stringify({id: docSnap.id, ...e}).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
                 const jaPassou = typeof e.dataTimestamp === 'number' && e.dataTimestamp < inicioDeHoje;
                 const badgePassou = jaPassou ? ` <span style="color:#ff4fa7; font-weight:800; font-size:.78rem; border:1px solid #ff4fa7; border-radius:6px; padding:1px 6px; margin-left:4px;">(passou)</span>` : '';
-                lista.innerHTML += `<div class="evento-item"${jaPassou ? ' style="opacity:.55;"' : ''}><div><strong>${e.nome || "Evento sem nome"}</strong>${badgePassou}<small>${e.dataTexto || "Sem data"} ${e.localNome ? " • " + e.localNome : ""}</small></div><div class="botoes-acao"><button class="btn-editar" onclick="editarEvento('${json}')">Editar</button><button class="btn-excluir" onclick="deletarEvento('${json}')">Excluir</button></div></div>`;
+                lista.innerHTML += `<div class="evento-item"${jaPassou ? ' style="opacity:.55;"' : ''}><div><strong>${e.nome || "Evento sem nome"}</strong>${badgePassou}<small>${e.dataTexto || "Sem data"} ${e.localNome ? " • " + e.localNome : ""}</small></div><div class="botoes-acao"><button class="btn-editar" onclick="editarEvento('${json}')">Editar</button><button class="btn-excluir" onclick="deletarEvento('${docSnap.id}')">Excluir</button></div></div>`;
             });
         }
 
@@ -814,24 +637,15 @@
             document.getElementById('localContato').value = e.localContato || '';
             document.getElementById('instagram').value = e.instagram || '';
             document.getElementById('linkIngresso').value = e.linkIngresso || '';
-            document.getElementById('imagemArquivo').value = '';
             document.getElementById('imagemTexto').value = e.imagem || '';
-            storagePathOriginalAoEditar = e.imagemStoragePath || '';
-            imagemOriginalAoEditar = e.imagem || '';
-            atualizarPreviewArte(e.imagem || null);
             document.getElementById('btn-salvar').innerText = "Atualizar Show";
             document.getElementById('btn-cancelar').style.display = "block";
             document.getElementById('shows').scrollIntoView({ behavior: "smooth", block: "start" });
         }
 
-        window.deletarEvento = async (json) => {
-            const e = JSON.parse(json);
+        window.deletarEvento = async (id) => {
             if(confirm("Excluir este show?")) {
-                await deleteDoc(doc(db, "eventos", e.id));
-                if (e.imagemStoragePath) {
-                    // Apaga também a arte enviada no Storage, pra não sobrar resquício no banco.
-                    deleteObject(ref(storage, e.imagemStoragePath)).catch(() => {});
-                }
+                await deleteDoc(doc(db, "eventos", id));
                 carregarEventosAdmin();
             }
         }
@@ -839,9 +653,6 @@
         window.resetarFormulario = () => {
             document.getElementById('form-evento').reset();
             document.getElementById('eventoId').value = "";
-            storagePathOriginalAoEditar = '';
-            imagemOriginalAoEditar = '';
-            atualizarPreviewArte(null);
             document.getElementById('btn-salvar').innerText = "Cadastrar Show";
             document.getElementById('btn-cancelar').style.display = "none";
         }
