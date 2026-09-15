@@ -373,7 +373,7 @@
                             </div>
                             <div style="flex:1; min-width:220px;">
                                 <input type="file" id="imagemArquivo" accept="image/*">
-                                <span class="hint">Envie uma imagem vertical (proporção 9:16, tipo story do Instagram). Se não enviar nada, o site usa a arte padrão automaticamente.</span>
+                                <span class="hint">Envie uma imagem vertical (proporção 9:16, tipo story do Instagram). Fotos grandes são redimensionadas e compactadas automaticamente antes do envio — não precisa editar antes. Se não enviar nada, o site usa a arte padrão automaticamente.</span>
                                 <div style="margin-top:10px;">
                                     <button type="button" class="btn-limpar" id="btn-remover-arte" onclick="removerArteSelecionada()" style="display:none;">Remover arte enviada</button>
                                 </div>
@@ -583,7 +583,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA_yKDVhp4n8YDgIhtzOPT5DJX24dip_X4",
@@ -631,6 +631,71 @@
             atualizarPreviewArte(null);
         };
 
+        const TAMANHO_MAXIMO_ARQUIVO = 25 * 1024 * 1024; // 25MB — acima disso nem tentamos processar.
+        const LARGURA_MAXIMA_ARTE = 1080; // resolução padrão de story (1080x1920)
+
+        // Reduz e compacta a imagem no próprio navegador antes do envio, pra fotos de
+        // celular (que chegam a 5-15MB em resolução altíssima) não travarem o upload.
+        // Se o navegador não conseguir decodificar o arquivo (ex: formatos exóticos como
+        // HEIC de iPhone), devolve o arquivo original sem travar o fluxo.
+        async function comprimirImagem(file, larguraMaxima = LARGURA_MAXIMA_ARTE, qualidade = 0.85) {
+            if (!/^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) return file;
+            try {
+                const bitmap = await createImageBitmap(file);
+                let { width, height } = bitmap;
+                if (width > larguraMaxima) {
+                    const escala = larguraMaxima / width;
+                    width = Math.round(width * escala);
+                    height = Math.round(height * escala);
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(bitmap, 0, 0, width, height);
+                if (bitmap.close) bitmap.close();
+                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', qualidade));
+                return blob || file;
+            } catch (erroCompressao) {
+                console.warn('Não foi possível compactar a imagem, enviando original:', erroCompressao);
+                return file;
+            }
+        }
+
+        // Envia com barra de progresso (callback) e cancela sozinho se travar por muito
+        // tempo — assim, em vez do site "congelar" esperando pra sempre, o admin recebe
+        // um erro claro em poucos segundos.
+        function enviarArteComProgresso(caminhoStorage, blob, aoProgredir) {
+            return new Promise((resolve, reject) => {
+                const arteRef = ref(storage, caminhoStorage);
+                const tarefa = uploadBytesResumable(arteRef, blob);
+                const tempoLimite = setTimeout(() => {
+                    tarefa.cancel();
+                    reject(new Error('TIMEOUT_ENVIO'));
+                }, 45000);
+
+                tarefa.on('state_changed',
+                    (snapshot) => {
+                        if (aoProgredir && snapshot.totalBytes) {
+                            aoProgredir(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
+                        }
+                    },
+                    (erro) => {
+                        clearTimeout(tempoLimite);
+                        reject(erro);
+                    },
+                    async () => {
+                        clearTimeout(tempoLimite);
+                        try {
+                            resolve(await getDownloadURL(arteRef));
+                        } catch (erro) {
+                            reject(erro);
+                        }
+                    }
+                );
+            });
+        }
+
         function processarData(dataISO) {
             const diasSemana = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
             const mesesAno = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -657,13 +722,19 @@
                 const arquivo = document.getElementById('imagemArquivo').files[0];
 
                 if (arquivo) {
-                    btn.innerText = "Enviando arte...";
-                    const extensao = (arquivo.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+                    if (arquivo.size > TAMANHO_MAXIMO_ARQUIVO) {
+                        throw new Error('ARQUIVO_MUITO_GRANDE');
+                    }
+                    btn.innerText = "Preparando arte...";
+                    const blobFinal = await comprimirImagem(arquivo);
+                    const extensao = blobFinal.type === 'image/jpeg'
+                        ? 'jpg'
+                        : ((arquivo.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg');
                     const idArquivo = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
                     const caminhoStorage = `eventos-artes/${idArquivo}.${extensao}`;
-                    const arteRef = ref(storage, caminhoStorage);
-                    await uploadBytes(arteRef, arquivo);
-                    imagemFinal = await getDownloadURL(arteRef);
+                    imagemFinal = await enviarArteComProgresso(caminhoStorage, blobFinal, (pct) => {
+                        btn.innerText = `Enviando arte... ${pct}%`;
+                    });
                     storagePathFinal = caminhoStorage;
                     btn.innerText = "Salvando...";
                 } else if (storagePathOriginalAoEditar && document.getElementById('imagemTexto').value.trim() === imagemOriginalAoEditar.trim()) {
@@ -701,7 +772,17 @@
                 carregarEventosAdmin();
             } catch (e) {
                 console.error(e);
-                alert("Erro ao salvar o show.");
+                if (e && e.message === 'ARQUIVO_MUITO_GRANDE') {
+                    alert("Essa imagem é muito pesada (mais de 25MB). Escolha uma arte mais leve ou reduza o tamanho antes de enviar.");
+                } else if (e && e.message === 'TIMEOUT_ENVIO') {
+                    alert("O envio da arte demorou demais e foi cancelado automaticamente. Verifique sua internet e tente novamente — se persistir, tente com uma imagem mais leve.");
+                } else if (e && e.code === 'storage/unauthorized') {
+                    alert("Não foi possível enviar a arte: o Firebase Storage está bloqueando o envio por permissão. É preciso liberar as regras do Storage no painel do Firebase.");
+                } else if (e && e.code === 'storage/canceled') {
+                    alert("O envio da arte foi cancelado.");
+                } else {
+                    alert("Erro ao salvar o show.");
+                }
             } finally {
                 btn.innerText = "Cadastrar Show";
                 btn.disabled = false;
