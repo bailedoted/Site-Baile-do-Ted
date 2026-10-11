@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Figtree:wght@400;500;700;800&family=Martian+Mono:wght@400;600&display=swap">
 <link rel="preload" as="image" href="img/site/ted-mascote.webp">
-<link rel="stylesheet" href="css/style.css?v=20261011">
+<link rel="stylesheet" href="css/style.css?v=20261011b">
 </head>
 <body>
 
@@ -33,7 +33,6 @@
       <a href="#show">O show</a>
       <a href="#para-quem">Para quem</a>
       <a href="#provas">Quem viu</a>
-      <a href="#orcamento">Orçamento</a>
     </nav>
     <a class="botao botao--vermelho botao--pequeno" href="https://wa.me/5541998440412?text=Ol%C3%A1!%20Quero%20contratar%20o%20Baile%20do%20Ted%20para%20meu%20evento." target="_blank" rel="noopener">Contratar</a>
     <button class="topo__menu" type="button" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
@@ -221,53 +220,6 @@
     </div>
   </section>
 
-  <!-- ============ ORÇAMENTO ============ -->
-  <section class="secao secao--escura" id="orcamento" aria-labelledby="orcamento-titulo">
-    <div class="container bilheteria">
-      <div class="bilheteria__texto">
-        <p class="etiqueta">Orçamento rápido</p>
-        <h2 id="orcamento-titulo" class="titulo">Simula aqui,<br>fecha no Whats</h2>
-        <p>Coloca a cidade do evento e a gente calcula uma estimativa base com o deslocamento saindo de Curitiba. Depois é só mandar pra gente no WhatsApp.</p>
-        <p class="nota">Hospedagem e alimentação não entram na simulação. O valor final depende da data, do formato e da estrutura do evento.</p>
-      </div>
-      <form class="bilheteria__form" id="form-orcamento" novalidate>
-        <label class="campo">
-          <span>Cidade e estado *</span>
-          <input id="cidade-destino" type="text" placeholder="Ex: Candelária, RS" autocomplete="address-level2" required>
-        </label>
-        <label class="campo">
-          <span>Tipo de evento</span>
-          <input id="tipo-evento" type="text" placeholder="Ex: aniversário, boate, formatura">
-        </label>
-        <div class="campo-duplo">
-          <label class="campo">
-            <span>Data desejada</span>
-            <input id="data-evento" type="date">
-          </label>
-          <label class="campo">
-            <span>Seu nome ou empresa</span>
-            <input id="nome-cliente" type="text" autocomplete="name">
-          </label>
-        </div>
-        <button class="botao botao--vermelho botao--largo" id="btn-calcular" type="submit">Calcular estimativa</button>
-
-        <div id="loading-box" class="calculando" hidden>
-          <p id="msg-ted"></p>
-          <div class="calculando__barra"><div id="barra-progresso"></div></div>
-        </div>
-
-        <div id="resultado-box" hidden>
-          <p id="msg-erro" class="erro" hidden></p>
-          <div id="dados-orcamento" class="resultado" hidden>
-            <p class="resultado__rotulo">Estimativa base</p>
-            <p class="resultado__valor">R$ <span id="res-total">--</span></p>
-            <a class="botao botao--verde botao--largo" href="#" id="btn-whats-orcamento" target="_blank" rel="noopener">Enviar cotação pelo WhatsApp</a>
-          </div>
-        </div>
-      </form>
-    </div>
-  </section>
-
   <!-- ============ FECHAMENTO ============ -->
   <section class="fechamento" aria-labelledby="fechamento-titulo">
     <div class="container fechamento__inner">
@@ -310,12 +262,11 @@
   <img class="visor__img" src="" alt="">
 </div>
 
-<script src="js/supabase-config.js?v=20261011"></script>
-<script src="js/supabase-client.js?v=20261011"></script>
-<script src="js/site.js?v=20261011"></script>
-<script src="js/orcamento.js?v=20261011"></script>
-<script src="js/scroll-fix.js?v=20261011" defer></script>
+<script src="js/supabase-config.js?v=20261011b"></script>
+<script src="js/supabase-client.js?v=20261011b"></script>
+<script src="js/site.js?v=20261011b"></script>
+<script src="js/scroll-fix.js?v=20261011b" defer></script>
 <script src="https://hosted.muses.org/mrp.js" defer></script>
-<script src="js/radio-player.js?v=20261011" defer></script>
+<script src="js/radio-player.js?v=20261011b" defer></script>
 </body>
 </html>

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Figtree:wght@400;500;700;800&family=Martian+Mono:wght@400;600&display=swap">
-<link rel="stylesheet" href="css/admin.css?v=20261011">
+<link rel="stylesheet" href="css/admin.css?v=20261011b">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 </head>
@@ -55,6 +55,7 @@
     </div>
     <nav class="abas" role="tablist" aria-label="Seções do painel">
       <button class="aba" role="tab" type="button" data-aba="shows" aria-selected="true">Shows</button>
+      <button class="aba" role="tab" type="button" data-aba="orcamento" aria-selected="false">Orçamento</button>
       <button class="aba" role="tab" type="button" data-aba="fotos" aria-selected="false">Fotos do site</button>
       <button class="aba" role="tab" type="button" data-aba="textos" aria-selected="false">Textos rápidos</button>
       <button class="aba" role="tab" type="button" data-aba="contratos" aria-selected="false">Contratos</button>
@@ -148,6 +149,63 @@
           </div>
           <div id="lista-eventos" class="lista-eventos" aria-live="polite"></div>
         </div>
+      </div>
+    </section>
+
+    <!-- ========== ORÇAMENTO ========== -->
+    <section class="painel-aba" id="aba-orcamento" role="tabpanel" hidden>
+      <div class="grade-orcamento">
+        <form class="cartao" id="form-orcamento" novalidate autocomplete="off">
+          <div class="cartao__cabeca"><h2>Simular orçamento</h2></div>
+          <p class="dica">Calcula a distância de carro saindo de Curitiba (ida e volta) e soma o cachê da faixa. Só você vê esta tela.</p>
+          <div class="campos">
+            <label class="campo campo--cheio"><span>Cidade e estado *</span><input type="text" id="orc-cidade" placeholder="Ex: Candelária, RS"></label>
+            <label class="campo"><span>Tipo de evento</span><input type="text" id="orc-tipo" placeholder="Ex: formatura, boate"></label>
+            <label class="campo"><span>Data desejada</span><input type="date" id="orc-data"></label>
+            <label class="campo"><span>Nome do cliente</span><input type="text" id="orc-nome"></label>
+            <label class="campo"><span>WhatsApp do cliente</span><input type="tel" id="orc-whats" placeholder="(41) 99999-9999"></label>
+          </div>
+          <button class="btn btn--vermelho btn--largo" type="submit" id="btn-calcular-orc">Calcular</button>
+        </form>
+
+        <div class="cartao">
+          <div class="cartao__cabeca"><h2>Resultado</h2></div>
+          <p class="vazio" id="orc-vazio">Preencha a cidade e clique em <strong>Calcular</strong>.</p>
+          <p class="aviso aviso--erro" id="orc-erro" hidden></p>
+          <div class="orc-resultado" id="orc-resultado" hidden>
+            <p class="orc-total"><small>Total estimado</small><span>R$ <span id="orc-total">0,00</span></span></p>
+            <dl class="resumo__lista">
+              <div><dt>Distância (ida e volta)</dt><dd id="orc-km">-</dd></div>
+              <div><dt id="orc-desloc-rotulo">Deslocamento</dt><dd id="orc-desloc">-</dd></div>
+              <div><dt id="orc-cache-rotulo">Cachê da faixa</dt><dd id="orc-cache">-</dd></div>
+            </dl>
+            <p class="dica">Hospedagem e alimentação da equipe não entram na conta.</p>
+            <label class="campo">
+              <span>Mensagem pro cliente (pode editar)</span>
+              <textarea id="orc-mensagem" rows="9"></textarea>
+            </label>
+            <div class="linha-botoes">
+              <button class="btn btn--contorno btn--pequeno" type="button" id="btn-copiar-orc">Copiar mensagem</button>
+              <a class="btn btn--verde btn--pequeno" id="btn-whats-orc" href="#" target="_blank" rel="noopener">Enviar no WhatsApp</a>
+              <button class="btn btn--ouro btn--pequeno" type="button" id="btn-orc-contrato">Levar pro contrato</button>
+            </div>
+          </div>
+        </div>
+
+        <form class="cartao cartao--cheio" id="form-tabela-orc" novalidate>
+          <div class="cartao__cabeca">
+            <h2>Tabela de valores</h2>
+            <button class="btn btn--vermelho btn--pequeno" type="submit" id="btn-salvar-tabela">Salvar tabela</button>
+          </div>
+          <p class="dica">A conta é: <strong>km rodados (ida e volta) × valor por km</strong> + <strong>cachê da faixa de distância</strong>. Mude os valores aqui quando precisar.</p>
+          <div class="tabela-orc">
+            <label class="campo"><span>Valor por km rodado</span><input type="text" inputmode="decimal" id="tab-km"></label>
+            <label class="campo"><span>Cachê até 200 km</span><input type="text" inputmode="decimal" id="tab-f1"></label>
+            <label class="campo"><span>Cachê de 201 a 300 km</span><input type="text" inputmode="decimal" id="tab-f2"></label>
+            <label class="campo"><span>Cachê de 301 a 500 km</span><input type="text" inputmode="decimal" id="tab-f3"></label>
+            <label class="campo"><span>Cachê acima de 500 km</span><input type="text" inputmode="decimal" id="tab-f4"></label>
+          </div>
+        </form>
       </div>
     </section>
 
@@ -298,9 +356,9 @@
 
 <div class="avisos" id="avisos" aria-live="polite"></div>
 
-<script src="js/supabase-config.js?v=20261011"></script>
-<script src="js/supabase-client.js?v=20261011"></script>
-<script src="js/admin-contrato.js?v=20261011"></script>
-<script src="js/admin.js?v=20261011"></script>
+<script src="js/supabase-config.js?v=20261011b"></script>
+<script src="js/supabase-client.js?v=20261011b"></script>
+<script src="js/admin-contrato.js?v=20261011b"></script>
+<script src="js/admin.js?v=20261011b"></script>
 </body>
 </html>
