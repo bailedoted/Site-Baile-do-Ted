@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Migração Firebase → Supabase | Painel do Ted</title>
+<link rel="icon" type="image/png" href="img/ted.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Figtree:wght@400;700;800&family=Martian+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/admin.css">
+<style>
+  .migra { max-width: 760px; margin: 0 auto; padding: 32px 16px 80px; display: grid; gap: 20px; }
+  .migra h1 { font-family: var(--f-cartaz); font-weight: 900; font-size: 2.6rem; line-height: 1; text-transform: uppercase; }
+  .passos { margin: 0; padding-left: 20px; color: var(--fumaca); display: grid; gap: 6px; }
+  .contagem { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .contagem div { background: var(--campo); border: 1px solid var(--linha); border-radius: 12px; padding: 14px; }
+  .contagem b { display: block; font-family: var(--f-cartaz); font-size: 2.4rem; line-height: 1; color: var(--ouro); }
+  .contagem span { font-family: var(--f-mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fumaca); }
+  .registro { font-family: var(--f-mono); font-size: .78rem; line-height: 1.6; background: var(--campo); border: 1px solid var(--linha); border-radius: 12px; padding: 14px; max-height: 340px; overflow: auto; white-space: pre-wrap; }
+  @media (max-width: 560px) { .contagem { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main class="migra">
+  <div>
+    <p class="rotulo">Uso único</p>
+    <h1>Trazer os dados do Firebase</h1>
+  </div>
+
+  <div class="cartao" id="passo-login">
+    <p class="dica" id="status-login">Verificando o seu login…</p>
+    <a class="btn btn--vermelho" href="admin.html" id="link-admin" hidden>Entrar no painel primeiro</a>
+  </div>
+
+  <div class="cartao" id="passo-migrar" hidden>
+    <ol class="passos">
+      <li>Clique em <strong>Ler o Firebase</strong> pra ver o que existe lá.</li>
+      <li>Confira os números e clique em <strong>Copiar para o Supabase</strong>.</li>
+      <li>Pode clicar de novo sem medo: o que já foi copiado não duplica.</li>
+    </ol>
+    <div class="linha-botoes">
+      <button class="btn btn--contorno" type="button" id="btn-ler">Ler o Firebase</button>
+      <button class="btn btn--vermelho" type="button" id="btn-copiar" disabled>Copiar para o Supabase</button>
+    </div>
+    <div class="contagem">
+      <div><b id="n-eventos">–</b><span>Shows</span></div>
+      <div><b id="n-contratos">–</b><span>Contratos</span></div>
+      <div><b id="n-textos">–</b><span>Textos rápidos</span></div>
+    </div>
+    <div class="registro" id="registro" aria-live="polite">Aguardando…</div>
+    <p class="dica">Terminou? Apague o arquivo <code>migrar.html</code> do GitHub — ele não é mais necessário.</p>
+  </div>
+</main>
+
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase-client.js"></script>
+<script>
+(function () {
+  'use strict';
+  var FIREBASE = {
+    apiKey: 'AIzaSyA_yKDVhp4n8YDgIhtzOPT5DJX24dip_X4',
+    authDomain: 'baile-do-ted.firebaseapp.com',
+    projectId: 'baile-do-ted',
+    storageBucket: 'baile-do-ted.firebasestorage.app',
+    messagingSenderId: '838778419593',
+    appId: '1:838778419593:web:590a0a81c4ff2f1a140958'
+  };
+  var SDK = 'https://www.gstatic.com/firebasejs/9.22.0/';
+  var sb = null;
+  var lido = null;
+
+  function $(id) { return document.getElementById(id); }
+  function registrar(msg) {
+    var r = $('registro');
+    if (r.textContent === 'Aguardando…') r.textContent = '';
+    r.textContent += msg + '\n';
+    r.scrollTop = r.scrollHeight;
+  }
+  function isoDeTimestamp(ms) {
+    var d = new Date(ms);
+    if (isNaN(d)) return null;
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  async function iniciar() {
+    try { sb = await window.tedSupabase(); }
+    catch (e) {
+      $('status-login').textContent = e && e.code === 'CONFIG_PENDENTE'
+        ? 'Falta configurar o js/supabase-config.js com a URL e a chave do Supabase.'
+        : 'Não foi possível conectar ao Supabase.';
+      return;
+    }
+    var s = await sb.auth.getSession();
+    if (!s.data || !s.data.session) {
+      $('status-login').textContent = 'Você precisa estar logado no painel. Entre e depois volte nesta página.';
+      $('link-admin').hidden = false;
+      return;
+    }
+    var adm = await sb.rpc('is_admin');
+    if (adm.data !== true) {
+      $('status-login').textContent = 'Seu e-mail não está liberado como admin no Supabase.';
+      return;
+    }
+    $('status-login').textContent = 'Logado como ' + s.data.session.user.email + '. Tudo certo pra migrar.';
+    $('passo-migrar').hidden = false;
+  }
+
+  async function lerFirebase() {
+    var btn = $('btn-ler');
+    btn.disabled = true; btn.textContent = 'Lendo…';
+    try {
+      registrar('Conectando ao Firebase…');
+      var appMod = await import(SDK + 'firebase-app.js');
+      var fs = await import(SDK + 'firebase-firestore.js');
+      var app = appMod.initializeApp(FIREBASE, 'migracao');
+      var db = fs.getFirestore(app);
+      lido = { eventos: [], contratos: [], textos: null };
+
+      var evs = await fs.getDocs(fs.collection(db, 'eventos'));
+      evs.forEach(function (d) { lido.eventos.push(Object.assign({ _id: d.id }, d.data())); });
+      registrar('Shows encontrados: ' + lido.eventos.length);
+
+      try {
+        var cts = await fs.getDocs(fs.collection(db, 'contratosGerados'));
+        cts.forEach(function (d) { lido.contratos.push(Object.assign({ _id: d.id }, d.data())); });
+        registrar('Contratos encontrados: ' + lido.contratos.length);
+      } catch (e) { registrar('Não consegui ler os contratos: ' + e.message); }
+
+      try {
+        var tx = await fs.getDoc(fs.doc(db, 'configuracoes', 'textosGerais'));
+        lido.textos = tx.exists() ? tx.data() : null;
+        registrar('Textos rápidos: ' + (lido.textos ? 'encontrados' : 'nenhum'));
+      } catch (e) { registrar('Não consegui ler os textos: ' + e.message); }
+
+      $('n-eventos').textContent = lido.eventos.length;
+      $('n-contratos').textContent = lido.contratos.length;
+      $('n-textos').textContent = lido.textos ? 'sim' : 'não';
+      $('btn-copiar').disabled = false;
+    } catch (e) {
+      registrar('ERRO ao ler o Firebase: ' + (e && e.message ? e.message : e));
+    } finally {
+      btn.disabled = false; btn.textContent = 'Ler o Firebase de novo';
+    }
+  }
+
+  function converterEvento(e) {
+    var data = /^\d{4}-\d{2}-\d{2}$/.test(e.dataBruta || '') ? e.dataBruta
+      : (typeof e.dataTimestamp === 'number' ? isoDeTimestamp(e.dataTimestamp) : null);
+    var img = String(e.imagem || '').trim();
+    if (!img || img === 'img/tedsite.png') img = null;
+    var status = String(e.status || '').toLowerCase();
+    var publicado = !(e.ativo === false || e.publico === false || e.oculto === true || /cancel|inativ|rascunho|exclu/.test(status));
+    return {
+      origem_id: e._id,
+      nome: e.nome || 'Show sem nome',
+      data: data,
+      local_nome: e.localNome || null,
+      local_endereco: e.localEndereco || null,
+      local_contato: e.localContato || null,
+      instagram: e.instagram || null,
+      link_ingresso: e.linkIngresso || null,
+      imagem_url: img,
+      imagem_path: null,
+      publicado: publicado
+    };
+  }
+
+  function converterContrato(c) {
+    var dados = Object.assign({}, c);
+    delete dados._id; delete dados.contratoTexto; delete dados.criadoEm;
+    return {
+      origem_id: c._id,
+      cliente_nome: c.cliente_nome || null,
+      evento_nome: c.evento_nome || null,
+      evento_data: c.evento_data || null,
+      valor_total: c.valor_total || null,
+      dados: dados,
+      contrato_texto: c.contratoTexto || null,
+      criado_em: typeof c.criadoEm === 'number' ? new Date(c.criadoEm).toISOString() : new Date().toISOString()
+    };
+  }
+
+  async function copiar() {
+    if (!lido) return;
+    var btn = $('btn-copiar');
+    btn.disabled = true; btn.textContent = 'Copiando…';
+    try {
+      var eventos = lido.eventos.map(converterEvento);
+      var semData = eventos.filter(function (e) { return !e.data; });
+      eventos = eventos.filter(function (e) { return e.data; });
+      if (semData.length) registrar('Pulei ' + semData.length + ' show(s) sem data: ' + semData.map(function (e) { return e.nome; }).join(', '));
+      if (eventos.length) {
+        var r1 = await sb.from('eventos').upsert(eventos, { onConflict: 'origem_id' });
+        if (r1.error) throw new Error('Shows: ' + r1.error.message);
+        registrar('✓ ' + eventos.length + ' show(s) copiados.');
+      }
+
+      var contratos = lido.contratos.map(converterContrato);
+      if (contratos.length) {
+        var r2 = await sb.from('contratos').upsert(contratos, { onConflict: 'origem_id' });
+        if (r2.error) throw new Error('Contratos: ' + r2.error.message);
+        registrar('✓ ' + contratos.length + ' contrato(s) copiados.');
+      }
+
+      if (lido.textos) {
+        var atual = await sb.from('configuracoes').select('valor').eq('chave', 'admin_textos').maybeSingle();
+        var temAlgo = atual.data && atual.data.valor && (atual.data.valor.orcamento || atual.data.valor.infos);
+        if (!temAlgo || window.confirm('Já existem textos rápidos salvos no Supabase. Substituir pelos do Firebase?')) {
+          var r3 = await sb.from('configuracoes').upsert({
+            chave: 'admin_textos',
+            valor: { orcamento: lido.textos.orcamento || '', infos: lido.textos.infos || '', valorGasolinaBase: lido.textos.valorGasolinaBase || '' },
+            atualizado_em: new Date().toISOString()
+          }, { onConflict: 'chave' });
+          if (r3.error) throw new Error('Textos: ' + r3.error.message);
+          registrar('✓ Textos rápidos copiados.');
+        } else {
+          registrar('Textos rápidos mantidos como estavam no Supabase.');
+        }
+      }
+      registrar('\nPRONTO! Confira no painel (admin.html). Depois apague o migrar.html do GitHub.');
+    } catch (e) {
+      registrar('ERRO: ' + (e && e.message ? e.message : e));
+    } finally {
+      btn.disabled = false; btn.textContent = 'Copiar para o Supabase';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    $('btn-ler').addEventListener('click', lerFirebase);
+    $('btn-copiar').addEventListener('click', copiar);
+    iniciar();
+  });
+})();
+</script>
+</body>
+</html>
