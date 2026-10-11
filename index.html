@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Figtree:wght@400;500;700;800&family=Martian+Mono:wght@400;600&display=swap">
 <link rel="preload" as="image" href="img/site/ted-mascote.webp">
-<link rel="stylesheet" href="css/style.css?v=20261011b">
+<link rel="stylesheet" href="css/style.css?v=20261011c">
 </head>
 <body>
 
@@ -91,7 +91,11 @@
       <div id="agenda-destaque" class="agenda-destaque" aria-live="polite">
         <div class="carregando"><span></span>Buscando a agenda…</div>
       </div>
-      <div id="agenda-lista" class="agenda-lista"></div>
+      <div class="agenda-mais" id="agenda-mais" hidden>
+        <h3>Mais datas <span id="agenda-mais-qtd"></span></h3>
+        <p class="agenda-mais__dica" aria-hidden="true">arraste pro lado →</p>
+      </div>
+      <div id="agenda-lista" class="agenda-lista" aria-label="Próximos shows"></div>
 
       <div class="chamada-linha">
         <p><strong>Quer o Ted na sua cidade?</strong> Consulta a data com a gente antes que alguém pegue.</p>
@@ -262,11 +266,11 @@
   <img class="visor__img" src="" alt="">
 </div>
 
-<script src="js/supabase-config.js?v=20261011b"></script>
-<script src="js/supabase-client.js?v=20261011b"></script>
-<script src="js/site.js?v=20261011b"></script>
-<script src="js/scroll-fix.js?v=20261011b" defer></script>
+<script src="js/supabase-config.js?v=20261011c"></script>
+<script src="js/supabase-client.js?v=20261011c"></script>
+<script src="js/site.js?v=20261011c"></script>
+<script src="js/scroll-fix.js?v=20261011c" defer></script>
 <script src="https://hosted.muses.org/mrp.js" defer></script>
-<script src="js/radio-player.js?v=20261011b" defer></script>
+<script src="js/radio-player.js?v=20261011c" defer></script>
 </body>
 </html>
