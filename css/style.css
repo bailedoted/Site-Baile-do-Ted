@@ -585,6 +585,31 @@ ul { margin: 0; padding: 0; list-style: none; }
   gap: 22px;
 }
 .agenda-lista:empty { display: none; }
+
+.agenda-mais {
+  margin-top: 40px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.agenda-mais h3 {
+  font-family: var(--f-cartaz);
+  font-weight: 900;
+  font-size: 2rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.agenda-mais h3 span { color: var(--ouro); font-variant-numeric: tabular-nums; }
+.agenda-mais__dica {
+  display: none;
+  font-family: var(--f-mono);
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--fumaca);
+}
+.agenda-mais + .agenda-lista { margin-top: 18px; }
 .show {
   background: var(--palco);
   border: 1px solid var(--linha);
@@ -1179,14 +1204,38 @@ body.visor-aberto { overflow: hidden; }
   .rodape__links { justify-content: flex-start; }
 }
 
+/* Celular e tablet: "Mais datas" vira uma fileira que desliza pro lado
+   (tipo catálogo de streaming), pra ninguém ter que rolar a página inteira. */
+@media (max-width: 860px) {
+  .agenda-mais__dica { display: block; }
+  .agenda-lista {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: min(58%, 240px);
+    gap: 12px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: clamp(18px, 4vw, 32px);
+    margin-inline: calc(-1 * clamp(18px, 4vw, 32px));
+    padding: 4px clamp(18px, 4vw, 32px) 12px;
+    scrollbar-width: none;
+  }
+  .agenda-lista::-webkit-scrollbar { display: none; }
+  .show { scroll-snap-align: start; }
+  .show:hover { transform: none; }
+  .show__corpo { padding: 12px; gap: 6px; }
+  .show__nome { font-size: 1.2rem; }
+  .show__local { font-size: .85rem; }
+  .show__acoes .botao:not(.icone-botao) { min-height: 40px; font-size: .85rem; padding: 8px 10px; }
+  .show__acoes .icone-botao { width: 38px; min-height: 38px; }
+}
+
 @media (max-width: 640px) {
   .ingresso { grid-template-columns: 1fr; }
   .ingresso__arte { aspect-ratio: 9 / 16; max-height: 78vh; }
   .ingresso__canhoto { grid-row: 2; }
   .entregas { grid-template-columns: 1fr; }
-  .agenda-lista { grid-template-columns: 1fr 1fr; gap: 14px; }
-  .show__corpo { padding: 14px; }
-  .show__nome { font-size: 1.35rem; }
   .agenda-vazia { grid-template-columns: 1fr; }
   .agenda-vazia img { width: 90px; }
   .campo-duplo { grid-template-columns: 1fr; }
@@ -1197,9 +1246,6 @@ body.visor-aberto { overflow: hidden; }
   .faixa__trilho { font-size: 1.25rem; }
 }
 
-@media (max-width: 400px) {
-  .agenda-lista { grid-template-columns: 1fr; }
-}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
