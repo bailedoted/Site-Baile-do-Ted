@@ -177,6 +177,7 @@
     carregarPrints();
     carregarTextos();
     carregarContratos();
+    carregarTabelaOrc();
     atualizarValoresAutomaticos();
   }
 
@@ -231,13 +232,14 @@
   }
 
   /* =================== ABAS =================== */
+  function abrirAba(nome) {
+    document.querySelectorAll('.aba').forEach(function (a) { a.setAttribute('aria-selected', a.dataset.aba === nome ? 'true' : 'false'); });
+    document.querySelectorAll('.painel-aba').forEach(function (p) { p.hidden = p.id !== 'aba-' + nome; });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   function ligarAbas() {
     document.querySelectorAll('.aba').forEach(function (aba) {
-      aba.addEventListener('click', function () {
-        document.querySelectorAll('.aba').forEach(function (a) { a.setAttribute('aria-selected', a === aba ? 'true' : 'false'); });
-        document.querySelectorAll('.painel-aba').forEach(function (p) { p.hidden = p.id !== 'aba-' + aba.dataset.aba; });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
+      aba.addEventListener('click', function () { abrirAba(aba.dataset.aba); });
     });
   }
 
@@ -427,6 +429,152 @@
       if (ed) { editarEvento(ed.dataset.editar); return; }
       var ex = e.target.closest('[data-excluir]');
       if (ex) excluirEvento(ex.dataset.excluir);
+    });
+  }
+
+  /* =================== ORÇAMENTO (uso interno) =================== */
+  var TABELA_PADRAO = { porKm: 0.68, faixa1: 1500, faixa2: 2000, faixa3: 2500, faixa4: 3000 };
+  var tabelaOrc = Object.assign({}, TABELA_PADRAO);
+  var ultimoOrc = null;
+
+  function reais(n) { return formatarMoedaNumero(Number(n) || 0); }
+  function numeroDeCampo(id) { return moedaParaNumero($(id).value); }
+  function numeroDecimal(id) {
+    var t = String($(id).value || '').replace(/[^\d,.]/g, '');
+    if (t.indexOf(',') >= 0) t = t.replace(/\./g, '').replace(',', '.');
+    return Number(t) || 0;
+  }
+
+  async function carregarTabelaOrc() {
+    var r = await sb.from('configuracoes').select('valor').eq('chave', 'admin_orcamento').maybeSingle();
+    if (r.data && r.data.valor) tabelaOrc = Object.assign({}, TABELA_PADRAO, r.data.valor);
+    $('tab-km').value = tabelaOrc.porKm.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    $('tab-f1').value = reais(tabelaOrc.faixa1);
+    $('tab-f2').value = reais(tabelaOrc.faixa2);
+    $('tab-f3').value = reais(tabelaOrc.faixa3);
+    $('tab-f4').value = reais(tabelaOrc.faixa4);
+  }
+
+  async function salvarTabelaOrc(e) {
+    e.preventDefault();
+    var nova = {
+      porKm: numeroDecimal('tab-km'),
+      faixa1: numeroDeCampo('tab-f1'),
+      faixa2: numeroDeCampo('tab-f2'),
+      faixa3: numeroDeCampo('tab-f3'),
+      faixa4: numeroDeCampo('tab-f4')
+    };
+    if (nova.porKm > 20) { toast('Valor por km parece alto demais (' + reais(nova.porKm) + '). Use vírgula, ex: 0,68.', 'erro'); return; }
+    if (!nova.porKm || !nova.faixa1 || !nova.faixa2 || !nova.faixa3 || !nova.faixa4) {
+      toast('Preencha todos os valores da tabela.', 'erro');
+      return;
+    }
+    var btn = $('btn-salvar-tabela');
+    btn.disabled = true;
+    var r = await sb.from('configuracoes').upsert({ chave: 'admin_orcamento', valor: nova, atualizado_em: new Date().toISOString() }, { onConflict: 'chave' });
+    btn.disabled = false;
+    if (r.error) { toast(mensagemErro(r.error, 'Não foi possível salvar a tabela.'), 'erro'); return; }
+    tabelaOrc = nova;
+    carregarTabelaOrc();
+    toast('Tabela salva! Os próximos cálculos já usam esses valores.');
+  }
+
+  function faixaDe(kmIdaVolta) {
+    if (kmIdaVolta <= 200) return { valor: tabelaOrc.faixa1, nome: 'até 200 km' };
+    if (kmIdaVolta <= 300) return { valor: tabelaOrc.faixa2, nome: '201 a 300 km' };
+    if (kmIdaVolta <= 500) return { valor: tabelaOrc.faixa3, nome: '301 a 500 km' };
+    return { valor: tabelaOrc.faixa4, nome: 'acima de 500 km' };
+  }
+
+  function montarMensagemOrc(o) {
+    var data = o.data ? o.data.split('-').reverse().join('/') : '';
+    return 'Olá' + (o.nome ? ', ' + o.nome.split(' ')[0] : '') + '! Segue a estimativa do *Baile do Ted*:\n\n' +
+      (o.tipo ? '*Evento:* ' + o.tipo + '\n' : '') +
+      '*Cidade:* ' + o.cidade + '\n' +
+      (data ? '*Data:* ' + data + '\n' : '') +
+      '*Valor:* ' + reais(o.total) + '\n\n' +
+      'Hospedagem e alimentação da equipe não estão inclusas. O valor final pode variar conforme a data e a estrutura do evento.\n\n' +
+      'Posso reservar a data pra você?';
+  }
+
+  function atualizarLinkWhatsOrc() {
+    var texto = $('orc-mensagem').value;
+    var num = String($('orc-whats').value || '').replace(/\D/g, '');
+    if (num && num.length <= 11) num = '55' + num;
+    $('btn-whats-orc').href = 'https://wa.me/' + (num || '') + '?text=' + encodeURIComponent(texto);
+  }
+
+  async function calcularOrcamentoAdmin(e) {
+    e.preventDefault();
+    var cidade = $('orc-cidade').value.trim();
+    $('orc-erro').hidden = true;
+    if (!cidade) { $('orc-erro').textContent = 'Digite a cidade e o estado do evento.'; $('orc-erro').hidden = false; $('orc-cidade').focus(); return; }
+    var btn = $('btn-calcular-orc');
+    btn.disabled = true; btn.textContent = 'Calculando rota…';
+    try {
+      var geo = await comTempo(fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q=' + encodeURIComponent(cidade)).then(function (r) { return r.json(); }), 20000);
+      if (!geo || !geo.length) throw new Error("Cidade não encontrada. Digite no formato 'Cidade, UF'.");
+      var rota = await comTempo(fetch('https://router.project-osrm.org/route/v1/driving/-49.2733,-25.4284;' + geo[0].lon + ',' + geo[0].lat + '?overview=false').then(function (r) { return r.json(); }), 20000);
+      if (!rota || rota.code !== 'Ok') throw new Error('Não foi possível traçar uma rota de carro até essa cidade.');
+      var km = (rota.routes[0].distance / 1000) * 2;
+      var desloc = km * tabelaOrc.porKm;
+      var faixa = faixaDe(km);
+      var total = desloc + faixa.valor;
+      ultimoOrc = {
+        cidade: cidade, tipo: $('orc-tipo').value.trim(), data: $('orc-data').value,
+        nome: $('orc-nome').value.trim(), whats: $('orc-whats').value.trim(),
+        km: km, desloc: desloc, cache: faixa.valor, total: total
+      };
+      $('orc-total').textContent = total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      $('orc-km').textContent = Math.round(km).toLocaleString('pt-BR') + ' km';
+      $('orc-desloc-rotulo').textContent = 'Deslocamento (' + reais(tabelaOrc.porKm) + '/km)';
+      $('orc-desloc').textContent = reais(desloc);
+      $('orc-cache-rotulo').textContent = 'Cachê da faixa (' + faixa.nome + ')';
+      $('orc-cache').textContent = reais(faixa.valor);
+      $('orc-mensagem').value = montarMensagemOrc(ultimoOrc);
+      atualizarLinkWhatsOrc();
+      $('orc-vazio').hidden = true;
+      $('orc-resultado').hidden = false;
+    } catch (err) {
+      var m = err && err.message ? err.message : '';
+      $('orc-erro').textContent = /TEMPO|fetch|network/i.test(m) || !m ? 'Não deu pra calcular agora. Confira a internet e tente de novo.' : m;
+      $('orc-erro').hidden = false;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Calcular';
+    }
+  }
+
+  function levarOrcParaContrato() {
+    if (!ultimoOrc) return;
+    $('contratoValorTotal').value = reais(ultimoOrc.total);
+    if (ultimoOrc.nome && !$('clienteNome').value.trim()) $('clienteNome').value = ultimoOrc.nome;
+    if (ultimoOrc.whats && !$('clienteTelefone').value.trim()) $('clienteTelefone').value = ultimoOrc.whats;
+    if (ultimoOrc.tipo && !$('contratoEventoNome').value.trim()) $('contratoEventoNome').value = ultimoOrc.tipo;
+    if (ultimoOrc.data && !$('contratoEventoData').value) $('contratoEventoData').value = ultimoOrc.data;
+    if (!$('contratoEventoLocal').value.trim()) $('contratoEventoLocal').value = ultimoOrc.cidade;
+    atualizarValoresAutomaticos();
+    abrirAba('contratos');
+    toast('Valor e dados levados pro contrato. Complete o que faltar.');
+  }
+
+  function ligarOrcamento() {
+    $('form-orcamento').addEventListener('submit', calcularOrcamentoAdmin);
+    $('form-tabela-orc').addEventListener('submit', salvarTabelaOrc);
+    $('orc-mensagem').addEventListener('input', atualizarLinkWhatsOrc);
+    $('orc-whats').addEventListener('input', function () { if (ultimoOrc) atualizarLinkWhatsOrc(); });
+    $('btn-copiar-orc').addEventListener('click', async function () {
+      var texto = $('orc-mensagem').value;
+      try { await navigator.clipboard.writeText(texto); }
+      catch (e) {
+        var t = document.createElement('textarea'); t.value = texto; document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); } catch (x) { /* nada */ }
+        t.remove();
+      }
+      toast('Mensagem copiada!');
+    });
+    $('btn-orc-contrato').addEventListener('click', levarOrcParaContrato);
+    ['tab-f1', 'tab-f2', 'tab-f3', 'tab-f4'].forEach(function (id) {
+      $(id).addEventListener('blur', function () { var v = moedaParaNumero(this.value); this.value = v ? reais(v) : ''; });
     });
   }
 
@@ -765,6 +913,7 @@
     ligarLogin();
     ligarAbas();
     ligarShows();
+    ligarOrcamento();
     ligarFotos();
     ligarTextos();
     ligarContratos();
