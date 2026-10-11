@@ -162,6 +162,11 @@
       }
       destaque.innerHTML = htmlDestaque(eventos[0]);
       lista.innerHTML = eventos.slice(1).map(htmlCard).join('');
+      var mais = document.getElementById('agenda-mais');
+      if (mais) {
+        mais.hidden = eventos.length < 2;
+        document.getElementById('agenda-mais-qtd').textContent = '(' + (eventos.length - 1) + ')';
+      }
     } catch (erro) {
       console.warn('[agenda]', erro && erro.message ? erro.message : erro);
       destaque.innerHTML = htmlVazio('Agenda fechando os detalhes', 'Não conseguimos carregar os shows agora. Chama no WhatsApp que a gente te passa as próximas datas.');
