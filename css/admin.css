@@ -82,6 +82,7 @@ code {
 .btn:disabled { opacity: .55; cursor: progress; }
 .btn--vermelho { --b-fundo: var(--vermelho); --b-texto: #fff; }
 .btn--ouro { --b-fundo: var(--ouro); --b-texto: var(--noite); }
+.btn--verde { --b-fundo: var(--verde); --b-texto: #fff; }
 .btn--contorno { background: transparent; color: var(--creme); border-color: var(--linha-forte); }
 .btn--contorno:hover { border-color: var(--creme); filter: none; }
 .btn--pequeno { min-height: 40px; padding: 8px 14px; font-size: .88rem; border-radius: 10px; }
@@ -441,6 +442,38 @@ input::placeholder, textarea::placeholder { color: rgba(199, 178, 173, .55); }
   border-radius: 14px;
 }
 
+/* ---------- ORÇAMENTO ---------- */
+.grade-orcamento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.orc-resultado { display: grid; gap: 16px; }
+.orc-total {
+  display: grid;
+  font-family: var(--f-cartaz);
+  font-weight: 900;
+  font-size: clamp(2.8rem, 6vw, 4rem);
+  line-height: 1;
+  color: var(--ouro);
+  font-variant-numeric: tabular-nums;
+}
+.orc-total small {
+  font-family: var(--f-mono);
+  font-size: .66rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--fumaca);
+  margin-bottom: 8px;
+}
+.tabela-orc {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
 /* ---------- FOTOS ---------- */
 .grade-fotos {
   display: grid;
@@ -598,7 +631,8 @@ input::placeholder, textarea::placeholder { color: rgba(199, 178, 173, .55); }
   .resumo { position: static; }
 }
 @media (max-width: 960px) {
-  .grade-shows, .grade-fotos { grid-template-columns: 1fr; }
+  .grade-shows, .grade-fotos, .grade-orcamento { grid-template-columns: 1fr; }
+  .tabela-orc { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .barra { flex-wrap: wrap; row-gap: 8px; }
   .abas { order: 3; width: 100%; margin: 0; }
   .barra__conta { margin-left: auto; }
@@ -613,6 +647,8 @@ input::placeholder, textarea::placeholder { color: rgba(199, 178, 173, .55); }
   .barra__marca strong { font-size: 1.2rem; }
   .abas { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; overflow: visible; }
   .aba { text-align: center; background: var(--palco); border: 1px solid var(--linha); }
+  .aba:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .tabela-orc { grid-template-columns: 1fr; }
   .barra__conta .btn { padding: 8px 10px; }
   .cartao h2 { font-size: 1.6rem; }
 }
